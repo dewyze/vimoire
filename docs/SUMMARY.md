@@ -6,11 +6,11 @@ See `ARCHITECTURE.md` for book.yml structure, project filesystem layout, and plu
 
 ## Core Concept
 
-**Filesystem** stores content (markdown, JSON). **book.yml** indexes structure and metadata. Healthcheck detects inconsistencies.
+**Filesystem** stores content (markdown, JSON). **manuscript.json** indexes structure and metadata. Healthcheck detects inconsistencies.
 
 ## Features
 
-**Structure & Navigation** — Neotree shows chapters/sections by order; Telescope for fast jump; create/rename/delete/reorder chapters (atomic YAML+FS updates).
+**Structure & Navigation** — Neotree shows chapters/sections by order; Telescope for fast jump; create/rename/delete/reorder chapters (atomic JSON+FS updates).
 
 **Authoring** — Custom filetype `vimoire.markdown` with role-based settings. Panels for notes, snippets, comments tied to each chapter.
 
@@ -30,7 +30,7 @@ See `ARCHITECTURE.md` for book.yml structure, project filesystem layout, and plu
 
 ## Building Order
 
-1. Core (directory structure, book.yml parsing, healthcheck)
+1. Core (directory structure, manuscript.json parsing, healthcheck)
 2. Navigation (Neotree, Telescope, file ops)
 3. Authoring (filetype, panels)
 4. Planning & plotting

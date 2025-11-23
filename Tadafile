@@ -4,32 +4,27 @@
       > util/log.lua
     - [ ] Implement path helpers and root detection
       > util/path.lua
-  - 1.2: Book Detection & Filesystem:
-    - [ ] Detect and validate book root directory
-      > core/book_root.lua
+  - 1.2: Manuscript & Filesystem:
+    - [ ] Load manuscript.json and provide Manuscript/Section/Chapter objects
+      > core/manuscript.lua
     - [ ] Establish canonical filesystem structure rules
       > core/fs_layout.lua
-  - 1.3: YAML/JSON & File Roles:
-    - [ ] Implement YAML parser with validation
-      > util/yaml.lua
-    - [ ] Implement JSON helper with error handling
-      > util/json.lua
+  - 1.3: File Roles:
     - [ ] Define file roles (text, notes, planning, JSON surfaces)
       > core/roles.lua
-  - 1.4: Book Model & State:
-    - [ ] Parse book.yml into in-memory model
-      > core/book_model.lua
+  - 1.4: Runtime State & Healthcheck:
     - [ ] Track ephemeral state and cache
       > state.lua
     - [ ] Build healthcheck for data integrity
       > core/healthcheck.lua
   - 1.5: Plugin Bootstrap:
-    - [ ] Bootstrap plugin initialization
+    - [ ] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
       > init.lua
     - [ ] Load user configuration
       > config.lua
     - [ ] Set up command dispatcher
       > commands.lua
+    - NOTE: Design init.lua to accept manuscript path from multiple sources (see ARCHITECTURE.md Bootstrap section) for future app packaging support
 
 - Phase 2: Navigation:
   - 2.1: File Operations:

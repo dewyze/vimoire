@@ -2,35 +2,44 @@
 
 ### Sections
 
-**book.yml**: YAML file per project defines sections, chapters, order, titles, and metadata.
+**manuscript.json**: JSON file per project defines sections, chapters, order, titles, and metadata.
 **Book project structure**: A single project uses a specific UUID and domain based file structure.
 **Plugin architecture**: Suggested example architecture for the lua plugin we are writing.
 
 ---
 
-## book.yml
+## manuscript.json
 
-```yaml
-title: "My Book Title"
-id: "book-uuid"
-description: ""
-created_at: "2025-01-01"
-updated_at: "2025-01-01"
-
-sections:
-  - id: "sec-1111"
-    title: "Part One"
-    status: null
-    meta: {}
-    chapters:
-      - id: "chap-aaaa"
-        title: "Chapter One"
-        status: null
-        meta: {}
-      - id: "chap-bbbb"
-        title: "Chapter Two"
-        status: null
-        meta: {}
+```json
+{
+  "title": "My Book Title",
+  "id": "book-uuid",
+  "description": "",
+  "created_at": "2025-01-01",
+  "updated_at": "2025-01-01",
+  "sections": [
+    {
+      "id": "sec-1111",
+      "title": "Part One",
+      "status": null,
+      "meta": {},
+      "chapters": [
+        {
+          "id": "chap-aaaa",
+          "title": "Chapter One",
+          "status": null,
+          "meta": {}
+        },
+        {
+          "id": "chap-bbbb",
+          "title": "Chapter Two",
+          "status": null,
+          "meta": {}
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ---
@@ -39,7 +48,7 @@ sections:
 
 ```
 book_root/
-  book.yml
+  manuscript.json
 
   sections/
     <uuid>/
@@ -77,15 +86,11 @@ lua/vimoire/
   state.lua                # runtime state
 
   util/
-    log.lua                # logging
-    path.lua               # path helpers
-    json.lua               # JSON encode/decode
-    yaml.lua               # YAML parsing
+    log.lua                # logging (vim.notify wrapper)
 
   core/
-    book_root.lua          # detect & validate root
-    book_model.lua         # parse book.yml
-    fs_layout.lua          # filesystem structure
+    manuscript.lua         # load/manage manuscript.json; Manuscript, Section, Chapter objects
+    fs_layout.lua          # filesystem structure rules
     healthcheck.lua        # detect issues, offer repairs
     roles.lua              # map paths to roles
 
@@ -130,3 +135,26 @@ lua/vimoire/
 - This is a suggested structure. Adjust as needed.
 - Vimoire runs in isolated `NVIM_APPNAME=vimoire` config.
 - Plotting can be extracted to separate plugin later.
+
+---
+
+## ID Scheme
+
+Chapters, sections, and other entities use **6-character alphanumeric IDs** (a-z, 0-9) generated randomly with collision detection. At 36^6 combinations (2.1 billion), collisions are statistically impossible for books of any practical size. ID generation includes a collision check against existing IDs in the manuscript.
+
+---
+
+## Bootstrap & App Launch (Future-Proofing)
+
+Currently, vimoire requires the user to open Neovim from the manuscript root directory. **Future app packaging** may want:
+- File picker dialog to select a manuscript folder
+- Command-line argument for manuscript path
+- Remember last opened project
+
+**Design constraint for init.lua:** Build it to accept manuscript path from multiple sources (in order):
+1. Command-line argument (passed by app launcher)
+2. Environment variable (set by wrapper script)
+3. Current working directory (fallback)
+4. User prompt (if not found)
+
+This allows the core logic to remain unchanged while supporting different launch modes (CLI, file picker, remembered project) without refactoring later.

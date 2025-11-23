@@ -1,0 +1,12 @@
+vim.o.confirm = true
+vim.o.expandtab = false
+vim.o.ignorecase = true
+vim.o.linebreak = true
+vim.o.mouse = "a"
+vim.o.scrolloff = 5
+vim.o.shiftwidth = 2
+vim.o.smartcase = true
+vim.o.tabstop = 2
+vim.o.undofile = true
+vim.o.wildignore = ".git,*.swp,*.tmp"
+vim.o.wrap = true
