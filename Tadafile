@@ -1,11 +1,11 @@
 - Phase 1: Core Foundation:
   - 1.1: Utilities & Logging:
-    - [ ] Implement logging utility
+    - [x] Implement logging utility
       > util/log.lua
-    - [ ] Implement path helpers and root detection
+    - [x] Implement path helpers and root detection
       > util/path.lua
   - 1.2: Manuscript & Filesystem:
-    - [ ] Load manuscript.json and provide Manuscript/Section/Chapter objects
+    - [x] Load manuscript.json and provide Manuscript/Section/Chapter objects
       > core/manuscript.lua
     - [ ] Establish canonical filesystem structure rules
       > core/fs_layout.lua

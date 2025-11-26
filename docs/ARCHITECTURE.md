@@ -10,33 +10,35 @@
 
 ## manuscript.json
 
+Flat structure: chapters at top level with section references. Sections maintain chapter ordering via `chapter_ids`.
+
 ```json
 {
-  "title": "My Book Title",
-  "id": "book-uuid",
+  "title": "The Unreliable Memoirs of Gerald the Sentient Toaster",
+  "id": "bk2xqr",
   "description": "",
-  "created_at": "2025-01-01",
-  "updated_at": "2025-01-01",
+  "chapters": [
+    {
+      "id": "chap1a",
+      "title": "The Day I Became Sentient",
+      "section": "sec001"
+    },
+    {
+      "id": "chap1b",
+      "title": "Bread: A Love Story",
+      "section": "sec001"
+    }
+  ],
   "sections": [
     {
-      "id": "sec-1111",
-      "title": "Part One",
-      "status": null,
-      "meta": {},
-      "chapters": [
-        {
-          "id": "chap-aaaa",
-          "title": "Chapter One",
-          "status": null,
-          "meta": {}
-        },
-        {
-          "id": "chap-bbbb",
-          "title": "Chapter Two",
-          "status": null,
-          "meta": {}
-        }
-      ]
+      "id": "sec001",
+      "title": "Part 1",
+      "chapter_ids": ["chap1a", "chap1b", "chap1c"]
+    },
+    {
+      "id": "sec002",
+      "title": "Part 2",
+      "chapter_ids": ["chap2a", "chap2b"]
     }
   ]
 }
