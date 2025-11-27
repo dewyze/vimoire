@@ -81,54 +81,50 @@ book_root/
 
 ## Plugin Architecture
 
-lua/vimoire/
-  init.lua                 # bootstrap
-  config.lua               # config defaults
-  commands.lua             # :Vimoire... commands
-  state.lua                # runtime state
+The plugin is organized into logical modules:
 
-  util/
-    log.lua                # logging (vim.notify wrapper)
+- **Core**: Manuscript loading, state management, healthcheck
+- **Navigation**: Neotree source, Telescope pickers, surface navigation
+- **Authoring**: Filetype configuration, panels system, notes/snippets/comments
+- **Planning**: Planning doc discovery and management
+- **Plotting**: Plot grid and chapter kanban views
+- **Spell**: Book-local spellchecking
+- **Export**: Manuscript assembly and Pandoc pipeline
+- **QoL**: Diagnostics and Neovide-specific enhancements
 
-  core/
-    manuscript.lua         # load/manage manuscript.json; Manuscript, Section, Chapter objects
-    fs_layout.lua          # filesystem structure rules
-    healthcheck.lua        # detect issues, offer repairs
-    roles.lua              # map paths to roles
+---
 
-  navigation/
-    neotree_source.lua     # custom Neotree source
-    telescope_sources.lua  # pickers
-    jump.lua               # open surfaces by chapter
+---
 
-  authoring/
-    filetype.lua           # vimoire.markdown filetype
-    panels.lua             # panel helpers
-    notes.lua              # notes panel
-    snippets.lua           # snippets.json
-    comments.lua           # comments.json
+## Neotree Navigation Operations
 
-  planning/
-    index.lua              # discover planning docs
-    panel.lua              # pin as panels
+The neotree source provides a hierarchical manuscript view with the following operations:
 
-  plotting/
-    model.lua              # JSON data
-    grid_view.lua          # book grid
-    kanban_view.lua        # chapter kanban
-    actions.lua            # UI interactions
+**Manuscript (root):**
+- Add section
+- Add chapter (only if default section exists)
 
-  spell/
-    spellfile.lua          # book-local dictionary
-    roles_spell.lua        # conditional spell
+**Section:**
+- Rename section
+- Remove section (with safety checks)
+- Move section up/down (reorder)
+- Add chapter
 
-  export/
-    manuscript.lua         # assemble chapters
-    pandoc.lua             # export pipeline
+**Chapter:**
+- Open text.md
+- Rename chapter
+- Add another chapter in same section
+- Remove chapter (prompts user about snippet handling: transfer or delete)
+- Move chapter up/down (reorder)
 
-  qol/
-    diagnostics.lua        # error messages
-    neovide.lua            # Neovide polish
+**Planning Folders (Characters, Settings, Reference):**
+- Add item (character, setting, or reference)
+- Items display alphabetically; fuzzy finder recommended for large lists
+
+**Planning Items (Character, Setting, Reference files):**
+- Open file
+- Remove file
+- Edit frontmatter (name, age/location) directly in editor
 
 ---
 

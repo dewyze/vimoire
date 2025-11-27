@@ -1,93 +1,60 @@
 - Phase 1: Core Foundation:
   - 1.1: Utilities & Logging:
     - [x] Implement logging utility
-      > util/log.lua
     - [x] Implement path helpers and root detection
-      > util/path.lua
   - 1.2: Manuscript & Filesystem:
     - [x] Load manuscript.json and provide Manuscript/Section/Chapter objects
-      > core/manuscript.lua
-    - [ ] Establish canonical filesystem structure rules
-      > core/fs_layout.lua
-  - 1.3: File Roles:
-    - [ ] Define file roles (text, notes, planning, JSON surfaces)
-      > core/roles.lua
-  - 1.4: Runtime State & Healthcheck:
+  - 1.3: Runtime State & Healthcheck:
     - [ ] Track ephemeral state and cache
-      > state.lua
     - [ ] Build healthcheck for data integrity
-      > core/healthcheck.lua
-  - 1.5: Plugin Bootstrap:
+  - 1.4: Plugin Bootstrap:
     - [ ] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
-      > init.lua
     - [ ] Load user configuration
-      > config.lua
     - [ ] Set up command dispatcher
-      > commands.lua
-    - NOTE: Design init.lua to accept manuscript path from multiple sources (see ARCHITECTURE.md Bootstrap section) for future app packaging support
+    - NOTE: Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
 
 - Phase 2: Navigation:
-  - 2.1: File Operations:
-    - [ ] Implement atomic create/rename/delete/reorder
-      > core/book_model.lua
-  - 2.2: Neotree Integration:
-    - [ ] Create custom Neotree source for book structure
-      > navigation/neotree_source.lua
+  - 2.1: Neotree Integration:
+    - [x] Create custom Neotree source for book structure
+    - [ ] Implement neotree operations (add/rename/remove/reorder)
+  - 2.2: File Operations:
+    - [ ] Implement atomic create/rename/delete/reorder mutations
   - 2.3: Telescope Integration:
     - [ ] Build Telescope pickers for chapters and planning
-      > navigation/telescope_sources.lua
-  - 2.4: Navigation Commands:
-    - [ ] Implement jump commands for text/notes/snippets/comments
-      > navigation/jump.lua
+  - 2.4: Navigation:
+    - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
 
 - Phase 3: Authoring Surface:
   - 3.1: Filetype & Panels:
     - [ ] Define vimoire.markdown filetype with role-based settings
-      > authoring/filetype.lua
     - [ ] Build collapsible panel system
-      > authoring/panels.lua
   - 3.2: Notes & Snippets:
     - [ ] Implement chapter notes panel
-      > authoring/notes.lua
     - [ ] Manage snippets extraction and insertion
-      > authoring/snippets.lua
   - 3.3: Comments:
     - [ ] Build comments panel with extmark anchors
-      > authoring/comments.lua
 
 - Phase 4: Planning & Plotting:
   - 4.1: Planning Docs:
     - [ ] Discover and index planning documents
-      > planning/index.lua
     - [ ] Allow pinning planning docs as panels
-      > planning/panel.lua
   - 4.2: Plotting Foundation:
     - [ ] Build plot data model (JSON structure)
-      > plotting/model.lua
   - 4.3: Plotting Views:
     - [ ] Build book-level grid view
-      > plotting/grid_view.lua
     - [ ] Build chapter-level kanban view
-      > plotting/kanban_view.lua
   - 4.4: Plotting Interactions:
     - [ ] Implement card operations (create/move/delete)
-      > plotting/actions.lua
 
 - Phase 5: Spellcheck & Export:
   - 5.1: Spellcheck:
     - [ ] Configure book-local spellfile
-      > spell/spellfile.lua
     - [ ] Enable conditional spellcheck by role
-      > spell/roles_spell.lua
   - 5.2: Export:
     - [ ] Assemble manuscript from ordered chapters
-      > export/manuscript.lua
     - [ ] Set up Pandoc export pipeline
-      > export/pandoc.lua
 
 - Phase 6: Neovide Polish:
   - 6.1: UI & Diagnostics:
     - [ ] Add Neovide-specific enhancements
-      > qol/neovide.lua
     - [ ] Implement friendly error messages
-      > qol/diagnostics.lua
