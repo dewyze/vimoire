@@ -25,13 +25,13 @@ function state:rebuild()
 
   -- Build chapters map
   for _, ch_data in ipairs(self.manuscript.chapters) do
-    local chapter = Chapter.new(ch_data)
+    local chapter = Chapter.new(ch_data, self.manuscript.root)
     self.chapters[chapter.id] = chapter
   end
 
   -- Build sections and inverted index
   for _, sec_data in ipairs(self.manuscript.sections) do
-    local section = Section.new(sec_data, self.manuscript._root)
+    local section = Section.new(sec_data)
     self.sections[section.id] = section
 
     -- chapters_by_section: section_id → [Chapter, Chapter, ...]
@@ -39,6 +39,9 @@ function state:rebuild()
     for _, chapter_id in ipairs(section.chapter_ids) do
       table.insert(self.chapters_by_section[section.id], self.chapters[chapter_id])
     end
+
+    -- Store chapters in section for direct access
+    section.chapters = self.chapters_by_section[section.id]
   end
 end
 

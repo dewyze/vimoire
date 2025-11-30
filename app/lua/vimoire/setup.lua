@@ -32,6 +32,11 @@ function setup.load_manuscript()
   end
 
   log.info("Loaded manuscript: " .. state.manuscript.title)
+
+  -- Update neotree source display name
+  local neotree_source = require("vimoire.navigation.neotree_source")
+  neotree_source.display_name = "󱓷 " .. state.manuscript.title
+
   return true
 end
 

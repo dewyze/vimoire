@@ -19,7 +19,7 @@ function Manuscript.load(root_path)
   end
 
   local manuscript = Manuscript.new(data)
-  manuscript._root = root_path
+  manuscript.root = root_path
 
   return manuscript
 end
@@ -30,16 +30,16 @@ function Manuscript.new(data)
 end
 
 function Manuscript:save()
-  if not self._root then
+  if not self.root then
     return false, "No root path set. Cannot save."
   end
 
-  local manuscript_file = Path:new(self._root, "manuscript.json")
+  local manuscript_file = Path:new(self.root, "manuscript.json")
 
-  -- Create a copy without _root for serialization
+  -- Create a copy without root for serialization
   local data = {}
   for k, v in pairs(self) do
-    if k ~= "_root" then
+    if k ~= "root" then
       data[k] = v
     end
   end

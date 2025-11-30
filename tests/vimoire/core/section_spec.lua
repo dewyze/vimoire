@@ -27,7 +27,7 @@ describe("Section", function()
 
   it("resolves chapters in order from state", function()
     local section = state.sections["p1x3q8"]
-    local chapters = section:chapters()
+    local chapters = section.chapters
 
     assert.equals(#chapters, 3)
     assert.equals(chapters[1].title, "The Day I Became Sentient")
