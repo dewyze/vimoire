@@ -156,3 +156,33 @@ Currently, vimoire requires the user to open Neovim from the manuscript root dir
 4. User prompt (if not found)
 
 This allows the core logic to remain unchanged while supporting different launch modes (CLI, file picker, remembered project) without refactoring later.
+
+---
+
+## User Configuration
+
+**Location:** `~/.config/vimoire/config.lua`
+
+**Loading strategy:**
+- App code uses `vimoire.config` module with defaults
+- On startup, explicitly loads `~/.config/vimoire/config.lua` (hardcoded path, NOT via stdpath)
+- User config merged with defaults using `vim.tbl_deep_extend("force", defaults, user_config)`
+
+**Why hardcoded path:**
+- App code location varies (dev symlink, Homebrew install)
+- User config location is fixed and expected
+- Launcher script can set `XDG_CONFIG_HOME` to point Neovim at app code without affecting user config path
+
+**Example wrapper script for Homebrew:**
+```bash
+#!/bin/bash
+# /opt/homebrew/bin/vimoire
+XDG_CONFIG_HOME="/opt/homebrew/opt/vimoire/app/.." \
+NVIM_APPNAME=vimoire \
+neovide "$@"
+```
+
+**Development setup:**
+- Symlink: `ln -s /path/to/repo/app ~/.config/vimoire`
+- User config lives at `~/.config/vimoire/config.lua` (git-ignored)
+- App loads it explicitly from hardcoded path

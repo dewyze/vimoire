@@ -1,16 +1,19 @@
+local config = require("vimoire.config")
+local editor = config.get("editor")
+
 vim.o.confirm = true
 vim.o.cursorline = false
 vim.o.expandtab = false
 vim.o.ignorecase = true
-vim.o.linebreak = true
+vim.o.linebreak = editor.linebreak
 vim.o.mouse = "a"
 vim.o.number = false
-vim.o.scrolloff = 5
-vim.o.shiftwidth = 4
+vim.o.scrolloff = editor.scrolloff
+vim.o.shiftwidth = editor.shiftwidth
 vim.o.showbreak = "↳ "
 vim.o.smartcase = true
-vim.o.tabstop = 4
-vim.o.textwidth = 80
+vim.o.tabstop = editor.tabstop
+vim.o.textwidth = editor.textwidth
 vim.o.undofile = true
 vim.o.wildignore = ".git,*.swp,*.tmp"
-vim.o.wrap = true
+vim.o.wrap = editor.wrap

@@ -140,13 +140,16 @@ function M.navigate(state_param, path)
 end
 
 function M.setup(config, global_config)
-  vim.api.nvim_set_hl(0, "VimoireManuscript", { fg = "#c792ea", bold = true })
-  vim.api.nvim_set_hl(0, "VimoireSection", { fg = "#82aaff", bold = true })
-  vim.api.nvim_set_hl(0, "VimoireChapter", { fg = "#89ddff" })
-  vim.api.nvim_set_hl(0, "VimoirePlanning", { fg = "#f78c6c", bold = true })
-  vim.api.nvim_set_hl(0, "VimoirePlanningSubfolder", { fg = "#ff9e64", bold = true })
-  vim.api.nvim_set_hl(0, "VimoirePlanningItem", { fg = "#ffc79b" })
-  vim.api.nvim_set_hl(0, "NeoTreeTabActive", { fg = "#a3d9a5", bold = true })
+  local vimoire_config = require("vimoire.config")
+  local colors = vimoire_config.get("navigator.colors")
+
+  vim.api.nvim_set_hl(0, "VimoireManuscript", { fg = colors.manuscript, bold = true })
+  vim.api.nvim_set_hl(0, "VimoireSection", { fg = colors.section, bold = true })
+  vim.api.nvim_set_hl(0, "VimoireChapter", { fg = colors.chapter })
+  vim.api.nvim_set_hl(0, "VimoirePlanning", { fg = colors.planning, bold = true })
+  vim.api.nvim_set_hl(0, "VimoirePlanningSubfolder", { fg = colors.planning_subfolder, bold = true })
+  vim.api.nvim_set_hl(0, "VimoirePlanningItem", { fg = colors.planning_item })
+  vim.api.nvim_set_hl(0, "NeoTreeTabActive", { fg = colors.winbar, bold = true })
 end
 
 return M

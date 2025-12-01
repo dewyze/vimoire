@@ -58,3 +58,6 @@
   - 6.1: UI & Diagnostics:
     - [ ] Add Neovide-specific enhancements
     - [ ] Implement friendly error messages
+    - [ ] Custom start screen (replace default Neovim version screen with Vimoire dashboard or minimal writing-focused screen)
+  - 6.2: Configuration:
+    - [ ] Centralized keybindings system (registry pattern with mode support)
