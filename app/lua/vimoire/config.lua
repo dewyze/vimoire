@@ -24,11 +24,14 @@ M.defaults = {
     wrap = true,
     linebreak = true,
   },
+  finder = {
+    preview = true,
+  },
   neovide = {
     font = "Iosevka Term Slab:h13",
     linespace = 8,
     padding = {
-      top = 100,
+      top = 20,
       left = 20,
       right = 20,
       bottom = 20,

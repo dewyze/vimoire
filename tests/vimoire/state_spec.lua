@@ -42,4 +42,26 @@ describe("State", function()
     state:rebuild()
     assert.equals(vim.tbl_count(state.chapters), original_count)
   end)
+
+  it("sets section index on sections", function()
+    state:load(fixture_path)
+    assert.equals(state.sections["p1x3q8"].index, 1)
+    assert.equals(state.sections["p2y5r4"].index, 2)
+  end)
+
+  it("sets chapter indices for multi-section manuscripts", function()
+    state:load(fixture_path)
+    local chapter = state.chapters["chap1b"]
+    assert.equals(chapter.section_index, 1)
+    assert.equals(chapter.chapter_index, 2)
+    assert.equals(chapter:display_number(), "1.2")
+  end)
+
+  it("sets nil section_index for single-section manuscripts", function()
+    state:load("tests/fixtures/single_section")
+    local chapter = state.chapters["ch002"]
+    assert.is_nil(chapter.section_index)
+    assert.equals(chapter.chapter_index, 2)
+    assert.equals(chapter:display_number(), "2")
+  end)
 end)

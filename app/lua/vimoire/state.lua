@@ -30,14 +30,20 @@ function state:rebuild()
   end
 
   -- Build sections and inverted index
-  for _, sec_data in ipairs(self.manuscript.sections) do
+  local sectioned = self.manuscript:sectioned()
+  for section_index, sec_data in ipairs(self.manuscript.sections) do
     local section = Section.new(sec_data)
     self.sections[section.id] = section
+    section.index = section_index
+    section.display_index = sectioned and section_index or nil
 
     -- chapters_by_section: section_id → [Chapter, Chapter, ...]
     self.chapters_by_section[section.id] = {}
-    for _, chapter_id in ipairs(section.chapter_ids) do
-      table.insert(self.chapters_by_section[section.id], self.chapters[chapter_id])
+    for chapter_index, chapter_id in ipairs(section.chapter_ids) do
+      local chapter = self.chapters[chapter_id]
+      chapter.chapter_index = chapter_index
+      chapter.section_index = section.display_index
+      table.insert(self.chapters_by_section[section.id], chapter)
     end
 
     -- Store chapters in section for direct access

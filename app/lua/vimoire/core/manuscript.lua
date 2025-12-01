@@ -57,4 +57,8 @@ function Manuscript:save()
   return true
 end
 
+function Manuscript:sectioned()
+  return #self.sections > 1
+end
+
 return Manuscript
