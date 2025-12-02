@@ -54,11 +54,26 @@ local function build_entries()
 
   for _, ptype in ipairs(planning_types) do
     local items = state.manuscript[ptype.key] or {}
+    local base_path = "planning/" .. ptype.key .. "/"
+
     for _, item in ipairs(items) do
+      -- Extract subfolder from path if present
+      local relative = item.file:sub(#base_path + 1)
+      local subfolder = relative:match("^(.+)/[^/]+$")
+
+      local title
+      if subfolder then
+        -- Capitalize first letter of subfolder
+        local folder_label = subfolder:sub(1, 1):upper() .. subfolder:sub(2)
+        title = ptype.label .. " > " .. folder_label .. " > " .. item.name
+      else
+        title = ptype.label .. " > " .. item.name
+      end
+
       table.insert(entries, {
         type = "planning",
         display_number = "",
-        title = ptype.label .. " > " .. item.name,
+        title = title,
         path = Path:new(root, item.file):absolute(),
       })
     end

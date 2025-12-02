@@ -15,6 +15,7 @@ local M = {
       setting = { { "indent" }, { "icon" }, { "name" } },
       reference = { { "indent" }, { "icon" }, { "name" } },
       reference_file = { { "indent" }, { "icon" }, { "name" } },
+      planning_subfolder = { { "indent" }, { "icon" }, { "name" } },
     },
   },
 }
@@ -50,8 +51,27 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
     return nil
   end
 
-  local nodes = {}
+  local base_path = "planning/" .. folder_id .. "/"
+  local subfolders = {}
+  local root_items = {}
+
+  -- Group items by subfolder
   for _, item in ipairs(items) do
+    local relative = item.file:sub(#base_path + 1)
+    local subfolder = relative:match("^(.+)/[^/]+$")
+
+    if subfolder then
+      subfolders[subfolder] = subfolders[subfolder] or {}
+      table.insert(subfolders[subfolder], item)
+    else
+      table.insert(root_items, item)
+    end
+  end
+
+  local nodes = {}
+
+  -- Add root-level items first
+  for _, item in ipairs(root_items) do
     local node = create_node(
       id_prefix .. ":" .. item.id,
       item.name,
@@ -59,6 +79,35 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
       state.manuscript.root .. "/" .. item.file
     )
     table.insert(nodes, node)
+  end
+
+  -- Add subfolder nodes
+  local sorted_subfolders = vim.tbl_keys(subfolders)
+  table.sort(sorted_subfolders)
+
+  for _, subfolder_name in ipairs(sorted_subfolders) do
+    local subfolder_items = subfolders[subfolder_name]
+    local subfolder_label = subfolder_name:sub(1, 1):upper() .. subfolder_name:sub(2)
+    local subfolder_node = create_node(
+      folder_id .. ":" .. subfolder_name,
+      subfolder_label,
+      "planning_subfolder",
+      nil
+    )
+
+    local subfolder_children = {}
+    for _, item in ipairs(subfolder_items) do
+      local node = create_node(
+        id_prefix .. ":" .. item.id,
+        item.name,
+        item_type,
+        state.manuscript.root .. "/" .. item.file
+      )
+      table.insert(subfolder_children, node)
+    end
+
+    subfolder_node.children = subfolder_children
+    table.insert(nodes, subfolder_node)
   end
 
   local folder = create_node(folder_id, folder_name, folder_id, nil)
