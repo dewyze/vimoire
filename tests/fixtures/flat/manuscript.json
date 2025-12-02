@@ -1,0 +1,10 @@
+{
+  "id": "simple1",
+  "title": "A Brief History of Socks",
+  "description": "The untold saga of foot coverings",
+  "chapters": [
+    {"id": "ch001", "section": null, "title": "The First Sock"},
+    {"id": "ch002", "section": null, "title": "The Missing Sock"}
+  ],
+  "sections": []
+}

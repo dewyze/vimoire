@@ -23,31 +23,52 @@ function state:rebuild()
     return
   end
 
-  -- Build chapters map
+  -- Build sections map
+  for _, sec_data in ipairs(self.manuscript.sections) do
+    local section = Section.new(sec_data)
+    self.sections[section.id] = section
+    self.chapters_by_section[section.id] = {}
+  end
+
+  -- Derive section order from chapter positions (ordered unique)
+  local section_order = {}
+  local seen = {}
+
+  -- Build chapters and group by section
+  local chapter_counts = {}
+  local unsectioned_count = 0
+
   for _, ch_data in ipairs(self.manuscript.chapters) do
     local chapter = Chapter.new(ch_data, self.manuscript.root)
     self.chapters[chapter.id] = chapter
+
+    local section_id = chapter.section
+    if section_id and self.sections[section_id] then
+      if not seen[section_id] then
+        seen[section_id] = true
+        table.insert(section_order, section_id)
+      end
+
+      chapter_counts[section_id] = (chapter_counts[section_id] or 0) + 1
+      chapter.chapter_index = chapter_counts[section_id]
+      table.insert(self.chapters_by_section[section_id], chapter)
+    else
+      unsectioned_count = unsectioned_count + 1
+      chapter.chapter_index = unsectioned_count
+    end
   end
 
-  -- Build sections and inverted index
-  local sectioned = self.manuscript:sectioned()
-  for section_index, sec_data in ipairs(self.manuscript.sections) do
-    local section = Section.new(sec_data)
-    self.sections[section.id] = section
-    section.index = section_index
-    section.display_index = sectioned and section_index or nil
+  -- Set section indices
+  local sectioned = #section_order > 1
+  for i, section_id in ipairs(section_order) do
+    local section = self.sections[section_id]
+    section.index = i
+    section.display_index = sectioned and i or nil
+    section.chapters = self.chapters_by_section[section_id]
 
-    -- chapters_by_section: section_id → [Chapter, Chapter, ...]
-    self.chapters_by_section[section.id] = {}
-    for chapter_index, chapter_id in ipairs(section.chapter_ids) do
-      local chapter = self.chapters[chapter_id]
-      chapter.chapter_index = chapter_index
+    for _, chapter in ipairs(section.chapters) do
       chapter.section_index = section.display_index
-      table.insert(self.chapters_by_section[section.id], chapter)
     end
-
-    -- Store chapters in section for direct access
-    section.chapters = self.chapters_by_section[section.id]
   end
 end
 

@@ -29,12 +29,17 @@ function Chapter.create(state, section_id, title)
   local text_file = Path:new(chapter_dir:absolute(), "text.md")
   text_file:write("", "w")
 
-  -- Add to manuscript.chapters
-  local chapter_data = { id = new_id, title = title, section = section_id }
-  table.insert(state.manuscript.chapters, chapter_data)
+  -- Find insert position (after last chapter of this section)
+  local insert_pos = #state.manuscript.chapters + 1
+  for i, ch in ipairs(state.manuscript.chapters) do
+    if ch.section == section_id then
+      insert_pos = i + 1
+    end
+  end
 
-  -- Add to section's chapter_ids
-  table.insert(section.chapter_ids, new_id)
+  -- Add to manuscript.chapters at the right position
+  local chapter_data = { id = new_id, title = title, section = section_id }
+  table.insert(state.manuscript.chapters, insert_pos, chapter_data)
 
   -- Persist and rebuild
   state.manuscript:save()
@@ -96,16 +101,6 @@ function Chapter:destroy(state)
     end
   end
 
-  -- Remove from section's chapter_ids
-  for _, section in pairs(state.sections) do
-    for i, chapter_id in ipairs(section.chapter_ids) do
-      if chapter_id == self.id then
-        table.remove(section.chapter_ids, i)
-        break
-      end
-    end
-  end
-
   -- Persist and rebuild
   state.manuscript:save()
   state:rebuild()
@@ -119,26 +114,35 @@ function Chapter:move(state, target_section_id, position)
     return nil, "Section not found: " .. target_section_id
   end
 
-  -- Find and remove from current section
-  for _, section in pairs(state.sections) do
-    for i, chapter_id in ipairs(section.chapter_ids) do
-      if chapter_id == self.id then
-        table.remove(section.chapter_ids, i)
-        break
-      end
-    end
-  end
-
-  -- Insert at new position in target section
-  table.insert(target_section.chapter_ids, position, self.id)
-
-  -- Update chapter's section reference in manuscript.chapters
-  for _, ch_data in ipairs(state.manuscript.chapters) do
+  -- Remove from current position
+  local chapter_data
+  for i, ch_data in ipairs(state.manuscript.chapters) do
     if ch_data.id == self.id then
-      ch_data.section = target_section_id
+      chapter_data = table.remove(state.manuscript.chapters, i)
       break
     end
   end
+
+  -- Update section reference
+  chapter_data.section = target_section_id
+
+  -- Find insert position: position N within target section
+  local section_count = 0
+  local insert_pos = #state.manuscript.chapters + 1
+
+  for i, ch in ipairs(state.manuscript.chapters) do
+    if ch.section == target_section_id then
+      section_count = section_count + 1
+      if section_count == position then
+        insert_pos = i
+        break
+      end
+      insert_pos = i + 1
+    end
+  end
+
+  -- Insert at calculated position
+  table.insert(state.manuscript.chapters, insert_pos, chapter_data)
 
   -- Persist and rebuild
   state.manuscript:save()

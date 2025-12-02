@@ -57,8 +57,8 @@ describe("State", function()
     assert.equals(chapter:display_number(), "1.2")
   end)
 
-  it("sets nil section_index for single-section manuscripts", function()
-    state:load("tests/fixtures/single_section")
+  it("sets nil section_index for unsectioned manuscripts", function()
+    state:load("tests/fixtures/flat")
     local chapter = state.chapters["ch002"]
     assert.is_nil(chapter.section_index)
     assert.equals(chapter.chapter_index, 2)

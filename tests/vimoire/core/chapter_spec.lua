@@ -53,13 +53,13 @@ describe("Chapter", function()
           assert.is_not_nil(section, "Section " .. opts.section .. " should exist")
 
           local found = false
-          for _, cid in ipairs(section.chapter_ids) do
-            if cid == chapter_id then found = true end
+          for _, ch in ipairs(section.chapters) do
+            if ch.id == chapter_id then found = true end
           end
           assert.is_true(found, "Chapter " .. chapter_id .. " should be in section " .. opts.section)
 
           if opts.position then
-            assert.equals(chapter_id, section.chapter_ids[opts.position],
+            assert.equals(chapter_id, section.chapters[opts.position].id,
               "Chapter " .. chapter_id .. " should be at position " .. opts.position)
           end
         end
@@ -104,7 +104,12 @@ describe("Chapter", function()
       local function check()
         local section = state.sections[section_id]
         assert.is_not_nil(section, "Section " .. section_id .. " should exist")
-        assert.same(expected_ids, section.chapter_ids)
+
+        local actual_ids = {}
+        for _, ch in ipairs(section.chapters) do
+          table.insert(actual_ids, ch.id)
+        end
+        assert.same(expected_ids, actual_ids)
       end
 
       check()
