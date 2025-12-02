@@ -20,7 +20,7 @@
   - 2.2: File Operations:
     - [ ] Implement atomic create/rename/delete/reorder mutations
   - 2.3: Telescope Integration:
-    - [ ] Build Telescope pickers for chapters and planning
+    - [x] Build Telescope pickers for chapters and planning
   - 2.4: Navigation:
     - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
 
