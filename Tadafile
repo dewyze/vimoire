@@ -61,3 +61,6 @@
     - [ ] Custom start screen (replace default Neovim version screen with Vimoire dashboard or minimal writing-focused screen)
   - 6.2: Configuration:
     - [ ] Centralized keybindings system (registry pattern with mode support)
+
+- Future Enhancements:
+  - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
