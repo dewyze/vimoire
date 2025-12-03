@@ -1,11 +1,22 @@
 local M = {}
 
 M.defaults = {
+  keymaps = {
+    finder = {
+      navigate = "<leader>ff",
+      manuscript = "<leader>fm",
+      characters = "<leader>fc",
+      settings = "<leader>fs",
+      reference = "<leader>fr",
+    },
+    navigator = {
+      toggle = "<LocalLeader>nt",
+    },
+  },
   ui = {
     mouse_mode = "single_click", -- "single_click" | "double_click"
   },
   navigator = {
-    keybinding = "<LocalLeader>nt",
     colors = {
       manuscript = "#c792ea",
       section = "#82aaff",

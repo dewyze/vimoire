@@ -15,11 +15,10 @@ local vimoire_config = require("vimoire.config")
 
 local Path = require("plenary.path")
 
-local function build_entries()
+local function build_manuscript_entries()
   local entries = {}
   local root = state.manuscript.root
 
-  -- Add chapters (grouped by section order)
   for _, group in ipairs(state.chapter_groups) do
     if group.section and group.section.visible then
       local section_text_path = Path:new(root, "sections", group.section.id, "text.md")
@@ -37,41 +36,6 @@ local function build_entries()
         display_number = chapter:display_number(),
         title = chapter.title,
         path = chapter:text_path(),
-        chapter = chapter,
-      })
-    end
-  end
-
-  -- Add planning docs
-  local planning_types = {
-    { key = "characters", label = "Characters" },
-    { key = "settings", label = "Settings" },
-    { key = "reference", label = "Research" },
-  }
-
-  for _, ptype in ipairs(planning_types) do
-    local items = state.manuscript[ptype.key] or {}
-    local base_path = "planning/" .. ptype.key .. "/"
-
-    for _, item in ipairs(items) do
-      -- Extract subfolder from path if present
-      local relative = item.file:sub(#base_path + 1)
-      local subfolder = relative:match("^(.+)/[^/]+$")
-
-      local title
-      if subfolder then
-        -- Capitalize first letter of subfolder
-        local folder_label = subfolder:sub(1, 1):upper() .. subfolder:sub(2)
-        title = ptype.label .. " > " .. folder_label .. " > " .. item.name
-      else
-        title = ptype.label .. " > " .. item.name
-      end
-
-      table.insert(entries, {
-        type = "planning",
-        display_number = "",
-        title = title,
-        path = Path:new(root, item.file):absolute(),
       })
     end
   end
@@ -79,10 +43,62 @@ local function build_entries()
   return entries
 end
 
-local function navigate(opts)
-  opts = opts or {}
+local function build_planning_entries(planning_key, label)
+  local entries = {}
+  local root = state.manuscript.root
+  local items = state.manuscript[planning_key] or {}
+  local base_path = "planning/" .. planning_key .. "/"
 
-  local entries = build_entries()
+  for _, item in ipairs(items) do
+    local relative = item.file:sub(#base_path + 1)
+    local subfolder = relative:match("^(.+)/[^/]+$")
+
+    local title
+    if subfolder then
+      local folder_label = subfolder:sub(1, 1):upper() .. subfolder:sub(2)
+      title = folder_label .. " > " .. item.name
+    else
+      title = item.name
+    end
+
+    table.insert(entries, {
+      type = planning_key,
+      display_number = "",
+      title = title,
+      path = Path:new(root, item.file):absolute(),
+    })
+  end
+
+  return entries
+end
+
+local function build_all_entries()
+  local entries = {}
+
+  for _, entry in ipairs(build_manuscript_entries()) do
+    table.insert(entries, entry)
+  end
+
+  for _, entry in ipairs(build_planning_entries("characters", "Characters")) do
+    entry.title = "Characters > " .. entry.title
+    table.insert(entries, entry)
+  end
+
+  for _, entry in ipairs(build_planning_entries("settings", "Settings")) do
+    entry.title = "Settings > " .. entry.title
+    table.insert(entries, entry)
+  end
+
+  for _, entry in ipairs(build_planning_entries("reference", "Reference")) do
+    entry.title = "Reference > " .. entry.title
+    table.insert(entries, entry)
+  end
+
+  return entries
+end
+
+local function create_picker(title, entries, opts)
+  opts = opts or {}
 
   local displayer = entry_display.create({
     separator = " ",
@@ -102,7 +118,6 @@ local function navigate(opts)
   local preview_enabled = vimoire_config.get("finder.preview")
   local previewer = preview_enabled and conf.file_previewer(opts) or false
 
-  -- Enable wrap in preview window
   local preview_wrap_group = vim.api.nvim_create_augroup("VimoireTelescopePreview", { clear = true })
   vim.api.nvim_create_autocmd("User", {
     group = preview_wrap_group,
@@ -114,7 +129,7 @@ local function navigate(opts)
   })
 
   pickers.new(opts, {
-    prompt_title = "Navigate",
+    prompt_title = title,
     finder = finders.new_table({
       results = entries,
       entry_maker = function(entry)
@@ -141,8 +156,32 @@ local function navigate(opts)
   }):find()
 end
 
+local function navigate(opts)
+  create_picker("Navigate", build_all_entries(), opts)
+end
+
+local function manuscript(opts)
+  create_picker("Manuscript", build_manuscript_entries(), opts)
+end
+
+local function characters(opts)
+  create_picker("Characters", build_planning_entries("characters"), opts)
+end
+
+local function settings(opts)
+  create_picker("Settings", build_planning_entries("settings"), opts)
+end
+
+local function reference(opts)
+  create_picker("Reference", build_planning_entries("reference"), opts)
+end
+
 return telescope.register_extension({
   exports = {
     navigate = navigate,
+    manuscript = manuscript,
+    characters = characters,
+    settings = settings,
+    reference = reference,
   },
 })
