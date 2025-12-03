@@ -96,9 +96,15 @@ describe("Section", function()
       opts = opts or {}
 
       local function check()
+        -- Derive section order from chapter positions (ordered unique)
         local actual_ids = {}
-        for _, sec_data in ipairs(state.manuscript.sections) do
-          table.insert(actual_ids, sec_data.id)
+        local seen = {}
+        for _, ch_data in ipairs(state.manuscript.chapters) do
+          local sid = ch_data.section
+          if sid and not seen[sid] then
+            seen[sid] = true
+            table.insert(actual_ids, sid)
+          end
         end
         assert.same(expected_ids, actual_ids)
       end
@@ -198,6 +204,18 @@ describe("Section", function()
         section:move(state, 2)
 
         assert_section_order({ "p2y5r4", "p1x3q8" }, { dir = temp_dir })
+      end)
+
+      it("reorders manuscript.sections to match", function()
+        local section = state.sections["p1x3q8"]
+        section:move(state, 2)
+
+        -- manuscript.sections should be reordered to match chapter-derived order
+        local actual_ids = {}
+        for _, sec_data in ipairs(state.manuscript.sections) do
+          table.insert(actual_ids, sec_data.id)
+        end
+        assert.same({ "p2y5r4", "p1x3q8" }, actual_ids)
       end)
     end)
   end)
