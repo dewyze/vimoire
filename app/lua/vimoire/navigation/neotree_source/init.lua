@@ -36,7 +36,7 @@ local function build_chapter_nodes(section)
   for _, chapter in ipairs(chapters) do
     local node = create_node(
       "chap:" .. chapter.id,
-      chapter.title,
+      chapter:display_number() .. ": " .. chapter.title,
       "chapter",
       chapter:text_path()
     )
@@ -47,10 +47,7 @@ local function build_chapter_nodes(section)
 end
 
 local function build_planning_section(items, folder_id, folder_name, item_type, id_prefix)
-  if not items or #items == 0 then
-    return nil
-  end
-
+  items = items or {}
   local base_path = "planning/" .. folder_id .. "/"
   local subfolders = {}
   local root_items = {}
@@ -115,19 +112,33 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
   return folder
 end
 
-local function build_section_nodes(manuscript)
+local function build_chapter_group_nodes()
   local nodes = {}
 
-  for _, section in ipairs(manuscript.sections) do
-    if section.visible then
-      local node = create_node(
-        "sec:" .. section.id,
-        section.title,
-        "section",
-        nil
-      )
-      node.children = build_chapter_nodes(section)
-      table.insert(nodes, node)
+  for _, group in ipairs(state.chapter_groups) do
+    if group.section then
+      -- Sectioned: wrap chapters in section node (if visible)
+      if group.section.visible then
+        local section_node = create_node(
+          "sec:" .. group.section.id,
+          group.section.title,
+          "section",
+          nil
+        )
+        section_node.children = build_chapter_nodes(group.section)
+        table.insert(nodes, section_node)
+      end
+    else
+      -- Flat: chapters at root level
+      for _, chapter in ipairs(group.chapters) do
+        local node = create_node(
+          "chap:" .. chapter.id,
+          chapter:display_number() .. ": " .. chapter.title,
+          "chapter",
+          chapter:text_path()
+        )
+        table.insert(nodes, node)
+      end
     end
   end
 
@@ -135,25 +146,13 @@ local function build_section_nodes(manuscript)
 end
 
 local function build_planning_nodes(manuscript)
-  local planning = {}
-
-  local chars = build_planning_section(manuscript.characters, "characters", "Characters", "character", "char")
-  local settings = build_planning_section(manuscript.settings, "settings", "Settings", "setting", "set")
-  local refs = build_planning_section(manuscript.reference, "reference", "Reference", "reference_file", "ref")
-
-  for _, section in ipairs({ chars, settings, refs }) do
-    if section then
-      table.insert(planning, section)
-    end
-  end
-
-  if #planning > 0 then
-    local planning_folder = create_node("planning", "Planning", "planning", nil)
-    planning_folder.children = planning
-    return { planning_folder }
-  end
-
-  return {}
+  local planning_folder = create_node("planning", "Planning", "planning", nil)
+  planning_folder.children = {
+    build_planning_section(manuscript.characters, "characters", "Characters", "character", "char"),
+    build_planning_section(manuscript.settings, "settings", "Settings", "setting", "set"),
+    build_planning_section(manuscript.reference, "reference", "Reference", "reference_file", "ref"),
+  }
+  return { planning_folder }
 end
 
 function M.navigate(state_param, path)
@@ -167,8 +166,8 @@ function M.navigate(state_param, path)
 
     local children = {}
 
-    local section_nodes = build_section_nodes(state.manuscript)
-    for _, node in ipairs(section_nodes) do
+    local chapter_nodes = build_chapter_group_nodes()
+    for _, node in ipairs(chapter_nodes) do
       table.insert(children, node)
     end
 

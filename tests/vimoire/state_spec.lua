@@ -1,14 +1,12 @@
 local assert = require("luassert")
+local helpers = require("tests.helpers")
 
 describe("State", function()
   local state = require("vimoire.state")
   local fixture_path = "tests/fixtures/standard"
 
   after_each(function()
-    state.manuscript = nil
-    state.chapters = nil
-    state.chapters_by_section = nil
-    state.sections = nil
+    helpers.reset_state()
   end)
 
   it("loads manuscript and builds indexes", function()
@@ -63,5 +61,28 @@ describe("State", function()
     assert.is_nil(chapter.section_index)
     assert.equals(chapter.chapter_index, 2)
     assert.equals(chapter:display_number(), "2")
+  end)
+
+  it("builds chapter_groups for sectioned manuscripts", function()
+    state:load(fixture_path)
+    assert.equals(#state.chapter_groups, 2)
+
+    local group1 = state.chapter_groups[1]
+    assert.equals(group1.section.id, "p1x3q8")
+    assert.equals(#group1.chapters, 3)
+
+    local group2 = state.chapter_groups[2]
+    assert.equals(group2.section.id, "p2y5r4")
+    assert.equals(#group2.chapters, 2)
+  end)
+
+  it("builds chapter_groups for flat manuscripts", function()
+    state:load("tests/fixtures/flat")
+    assert.equals(#state.chapter_groups, 1)
+
+    local group = state.chapter_groups[1]
+    assert.is_nil(group.section)
+    assert.equals(#group.chapters, 2)
+    assert.equals(group.chapters[1].title, "The First Sock")
   end)
 end)

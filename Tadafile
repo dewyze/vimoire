@@ -7,11 +7,13 @@
   - 1.3: Runtime State & Healthcheck:
     - [ ] Track ephemeral state and cache
     - [ ] Build healthcheck for data integrity
+    - NOTE: Health check should verify visible sections have title page (sections/{id}/text.md)
   - 1.4: Plugin Bootstrap:
     - [ ] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
     - [ ] Load user configuration
     - [ ] Set up command dispatcher
     - NOTE: Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
+    - NOTE: Handle lazy.nvim auto-updates gracefully (plugin reload without restart)
 
 - Phase 2: Navigation:
   - 2.1: Neotree Integration:

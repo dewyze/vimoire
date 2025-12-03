@@ -6,5 +6,8 @@
     {"id": "ch001", "section": null, "title": "The First Sock"},
     {"id": "ch002", "section": null, "title": "The Missing Sock"}
   ],
-  "sections": []
+  "sections": [],
+  "characters": [],
+  "settings": [],
+  "reference": []
 }

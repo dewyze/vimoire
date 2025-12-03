@@ -2,7 +2,8 @@ local state = {
   manuscript = nil,
   chapters = nil,
   chapters_by_section = nil,
-  sections = nil
+  sections = nil,
+  chapter_groups = nil,
 }
 
 local Manuscript = require("vimoire.core.manuscript")
@@ -18,6 +19,7 @@ function state:rebuild()
   self.chapters = {}
   self.chapters_by_section = {}
   self.sections = {}
+  self.chapter_groups = {}
 
   if not self.manuscript then
     return
@@ -33,6 +35,7 @@ function state:rebuild()
   -- Derive section order from chapter positions (ordered unique)
   local section_order = {}
   local seen = {}
+  local unsectioned_chapters = {}
 
   -- Build chapters and group by section
   local chapter_counts = {}
@@ -55,10 +58,11 @@ function state:rebuild()
     else
       unsectioned_count = unsectioned_count + 1
       chapter.chapter_index = unsectioned_count
+      table.insert(unsectioned_chapters, chapter)
     end
   end
 
-  -- Set section indices
+  -- Set section indices and build chapter_groups
   local sectioned = #section_order > 1
   for i, section_id in ipairs(section_order) do
     local section = self.sections[section_id]
@@ -69,6 +73,19 @@ function state:rebuild()
     for _, chapter in ipairs(section.chapters) do
       chapter.section_index = section.display_index
     end
+
+    table.insert(self.chapter_groups, {
+      section = section,
+      chapters = section.chapters,
+    })
+  end
+
+  -- Add unsectioned chapters as a group (if any)
+  if #unsectioned_chapters > 0 then
+    table.insert(self.chapter_groups, {
+      section = nil,
+      chapters = unsectioned_chapters,
+    })
   end
 end
 

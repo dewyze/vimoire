@@ -20,6 +20,7 @@ function M.reset_state()
   state.chapters = nil
   state.sections = nil
   state.chapters_by_section = nil
+  state.chapter_groups = nil
 end
 
 return M

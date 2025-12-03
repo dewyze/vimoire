@@ -20,21 +20,18 @@ local function build_entries()
   local root = state.manuscript.root
 
   -- Add chapters (grouped by section order)
-  for _, sec_data in ipairs(state.manuscript.sections) do
-    local section = state.sections[sec_data.id]
-
-    -- Add section text.md if it exists
-    local section_text_path = Path:new(root, "sections", sec_data.id, "text.md")
-    if section_text_path:exists() then
+  for _, group in ipairs(state.chapter_groups) do
+    if group.section and group.section.visible then
+      local section_text_path = Path:new(root, "sections", group.section.id, "text.md")
       table.insert(entries, {
         type = "section",
-        display_number = "§" .. section.index,
-        title = section.title,
+        display_number = "§" .. group.section.index,
+        title = group.section.title,
         path = section_text_path:absolute(),
       })
     end
 
-    for _, chapter in ipairs(section.chapters) do
+    for _, chapter in ipairs(group.chapters) do
       table.insert(entries, {
         type = "chapter",
         display_number = chapter:display_number(),
