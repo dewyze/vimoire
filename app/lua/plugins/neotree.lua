@@ -31,10 +31,29 @@ return {
       window = {
         mappings = mouse_mappings,
       },
+      vimoire = {
+        window = {
+          mappings = {
+            ["<cr>"] = "open",
+            ["o"] = "open",
+            ["s"] = "open_split",
+            ["v"] = "open_vsplit",
+            ["t"] = "toggle_node",
+            ["C"] = "close_node",
+            ["z"] = "close_all_nodes",
+            ["e"] = "expand_all_nodes",
+            ["q"] = "close_window",
+            ["?"] = "show_help",
+            ["R"] = "refresh",
+            ["a"] = "add",
+            ["r"] = "rename",
+            ["d"] = "delete",
+            ["m"] = "move",
+            ["J"] = "move_down",
+            ["K"] = "move_up",
+          },
+        },
+      },
     })
-
-    vim.keymap.set("n", "<LocalLeader>nt", function()
-      vim.cmd("Neotree source=vimoire")
-    end, { noremap = true, silent = true })
   end,
 }

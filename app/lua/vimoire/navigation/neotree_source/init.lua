@@ -40,6 +40,8 @@ local function build_chapter_nodes(section)
       "chapter",
       chapter:text_path()
     )
+    node.chapter_id = chapter.id
+    node.section_id = section.id
     table.insert(nodes, node)
   end
 
@@ -75,6 +77,7 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
       item_type,
       state.manuscript.root .. "/" .. item.file
     )
+    node.item_id = item.id
     table.insert(nodes, node)
   end
 
@@ -91,6 +94,8 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
       "planning_subfolder",
       nil
     )
+    subfolder_node.planning_type = folder_id
+    subfolder_node.subfolder = subfolder_name
 
     local subfolder_children = {}
     for _, item in ipairs(subfolder_items) do
@@ -100,6 +105,8 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
         item_type,
         state.manuscript.root .. "/" .. item.file
       )
+      node.item_id = item.id
+      node.subfolder = subfolder_name
       table.insert(subfolder_children, node)
     end
 
@@ -125,6 +132,7 @@ local function build_chapter_group_nodes()
           "section",
           nil
         )
+        section_node.section_id = group.section.id
         section_node.children = build_chapter_nodes(group.section)
         table.insert(nodes, section_node)
       end
@@ -137,6 +145,7 @@ local function build_chapter_group_nodes()
           "chapter",
           chapter:text_path()
         )
+        node.chapter_id = chapter.id
         table.insert(nodes, node)
       end
     end

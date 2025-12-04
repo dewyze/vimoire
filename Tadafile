@@ -19,10 +19,19 @@
   - 2.1: Neotree Integration:
     - [x] Create custom Neotree source for book structure
     - [ ] Implement neotree operations (add/rename/remove/reorder)
+    - NOTE: Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
+    - NOTE: From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help
+    - NOTE: Custom (already done): open (toggle folder or edit file), refresh
+    - NOTE: Custom (to implement): add (context-aware), rename, delete, move (section picker via vim.ui.select), move_up/move_down (reorder)
+    - NOTE: Keybindings: a=add, r=rename, d=delete, m=move, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
+    - NOTE: Node data stored: chapter nodes get chapter_id/section_id, section nodes get section_id, planning items get item_id/subfolder, subfolders get planning_type/subfolder
+    - NOTE: Open question: flat manuscripts (no sections) - how to add chapters? Chapter.create needs section_id. Also: add section only from manuscript root, or separate key?
   - 2.2: File Operations:
-    - [ ] Implement atomic create/rename/delete/reorder mutations
+    - [x] Implement atomic create/rename/delete/reorder mutations
+    - NOTE: Chapter/Section/PlanningItem models with create/update/destroy/move methods
   - 2.3: Telescope Integration:
     - [x] Build Telescope pickers for chapters and planning
+    - [x] Add filtered pickers (manuscript, characters, settings, reference)
   - 2.4: Navigation:
     - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
 
