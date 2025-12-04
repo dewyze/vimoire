@@ -12,3 +12,7 @@ end
 if keymaps.navigator.toggle then
   vim.keymap.set("n", keymaps.navigator.toggle, ":Neotree toggle source=vimoire<CR>", { desc = "Vimoire: toggle navigator" })
 end
+
+if keymaps.navigator.reveal then
+  vim.keymap.set("n", keymaps.navigator.reveal, ":Neotree reveal source=vimoire<CR>", { desc = "Vimoire: find in navigator" })
+end

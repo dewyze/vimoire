@@ -7,9 +7,10 @@ describe("Setup", function()
 
   after_each(function()
     state.manuscript = nil
-    state.chapters = nil
-    state.chapters_by_section = nil
+    state.entries = nil
+    state.entries_by_section = nil
     state.sections = nil
+    state.entry_groups = nil
   end)
 
   it("loads manuscript from manuscript.json argument", function()

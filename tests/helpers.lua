@@ -17,10 +17,10 @@ end
 
 function M.reset_state()
   state.manuscript = nil
-  state.chapters = nil
+  state.entries = nil
   state.sections = nil
-  state.chapters_by_section = nil
-  state.chapter_groups = nil
+  state.entries_by_section = nil
+  state.entry_groups = nil
 end
 
 return M

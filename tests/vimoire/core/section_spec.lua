@@ -1,5 +1,4 @@
 local assert = require("luassert")
-local Path = require("plenary.path")
 local helpers = require("tests.helpers")
 local state = require("vimoire.state")
 
@@ -16,22 +15,22 @@ describe("Section", function()
   end)
 
   it("holds section metadata", function()
-    local data = { id = "p1x3q8", title = "Part 1", visible = true }
+    local data = { id = "p1x3q8", title = "Part 1" }
     local section = Section.new(data)
 
     assert.equals(section.id, "p1x3q8")
     assert.equals(section.title, "Part 1")
-    assert.equals(section.visible, true)
   end)
 
-  it("resolves chapters in order from state", function()
+  it("resolves entries in order from state", function()
     local section = state.sections["p1x3q8"]
-    local chapters = section.chapters
+    local entries = section.entries
 
-    assert.equals(#chapters, 3)
-    assert.equals(chapters[1].title, "The Day I Became Sentient")
-    assert.equals(chapters[2].title, "Bread: A Love Story")
-    assert.equals(chapters[3].title, "The Kitchen Uprising")
+    assert.equals(#entries, 4)
+    assert.equals(entries[1].title, "Part One")
+    assert.equals(entries[2].title, "The Day I Became Sentient")
+    assert.equals(entries[3].title, "Bread: A Love Story")
+    assert.equals(entries[4].title, "The Kitchen Uprising")
   end)
 
   -- Mutation tests
@@ -50,22 +49,9 @@ describe("Section", function()
           assert.equals(opts.title, section.title)
         end
 
-        if opts.visible ~= nil then
-          assert.equals(opts.visible, section.visible)
-        end
-
         if opts.position then
           assert.equals(section_id, state.manuscript.sections[opts.position].id,
             "Section " .. section_id .. " should be at position " .. opts.position)
-        end
-
-        if opts.dir then
-          local title_path = Path:new(opts.dir, "sections", section_id, "title.md")
-          if opts.visible then
-            assert.is_true(title_path:exists(), "Title page should exist for visible section")
-          else
-            assert.is_false(title_path:exists(), "Title page should not exist for invisible section")
-          end
         end
       end
 
@@ -82,31 +68,6 @@ describe("Section", function()
 
       local function check()
         assert.is_nil(state.sections[section_id], "Section " .. section_id .. " should not exist")
-      end
-
-      check()
-
-      if opts.dir then
-        state:load(opts.dir)
-        check()
-      end
-    end
-
-    local function assert_section_order(expected_ids, opts)
-      opts = opts or {}
-
-      local function check()
-        -- Derive section order from chapter positions (ordered unique)
-        local actual_ids = {}
-        local seen = {}
-        for _, ch_data in ipairs(state.manuscript.chapters) do
-          local sid = ch_data.section
-          if sid and not seen[sid] then
-            seen[sid] = true
-            table.insert(actual_ids, sid)
-          end
-        end
-        assert.same(expected_ids, actual_ids)
       end
 
       check()
@@ -134,7 +95,6 @@ describe("Section", function()
         assert.is_not_nil(section)
         assert_section(section.id, {
           title = "Part 3",
-          visible = false,
           position = 3,
           dir = temp_dir,
         })
@@ -152,70 +112,23 @@ describe("Section", function()
           dir = temp_dir,
         })
       end)
-
-      it("creates title page when setting visible to true", function()
-        local section = state.sections["p1x3q8"]
-        section.visible = false
-        section:update(state, { visible = true })
-
-        assert_section("p1x3q8", {
-          visible = true,
-          dir = temp_dir,
-        })
-      end)
-
-      it("removes title page when setting visible to false", function()
-        -- First create a title page
-        local section = state.sections["p1x3q8"]
-        section:update(state, { visible = true })
-
-        -- Then remove it
-        section:update(state, { visible = false })
-
-        assert_section("p1x3q8", {
-          visible = false,
-          dir = temp_dir,
-        })
-      end)
     end)
 
     describe("destroy", function()
-      it("removes the section and its chapters", function()
+      it("removes the section and ungroups its entries", function()
         local section = state.sections["p1x3q8"]
-        local chapter_ids = { "chap1a", "chap1b", "chap1c" }
+        local entry_ids = { "chap1a", "chap1b", "chap1c" }
         local result = section:destroy(state)
 
         assert.is_true(result)
         assert_section_removed("p1x3q8", { dir = temp_dir })
 
-        -- Chapters should also be gone
-        for _, chapter_id in ipairs(chapter_ids) do
-          assert.is_nil(state.chapters[chapter_id])
+        -- Entries should still exist but be ungrouped
+        for _, entry_id in ipairs(entry_ids) do
+          local entry = state.entries[entry_id]
+          assert.is_not_nil(entry, "Entry " .. entry_id .. " should still exist")
+          assert.is_nil(entry.section, "Entry " .. entry_id .. " should be ungrouped")
         end
-      end)
-    end)
-
-    describe("move", function()
-      it("moves section to new position", function()
-        -- Original: [p1x3q8, p2y5r4]
-        -- Move p1x3q8 to position 2
-        -- Result: [p2y5r4, p1x3q8]
-        local section = state.sections["p1x3q8"]
-        section:move(state, 2)
-
-        assert_section_order({ "p2y5r4", "p1x3q8" }, { dir = temp_dir })
-      end)
-
-      it("reorders manuscript.sections to match", function()
-        local section = state.sections["p1x3q8"]
-        section:move(state, 2)
-
-        -- manuscript.sections should be reordered to match chapter-derived order
-        local actual_ids = {}
-        for _, sec_data in ipairs(state.manuscript.sections) do
-          table.insert(actual_ids, sec_data.id)
-        end
-        assert.same({ "p2y5r4", "p1x3q8" }, actual_ids)
       end)
     end)
   end)

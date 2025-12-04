@@ -1,7 +1,7 @@
 local M = {}
 local cc = require("neo-tree.sources.common.commands")
 local vimoire_state = require("vimoire.state")
-local Chapter = require("vimoire.core.chapter")
+local Entry = require("vimoire.core.entry")
 local Section = require("vimoire.core.section")
 local PlanningItem = require("vimoire.core.planning_item")
 

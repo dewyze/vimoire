@@ -8,6 +8,7 @@ end
 local ICONS = {
   manuscript = hex_to_icon("0xf15d6"),
   chapter = hex_to_icon("0xf0bc2"),
+  page = hex_to_icon("0xf249"),
   section = hex_to_icon("0xe6ad"),
   characters = hex_to_icon("0xf2b9"),
   settings = hex_to_icon("0xf0984"),
@@ -23,6 +24,7 @@ local HIGHLIGHTS = {
   manuscript = "VimoireManuscript",
   section = "VimoireSection",
   chapter = "VimoireChapter",
+  page = "VimoirePage",
   planning = "VimoirePlanning",
   planning_subfolder = "VimoirePlanningSubfolder",
   characters = "VimoirePlanningSubfolder",

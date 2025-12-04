@@ -11,6 +11,7 @@ M.defaults = {
     },
     navigator = {
       toggle = "<LocalLeader>nt",
+      reveal = "<LocalLeader>nf",
     },
   },
   ui = {
@@ -21,6 +22,7 @@ M.defaults = {
       manuscript = "#c792ea",
       section = "#82aaff",
       chapter = "#89ddff",
+      page = "#c3e88d",
       planning = "#f78c6c",
       planning_subfolder = "#ff9e64",
       planning_item = "#ffc79b",

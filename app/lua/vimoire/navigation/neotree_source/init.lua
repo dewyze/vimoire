@@ -8,6 +8,7 @@ local M = {
       manuscript = { { "indent" }, { "icon" }, { "name" } },
       section = { { "indent" }, { "icon" }, { "name" } },
       chapter = { { "indent" }, { "icon" }, { "name" } },
+      page = { { "indent" }, { "icon" }, { "name" } },
       planning = { { "indent" }, { "icon" }, { "name" } },
       characters = { { "indent" }, { "icon" }, { "name" } },
       character = { { "indent" }, { "icon" }, { "name" } },
@@ -29,20 +30,32 @@ local function create_node(id, name, type, path)
   }
 end
 
-local function build_chapter_nodes(section)
-  local chapters = section.chapters or {}
+local function build_entry_node(entry)
+  local display_name
+  if entry.kind == "chapter" and entry:display_number() then
+    display_name = entry:display_number() .. ": " .. entry.title
+  else
+    display_name = entry.title
+  end
+
+  local node = create_node(
+    "entry:" .. entry.id,
+    display_name,
+    entry.kind,
+    entry:text_path()
+  )
+  node.entry_id = entry.id
+  node.section_id = entry.section
+  node.kind = entry.kind
+  return node
+end
+
+local function build_entry_nodes(entries)
+  entries = entries or {}
   local nodes = {}
 
-  for _, chapter in ipairs(chapters) do
-    local node = create_node(
-      "chap:" .. chapter.id,
-      chapter:display_number() .. ": " .. chapter.title,
-      "chapter",
-      chapter:text_path()
-    )
-    node.chapter_id = chapter.id
-    node.section_id = section.id
-    table.insert(nodes, node)
+  for _, entry in ipairs(entries) do
+    table.insert(nodes, build_entry_node(entry))
   end
 
   return nodes
@@ -119,34 +132,25 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
   return folder
 end
 
-local function build_chapter_group_nodes()
+local function build_entry_group_nodes()
   local nodes = {}
 
-  for _, group in ipairs(state.chapter_groups) do
+  for _, group in ipairs(state.entry_groups) do
     if group.section then
-      -- Sectioned: wrap chapters in section node (if visible)
-      if group.section.visible then
-        local section_node = create_node(
-          "sec:" .. group.section.id,
-          group.section.title,
-          "section",
-          nil
-        )
-        section_node.section_id = group.section.id
-        section_node.children = build_chapter_nodes(group.section)
-        table.insert(nodes, section_node)
-      end
+      -- Sectioned: wrap entries in section node
+      local section_node = create_node(
+        "sec:" .. group.section.id,
+        group.section.title,
+        "section",
+        nil
+      )
+      section_node.section_id = group.section.id
+      section_node.children = build_entry_nodes(group.entries)
+      table.insert(nodes, section_node)
     else
-      -- Flat: chapters at root level
-      for _, chapter in ipairs(group.chapters) do
-        local node = create_node(
-          "chap:" .. chapter.id,
-          chapter:display_number() .. ": " .. chapter.title,
-          "chapter",
-          chapter:text_path()
-        )
-        node.chapter_id = chapter.id
-        table.insert(nodes, node)
+      -- Unsectioned: entries at root level
+      for _, entry in ipairs(group.entries) do
+        table.insert(nodes, build_entry_node(entry))
       end
     end
   end
@@ -164,7 +168,7 @@ local function build_planning_nodes(manuscript)
   return { planning_folder }
 end
 
-function M.navigate(state_param, path)
+function M.navigate(state_param, path, path_to_reveal)
   if not state.manuscript then
     vim.notify("No manuscript loaded", vim.log.levels.WARN)
     return
@@ -175,8 +179,8 @@ function M.navigate(state_param, path)
 
     local children = {}
 
-    local chapter_nodes = build_chapter_group_nodes()
-    for _, node in ipairs(chapter_nodes) do
+    local entry_nodes = build_entry_group_nodes()
+    for _, node in ipairs(entry_nodes) do
       table.insert(children, node)
     end
 
@@ -189,6 +193,15 @@ function M.navigate(state_param, path)
 
     local renderer = require("neo-tree.ui.renderer")
     renderer.show_nodes({ manuscript_node }, state_param)
+
+    -- Handle reveal: focus the node matching path_to_reveal
+    if path_to_reveal then
+      local root = state.manuscript.root
+      local entry_id = path_to_reveal:match(root .. "/entries/([^/]+)/")
+      if entry_id then
+        renderer.focus_node(state_param, "entry:" .. entry_id)
+      end
+    end
   end)
 
   if not ok then
@@ -203,6 +216,7 @@ function M.setup(config, global_config)
   vim.api.nvim_set_hl(0, "VimoireManuscript", { fg = colors.manuscript, bold = true })
   vim.api.nvim_set_hl(0, "VimoireSection", { fg = colors.section, bold = true })
   vim.api.nvim_set_hl(0, "VimoireChapter", { fg = colors.chapter })
+  vim.api.nvim_set_hl(0, "VimoirePage", { fg = colors.page })
   vim.api.nvim_set_hl(0, "VimoirePlanning", { fg = colors.planning, bold = true })
   vim.api.nvim_set_hl(0, "VimoirePlanningSubfolder", { fg = colors.planning_subfolder, bold = true })
   vim.api.nvim_set_hl(0, "VimoirePlanningItem", { fg = colors.planning_item })

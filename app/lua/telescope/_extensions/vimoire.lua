@@ -17,25 +17,19 @@ local Path = require("plenary.path")
 
 local function build_manuscript_entries()
   local entries = {}
-  local root = state.manuscript.root
 
-  for _, group in ipairs(state.chapter_groups) do
-    if group.section and group.section.visible then
-      local section_text_path = Path:new(root, "sections", group.section.id, "text.md")
-      table.insert(entries, {
-        type = "section",
-        display_number = "§" .. group.section.index,
-        title = group.section.title,
-        path = section_text_path:absolute(),
-      })
-    end
+  for _, group in ipairs(state.entry_groups) do
+    for _, entry in ipairs(group.entries) do
+      local display_number = ""
+      if entry.kind == "chapter" and entry:display_number() then
+        display_number = entry:display_number()
+      end
 
-    for _, chapter in ipairs(group.chapters) do
       table.insert(entries, {
-        type = "chapter",
-        display_number = chapter:display_number(),
-        title = chapter.title,
-        path = chapter:text_path(),
+        type = entry.kind,
+        display_number = display_number,
+        title = entry.title,
+        path = entry:text_path(),
       })
     end
   end

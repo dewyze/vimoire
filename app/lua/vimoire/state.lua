@@ -1,13 +1,13 @@
 local state = {
   manuscript = nil,
-  chapters = nil,
-  chapters_by_section = nil,
+  entries = nil,
+  entries_by_section = nil,
   sections = nil,
-  chapter_groups = nil,
+  entry_groups = nil,
 }
 
 local Manuscript = require("vimoire.core.manuscript")
-local Chapter = require("vimoire.core.chapter")
+local Entry = require("vimoire.core.entry")
 local Section = require("vimoire.core.section")
 
 function state:load(manuscript_path)
@@ -16,75 +16,79 @@ function state:load(manuscript_path)
 end
 
 function state:rebuild()
-  self.chapters = {}
-  self.chapters_by_section = {}
+  self.entries = {}
+  self.entries_by_section = {}
   self.sections = {}
-  self.chapter_groups = {}
+  self.entry_groups = {}
 
   if not self.manuscript then
     return
   end
 
   -- Build sections map
-  for _, sec_data in ipairs(self.manuscript.sections) do
+  for i, sec_data in ipairs(self.manuscript.sections) do
     local section = Section.new(sec_data)
+    section.index = i
     self.sections[section.id] = section
-    self.chapters_by_section[section.id] = {}
+    self.entries_by_section[section.id] = {}
   end
 
-  -- Derive section order from chapter positions (ordered unique)
+  -- Track section order from entry positions (first appearance)
   local section_order = {}
-  local seen = {}
-  local unsectioned_chapters = {}
+  local seen_sections = {}
+  local unsectioned_entries = {}
 
-  -- Build chapters and group by section
-  local chapter_counts = {}
-  local unsectioned_count = 0
+  -- Chapter numbering: count only kind="chapter" entries
+  local chapter_count = 0
 
-  for _, ch_data in ipairs(self.manuscript.chapters) do
-    local chapter = Chapter.new(ch_data, self.manuscript.root)
-    self.chapters[chapter.id] = chapter
+  -- Build entries and group by section
+  for _, entry_data in ipairs(self.manuscript.entries) do
+    local entry = Entry.new(entry_data, self.manuscript.root)
+    self.entries[entry.id] = entry
 
-    local section_id = chapter.section
+    -- Number chapters
+    if entry.kind == "chapter" then
+      chapter_count = chapter_count + 1
+      entry.chapter_index = chapter_count
+    end
+
+    local section_id = entry.section
     if section_id and self.sections[section_id] then
-      if not seen[section_id] then
-        seen[section_id] = true
+      if not seen_sections[section_id] then
+        seen_sections[section_id] = true
         table.insert(section_order, section_id)
       end
-
-      chapter_counts[section_id] = (chapter_counts[section_id] or 0) + 1
-      chapter.chapter_index = chapter_counts[section_id]
-      table.insert(self.chapters_by_section[section_id], chapter)
+      table.insert(self.entries_by_section[section_id], entry)
     else
-      unsectioned_count = unsectioned_count + 1
-      chapter.chapter_index = unsectioned_count
-      table.insert(unsectioned_chapters, chapter)
+      table.insert(unsectioned_entries, entry)
     end
   end
 
-  -- Set section indices and build chapter_groups
+  -- Set section display indices and build entry_groups
   local sectioned = #section_order > 1
   for i, section_id in ipairs(section_order) do
     local section = self.sections[section_id]
-    section.index = i
     section.display_index = sectioned and i or nil
-    section.chapters = self.chapters_by_section[section_id]
+    section.entries = self.entries_by_section[section_id]
 
-    for _, chapter in ipairs(section.chapters) do
-      chapter.section_index = section.display_index
+    -- Set section_index on chapter entries within this section
+    for _, entry in ipairs(section.entries) do
+      if entry.kind == "chapter" then
+        entry.section_index = section.display_index
+      end
     end
 
-    table.insert(self.chapter_groups, {
+    table.insert(self.entry_groups, {
       section = section,
-      chapters = section.chapters,
+      entries = section.entries,
     })
   end
 
-  -- Add unsectioned chapters as a group (if any)
-  if #unsectioned_chapters > 0 then
-    table.insert(self.chapter_groups, {
+  -- Add unsectioned entries as a group (if any)
+  if #unsectioned_entries > 0 then
+    table.insert(self.entry_groups, {
       section = nil,
-      chapters = unsectioned_chapters,
+      entries = unsectioned_entries,
     })
   end
 end

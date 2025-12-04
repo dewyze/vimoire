@@ -23,10 +23,10 @@ describe("Manuscript", function()
     assert.equals(#manuscript.sections, 2)
   end)
 
-  it("has correct chapter count", function()
+  it("has correct entry count", function()
     local manuscript = Manuscript.load(example_path)
 
-    assert.equals(vim.tbl_count(manuscript.chapters), 5)
+    assert.equals(#manuscript.entries, 8)
   end)
 
   it("saves manuscript back to disk", function()
