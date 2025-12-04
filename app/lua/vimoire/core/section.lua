@@ -1,73 +1,73 @@
 local Section = {}
-local id_util = require("vimoire.util.id")
+Section.__index = Section
 
-function Section.new(data)
-  local self = setmetatable(data, { __index = Section })
+local Entry = require("vimoire.core.entry")
+
+function Section.new(data, root)
+  local self = setmetatable({}, Section)
+  for k, v in pairs(data) do
+    self[k] = v
+  end
+  self.root = root
+  self.kind = "section"
+  self.items = self.items or {}
   return self
 end
 
-function Section.create(state, title)
-  -- Generate unique ID
-  local existing_ids = {}
-  for section_id, _ in pairs(state.sections) do
-    table.insert(existing_ids, section_id)
-  end
-  local new_id = id_util.generate(existing_ids)
+function Section.create(state, title, parent_items)
+  local existing_ids = Entry.collect_ids(state.manuscript.items)
+  local new_id = Entry.generate_id(existing_ids)
 
-  -- Add to manuscript.sections
-  local section_data = { id = new_id, title = title }
-  table.insert(state.manuscript.sections, section_data)
+  -- Sections have no files
+  local data = { id = new_id, kind = "section", title = title, items = {} }
+  table.insert(parent_items, data)
 
-  -- Persist and rebuild
-  state.manuscript:save()
-  state:rebuild()
-
+  state:save()
   return state.sections[new_id]
 end
 
-function Section:update(state, attrs)
-  -- Update local fields
-  for k, v in pairs(attrs) do
-    self[k] = v
-  end
+function Section:text_path()
+  return nil
+end
 
-  -- Update in manuscript.sections
-  for _, sec_data in ipairs(state.manuscript.sections) do
-    if sec_data.id == self.id then
-      for k, v in pairs(attrs) do
-        sec_data[k] = v
-      end
-      break
+function Section:notes_path()
+  return nil
+end
+
+function Section:display_number()
+  return nil
+end
+
+function Section:update(state, attrs)
+  local index = Entry.find_index(self.parent_items, self.id)
+  if not index then return self end
+
+  for k, v in pairs(attrs) do
+    if k ~= "items" then -- Don't overwrite items via update
+      self[k] = v
+      self.parent_items[index][k] = v
     end
   end
 
-  -- Persist and rebuild
-  state.manuscript:save()
-  state:rebuild()
-
+  state:save()
   return state.sections[self.id]
 end
 
 function Section:destroy(state)
-  -- Ungroup all entries in this section (don't delete them)
-  for _, entry_data in ipairs(state.manuscript.entries) do
-    if entry_data.section == self.id then
-      entry_data.section = nil
-    end
+  local index = Entry.find_index(self.parent_items, self.id)
+  if not index then return false end
+
+  local children = self.parent_items[index].items or {}
+
+  -- Remove section
+  table.remove(self.parent_items, index)
+
+  -- Insert children where section was
+  for i, child in ipairs(children) do
+    table.insert(self.parent_items, index + i - 1, child)
   end
 
-  -- Remove from manuscript.sections
-  for i, sec_data in ipairs(state.manuscript.sections) do
-    if sec_data.id == self.id then
-      table.remove(state.manuscript.sections, i)
-      break
-    end
-  end
-
-  -- Persist and rebuild
-  state.manuscript:save()
-  state:rebuild()
-
+  state:save()
   return true
 end
 

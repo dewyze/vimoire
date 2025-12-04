@@ -30,34 +30,44 @@ local function create_node(id, name, type, path)
   }
 end
 
-local function build_entry_node(entry)
-  local display_name
-  if entry.kind == "chapter" and entry:display_number() then
-    display_name = entry:display_number() .. ": " .. entry.title
+local function build_item_node(item_data, entry_or_section)
+  if item_data.kind == "section" then
+    local node = create_node(
+      "section:" .. item_data.id,
+      item_data.title,
+      "section",
+      nil
+    )
+    node.section_id = item_data.id
+    node.children = build_items_nodes(item_data.items or {})
+    return node
   else
-    display_name = entry.title
-  end
+    -- Chapter or page
+    local display_name
+    if entry_or_section and entry_or_section:display_number() then
+      display_name = entry_or_section:display_number() .. ": " .. item_data.title
+    else
+      display_name = item_data.title
+    end
 
-  local node = create_node(
-    "entry:" .. entry.id,
-    display_name,
-    entry.kind,
-    entry:text_path()
-  )
-  node.entry_id = entry.id
-  node.section_id = entry.section
-  node.kind = entry.kind
-  return node
+    local node = create_node(
+      "entry:" .. item_data.id,
+      display_name,
+      item_data.kind,
+      entry_or_section and entry_or_section:text_path() or nil
+    )
+    node.entry_id = item_data.id
+    node.kind = item_data.kind
+    return node
+  end
 end
 
-local function build_entry_nodes(entries)
-  entries = entries or {}
+function build_items_nodes(items)
   local nodes = {}
-
-  for _, entry in ipairs(entries) do
-    table.insert(nodes, build_entry_node(entry))
+  for _, item_data in ipairs(items) do
+    local entry_or_section = state.entries[item_data.id] or state.sections[item_data.id]
+    table.insert(nodes, build_item_node(item_data, entry_or_section))
   end
-
   return nodes
 end
 
@@ -67,7 +77,6 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
   local subfolders = {}
   local root_items = {}
 
-  -- Group items by subfolder
   for _, item in ipairs(items) do
     local relative = item.file:sub(#base_path + 1)
     local subfolder = relative:match("^(.+)/[^/]+$")
@@ -82,7 +91,6 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
 
   local nodes = {}
 
-  -- Add root-level items first
   for _, item in ipairs(root_items) do
     local node = create_node(
       id_prefix .. ":" .. item.id,
@@ -94,7 +102,6 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
     table.insert(nodes, node)
   end
 
-  -- Add subfolder nodes
   local sorted_subfolders = vim.tbl_keys(subfolders)
   table.sort(sorted_subfolders)
 
@@ -132,32 +139,6 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
   return folder
 end
 
-local function build_entry_group_nodes()
-  local nodes = {}
-
-  for _, group in ipairs(state.entry_groups) do
-    if group.section then
-      -- Sectioned: wrap entries in section node
-      local section_node = create_node(
-        "sec:" .. group.section.id,
-        group.section.title,
-        "section",
-        nil
-      )
-      section_node.section_id = group.section.id
-      section_node.children = build_entry_nodes(group.entries)
-      table.insert(nodes, section_node)
-    else
-      -- Unsectioned: entries at root level
-      for _, entry in ipairs(group.entries) do
-        table.insert(nodes, build_entry_node(entry))
-      end
-    end
-  end
-
-  return nodes
-end
-
 local function build_planning_nodes(manuscript)
   local planning_folder = create_node("planning", "Planning", "planning", nil)
   planning_folder.children = {
@@ -179,8 +160,8 @@ function M.navigate(state_param, path, path_to_reveal)
 
     local children = {}
 
-    local entry_nodes = build_entry_group_nodes()
-    for _, node in ipairs(entry_nodes) do
+    local item_nodes = build_items_nodes(state.manuscript.items or {})
+    for _, node in ipairs(item_nodes) do
       table.insert(children, node)
     end
 
@@ -194,7 +175,6 @@ function M.navigate(state_param, path, path_to_reveal)
     local renderer = require("neo-tree.ui.renderer")
     renderer.show_nodes({ manuscript_node }, state_param)
 
-    -- Handle reveal: focus the node matching path_to_reveal
     if path_to_reveal then
       local root = state.manuscript.root
       local entry_id = path_to_reveal:match(root .. "/entries/([^/]+)/")

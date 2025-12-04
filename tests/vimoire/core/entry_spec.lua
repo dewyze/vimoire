@@ -5,143 +5,70 @@ local state = require("vimoire.state")
 
 describe("Entry", function()
   local Entry = require("vimoire.core.entry")
+  local Chapter = require("vimoire.core.chapter")
+  local Page = require("vimoire.core.page")
 
-  it("holds entry metadata", function()
-    local data = { id = "chap1a", kind = "chapter", title = "The Day I Became Sentient", section = "p1x3q8" }
-    local entry = Entry.new(data, "/some/root")
-    assert.equals(entry.id, "chap1a")
-    assert.equals(entry.kind, "chapter")
-    assert.equals(entry.title, "The Day I Became Sentient")
-    assert.equals(entry.section, "p1x3q8")
-  end)
-
-  describe("display_number", function()
-    it("returns nil for page entries", function()
-      local entry = Entry.new({ id = "p1", kind = "page", title = "Test" }, "/root")
-      entry.chapter_index = 3
-      assert.is_nil(entry:display_number())
+  describe("factory", function()
+    it("builds Chapter for kind=chapter", function()
+      local entry = Entry.build({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
+      assert.equals("chapter", entry.kind)
+      assert.is_not_nil(entry.text_path)
     end)
 
-    it("returns chapter index when no section index", function()
-      local entry = Entry.new({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
-      entry.chapter_index = 3
-      assert.equals("3", entry:display_number())
+    it("builds Page for kind=page", function()
+      local entry = Entry.build({ id = "p1", kind = "page", title = "Test" }, "/root")
+      assert.equals("page", entry.kind)
     end)
 
-    it("returns section.chapter when section index present", function()
-      local entry = Entry.new({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
-      entry.section_index = 2
-      entry.chapter_index = 5
-      assert.equals("2.5", entry:display_number())
+    it("builds Section for kind=section", function()
+      local entry = Entry.build({ id = "s1", kind = "section", title = "Part 1", items = {} }, "/root")
+      assert.equals("section", entry.kind)
+      assert.is_nil(entry:text_path())
     end)
   end)
 
-  describe("paths", function()
-    it("returns text_path in entries folder", function()
-      local entry = Entry.new({ id = "abc123", kind = "chapter", title = "Test" }, "/some/root")
-      assert.equals("/some/root/entries/abc123/text.md", entry:text_path())
+  describe("Chapter", function()
+    it("holds chapter metadata", function()
+      local chapter = Chapter.new({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
+      assert.equals("ch1", chapter.id)
+      assert.equals("chapter", chapter.kind)
+      assert.equals("Test", chapter.title)
     end)
 
-    it("returns notes_path in entries folder", function()
-      local entry = Entry.new({ id = "abc123", kind = "chapter", title = "Test" }, "/some/root")
-      assert.equals("/some/root/entries/abc123/notes.md", entry:notes_path())
+    it("returns text_path", function()
+      local chapter = Chapter.new({ id = "abc123", kind = "chapter", title = "Test" }, "/some/root")
+      assert.equals("/some/root/entries/abc123/text.md", chapter:text_path())
+    end)
+
+    it("returns notes_path", function()
+      local chapter = Chapter.new({ id = "abc123", kind = "chapter", title = "Test" }, "/some/root")
+      assert.equals("/some/root/entries/abc123/notes.md", chapter:notes_path())
+    end)
+
+    it("returns display_number from chapter_index", function()
+      local chapter = Chapter.new({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
+      chapter.chapter_index = 3
+      assert.equals("3", chapter:display_number())
     end)
   end)
 
-  -- Mutation tests (create/update/destroy/move)
+  describe("Page", function()
+    it("holds page metadata", function()
+      local page = Page.new({ id = "p1", kind = "page", title = "Interlude" }, "/root")
+      assert.equals("p1", page.id)
+      assert.equals("page", page.kind)
+    end)
+
+    it("returns nil for display_number", function()
+      local page = Page.new({ id = "p1", kind = "page", title = "Test" }, "/root")
+      page.chapter_index = 3
+      assert.is_nil(page:display_number())
+    end)
+  end)
 
   describe("mutations", function()
     local temp_dir
     local fixture_path = "tests/fixtures/standard"
-
-    -- Local assertion helpers
-
-    local function assert_entry(entry_id, opts)
-      opts = opts or {}
-
-      local function check()
-        local entry = state.entries[entry_id]
-        assert.is_not_nil(entry, "Entry " .. entry_id .. " should exist")
-
-        if opts.title then
-          assert.equals(opts.title, entry.title)
-        end
-
-        if opts.kind then
-          assert.equals(opts.kind, entry.kind)
-        end
-
-        if opts.section then
-          local section = state.sections[opts.section]
-          assert.is_not_nil(section, "Section " .. opts.section .. " should exist")
-
-          local found = false
-          for _, e in ipairs(section.entries) do
-            if e.id == entry_id then found = true end
-          end
-          assert.is_true(found, "Entry " .. entry_id .. " should be in section " .. opts.section)
-
-          if opts.position then
-            assert.equals(entry_id, section.entries[opts.position].id,
-              "Entry " .. entry_id .. " should be at position " .. opts.position)
-          end
-        end
-
-        if opts.dir then
-          local entry_dir = Path:new(opts.dir, "entries", entry_id)
-          assert.is_true(entry_dir:exists(), "Entry dir should exist: " .. entry_id)
-        end
-      end
-
-      check()
-
-      if opts.dir then
-        state:load(opts.dir)
-        check()
-      end
-    end
-
-    local function assert_entry_removed(entry_id, opts)
-      opts = opts or {}
-
-      local function check()
-        assert.is_nil(state.entries[entry_id], "Entry " .. entry_id .. " should not exist")
-
-        if opts.dir then
-          local entry_dir = Path:new(opts.dir, "entries", entry_id)
-          assert.is_false(entry_dir:exists(), "Entry dir should not exist: " .. entry_id)
-        end
-      end
-
-      check()
-
-      if opts.dir then
-        state:load(opts.dir)
-        check()
-      end
-    end
-
-    local function assert_section_order(section_id, expected_ids, opts)
-      opts = opts or {}
-
-      local function check()
-        local section = state.sections[section_id]
-        assert.is_not_nil(section, "Section " .. section_id .. " should exist")
-
-        local actual_ids = {}
-        for _, e in ipairs(section.entries) do
-          table.insert(actual_ids, e.id)
-        end
-        assert.same(expected_ids, actual_ids)
-      end
-
-      check()
-
-      if opts.dir then
-        state:load(opts.dir)
-        check()
-      end
-    end
 
     before_each(function()
       temp_dir = helpers.create_temp_fixture(fixture_path)
@@ -153,104 +80,64 @@ describe("Entry", function()
       helpers.reset_state()
     end)
 
-    describe("create", function()
-      it("creates a new chapter entry in section", function()
-        local entry = Entry.create(state, "chapter", "A New Chapter", "p1x3q8")
+    describe("Chapter.create", function()
+      it("creates a new chapter in section", function()
+        local section = state.sections["p1x3q8"]
+        local section_data = state.manuscript.items[1]
 
-        assert.is_not_nil(entry)
-        assert_entry(entry.id, {
-          title = "A New Chapter",
-          kind = "chapter",
-          section = "p1x3q8",
-          dir = temp_dir,
-        })
+        local chapter = Chapter.create(state, "New Chapter", section_data.items)
+
+        assert.is_not_nil(chapter)
+        assert.equals("New Chapter", chapter.title)
+        assert.equals("chapter", chapter.kind)
+
+        -- Verify file created
+        local entry_dir = Path:new(temp_dir, "entries", chapter.id)
+        assert.is_true(entry_dir:exists())
+
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.is_not_nil(state.entries[chapter.id])
       end)
 
-      it("creates a new page entry in section", function()
-        local entry = Entry.create(state, "page", "Interlude", "p1x3q8")
+      it("creates a new chapter at root level", function()
+        local chapter = Chapter.create(state, "Root Chapter", state.manuscript.items)
 
-        assert.is_not_nil(entry)
-        assert_entry(entry.id, {
-          title = "Interlude",
-          kind = "page",
-          section = "p1x3q8",
-          dir = temp_dir,
-        })
-      end)
+        assert.is_not_nil(chapter)
 
-      it("creates unsectioned entry when section_id is nil", function()
-        local entry = Entry.create(state, "chapter", "Standalone Chapter", nil)
-
-        assert.is_not_nil(entry)
-        assert.is_nil(entry.section)
-        assert_entry(entry.id, {
-          title = "Standalone Chapter",
-          kind = "chapter",
-          dir = temp_dir,
-        })
-      end)
-
-      it("returns error for non-existent section", function()
-        local result, err = Entry.create(state, "chapter", "Test", "nonexistent")
-
-        assert.is_nil(result)
-        assert.matches("Section not found", err)
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.is_not_nil(state.entries[chapter.id])
       end)
     end)
 
     describe("update", function()
-      it("updates the entry title", function()
+      it("updates the chapter title", function()
         local entry = state.entries["chap1a"]
-        local updated = entry:update(state, { title = "Renamed Entry" })
+        local updated = entry:update(state, { title = "Renamed Chapter" })
 
-        assert.equals("Renamed Entry", updated.title)
-        assert_entry("chap1a", {
-          title = "Renamed Entry",
-          dir = temp_dir,
-        })
+        assert.equals("Renamed Chapter", updated.title)
+
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.equals("Renamed Chapter", state.entries["chap1a"].title)
       end)
     end)
 
     describe("destroy", function()
-      it("removes the entry", function()
+      it("removes the chapter and its files", function()
         local entry = state.entries["chap1a"]
+        local entry_dir = Path:new(temp_dir, "entries", "chap1a")
+
         local result = entry:destroy(state)
 
         assert.is_true(result)
-        assert_entry_removed("chap1a", { dir = temp_dir })
-      end)
-    end)
+        assert.is_nil(state.entries["chap1a"])
+        assert.is_false(entry_dir:exists())
 
-    describe("move", function()
-      it("moves entry to new position in same section", function()
-        -- Original: [part1tp, chap1a, chap1b, chap1c]
-        -- Move chap1a to position 3
-        -- Result: [part1tp, chap1b, chap1a, chap1c]
-        local entry = state.entries["chap1a"]
-        entry:move(state, "p1x3q8", 3)
-
-        assert_section_order("p1x3q8", { "part1tp", "chap1b", "chap1a", "chap1c" }, { dir = temp_dir })
-      end)
-
-      it("moves entry to different section", function()
-        -- Original p1x3q8: [part1tp, chap1a, chap1b, chap1c]
-        -- Original p2y5r4: [chap2a, chap2b]
-        -- Move chap1a to position 2 in p2y5r4
-        -- Result p1x3q8: [part1tp, chap1b, chap1c]
-        -- Result p2y5r4: [chap2a, chap1a, chap2b]
-        local entry = state.entries["chap1a"]
-        entry:move(state, "p2y5r4", 2)
-
-        assert_section_order("p1x3q8", { "part1tp", "chap1b", "chap1c" }, { dir = temp_dir })
-        assert_section_order("p2y5r4", { "chap2a", "chap1a", "chap2b" }, { dir = temp_dir })
-      end)
-
-      it("returns error for non-existent target section", function()
-        local entry = state.entries["chap1a"]
-        local result, err = entry:move(state, "nonexistent", 1)
-
-        assert.is_nil(result)
-        assert.matches("Section not found", err)
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.is_nil(state.entries["chap1a"])
       end)
     end)
   end)

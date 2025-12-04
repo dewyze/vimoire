@@ -15,68 +15,29 @@ describe("Section", function()
   end)
 
   it("holds section metadata", function()
-    local data = { id = "p1x3q8", title = "Part 1" }
-    local section = Section.new(data)
+    local data = { id = "p1x3q8", title = "Part 1", items = {} }
+    local section = Section.new(data, "/root")
 
-    assert.equals(section.id, "p1x3q8")
-    assert.equals(section.title, "Part 1")
+    assert.equals("p1x3q8", section.id)
+    assert.equals("Part 1", section.title)
+    assert.equals("section", section.kind)
   end)
 
-  it("resolves entries in order from state", function()
+  it("has items array", function()
     local section = state.sections["p1x3q8"]
-    local entries = section.entries
-
-    assert.equals(#entries, 4)
-    assert.equals(entries[1].title, "Part One")
-    assert.equals(entries[2].title, "The Day I Became Sentient")
-    assert.equals(entries[3].title, "Bread: A Love Story")
-    assert.equals(entries[4].title, "The Kitchen Uprising")
+    assert.is_not_nil(section.items)
+    assert.equals(4, #section.items)
   end)
 
-  -- Mutation tests
+  it("returns nil for text_path and notes_path", function()
+    local section = state.sections["p1x3q8"]
+    assert.is_nil(section:text_path())
+    assert.is_nil(section:notes_path())
+    assert.is_nil(section:display_number())
+  end)
 
   describe("mutations", function()
     local temp_dir
-
-    local function assert_section(section_id, opts)
-      opts = opts or {}
-
-      local function check()
-        local section = state.sections[section_id]
-        assert.is_not_nil(section, "Section " .. section_id .. " should exist")
-
-        if opts.title then
-          assert.equals(opts.title, section.title)
-        end
-
-        if opts.position then
-          assert.equals(section_id, state.manuscript.sections[opts.position].id,
-            "Section " .. section_id .. " should be at position " .. opts.position)
-        end
-      end
-
-      check()
-
-      if opts.dir then
-        state:load(opts.dir)
-        check()
-      end
-    end
-
-    local function assert_section_removed(section_id, opts)
-      opts = opts or {}
-
-      local function check()
-        assert.is_nil(state.sections[section_id], "Section " .. section_id .. " should not exist")
-      end
-
-      check()
-
-      if opts.dir then
-        state:load(opts.dir)
-        check()
-      end
-    end
 
     before_each(function()
       temp_dir = helpers.create_temp_fixture(fixture_path)
@@ -90,14 +51,15 @@ describe("Section", function()
 
     describe("create", function()
       it("creates a new section", function()
-        local section = Section.create(state, "Part 3")
+        local section = Section.create(state, "Part 3", state.manuscript.items)
 
         assert.is_not_nil(section)
-        assert_section(section.id, {
-          title = "Part 3",
-          position = 3,
-          dir = temp_dir,
-        })
+        assert.equals("Part 3", section.title)
+        assert.equals("section", section.kind)
+
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.is_not_nil(state.sections[section.id])
       end)
     end)
 
@@ -107,28 +69,34 @@ describe("Section", function()
         local updated = section:update(state, { title = "Renamed Part" })
 
         assert.equals("Renamed Part", updated.title)
-        assert_section("p1x3q8", {
-          title = "Renamed Part",
-          dir = temp_dir,
-        })
+
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.equals("Renamed Part", state.sections["p1x3q8"].title)
       end)
     end)
 
     describe("destroy", function()
-      it("removes the section and ungroups its entries", function()
+      it("removes the section and promotes its entries to parent", function()
         local section = state.sections["p1x3q8"]
-        local entry_ids = { "chap1a", "chap1b", "chap1c" }
+        local child_count = #section.items
+        local original_root_count = #state.manuscript.items
+
         local result = section:destroy(state)
 
         assert.is_true(result)
-        assert_section_removed("p1x3q8", { dir = temp_dir })
+        assert.is_nil(state.sections["p1x3q8"])
 
-        -- Entries should still exist but be ungrouped
-        for _, entry_id in ipairs(entry_ids) do
-          local entry = state.entries[entry_id]
-          assert.is_not_nil(entry, "Entry " .. entry_id .. " should still exist")
-          assert.is_nil(entry.section, "Entry " .. entry_id .. " should be ungrouped")
-        end
+        -- Children should be promoted to root level
+        -- Original: 4 items (2 sections + 2 unsectioned)
+        -- After: 4 - 1 section + 4 children = 7 items
+        assert.equals(original_root_count - 1 + child_count, #state.manuscript.items)
+
+        -- Verify persistence
+        state:load(temp_dir)
+        assert.is_nil(state.sections["p1x3q8"])
+        -- Children should still exist
+        assert.is_not_nil(state.entries["chap1a"])
       end)
     end)
   end)

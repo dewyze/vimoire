@@ -1,9 +1,7 @@
 local M = {}
 local cc = require("neo-tree.sources.common.commands")
 local vimoire_state = require("vimoire.state")
-local Entry = require("vimoire.core.entry")
-local Section = require("vimoire.core.section")
-local PlanningItem = require("vimoire.core.planning_item")
+local movement = require("vimoire.core.movement")
 
 -- Custom: refresh tree
 M.refresh = function(state)
@@ -57,16 +55,24 @@ M.move = function(state)
   vim.notify("Move not yet implemented", vim.log.levels.INFO)
 end
 
--- Custom: reorder up
-M.move_up = function(state)
-  -- TODO: implement
-  vim.notify("Move up not yet implemented", vim.log.levels.INFO)
+local function get_id(node)
+  return node.entry_id or node.section_id
 end
 
--- Custom: reorder down
+-- Custom: reorder up (K)
+M.move_up = function(state)
+  local id = get_id(state.tree:get_node())
+  if id and movement.move_up(vimoire_state, id) then
+    M.refresh(state)
+  end
+end
+
+-- Custom: reorder down (J)
 M.move_down = function(state)
-  -- TODO: implement
-  vim.notify("Move down not yet implemented", vim.log.levels.INFO)
+  local id = get_id(state.tree:get_node())
+  if id and movement.move_down(vimoire_state, id) then
+    M.refresh(state)
+  end
 end
 
 return M

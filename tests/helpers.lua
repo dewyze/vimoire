@@ -17,10 +17,8 @@ end
 
 function M.reset_state()
   state.manuscript = nil
-  state.entries = nil
-  state.sections = nil
-  state.entries_by_section = nil
-  state.entry_groups = nil
+  state.entries = {}
+  state.sections = {}
 end
 
 return M

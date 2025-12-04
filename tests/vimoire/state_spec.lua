@@ -13,81 +13,86 @@ describe("State", function()
     state:load(fixture_path)
     assert.is_not_nil(state.manuscript)
     assert.is_not_nil(state.entries)
-    assert.is_not_nil(state.entries_by_section)
     assert.is_not_nil(state.sections)
   end)
 
   it("creates entries map with correct count", function()
     state:load(fixture_path)
-    assert.equals(vim.tbl_count(state.entries), 8)
+    -- 4 in Part 1 + 2 in Part 2 + 2 unsectioned = 8 entries
+    assert.equals(8, vim.tbl_count(state.entries))
   end)
 
   it("creates sections with correct count", function()
     state:load(fixture_path)
-    assert.equals(vim.tbl_count(state.sections), 2)
-  end)
-
-  it("indexes entries by section", function()
-    state:load(fixture_path)
-    local section_entries = state.entries_by_section["p1x3q8"]
-    assert.equals(#section_entries, 4)
-    assert.equals(section_entries[1].title, "Part One")
+    assert.equals(2, vim.tbl_count(state.sections))
   end)
 
   it("can rebuild indexes", function()
     state:load(fixture_path)
     local original_count = vim.tbl_count(state.entries)
     state:rebuild()
-    assert.equals(vim.tbl_count(state.entries), original_count)
-  end)
-
-  it("sets section index on sections", function()
-    state:load(fixture_path)
-    assert.equals(state.sections["p1x3q8"].index, 1)
-    assert.equals(state.sections["p2y5r4"].index, 2)
+    assert.equals(original_count, vim.tbl_count(state.entries))
   end)
 
   it("sets chapter indices only for chapter entries", function()
     state:load(fixture_path)
-    local entry = state.entries["chap1b"]
-    assert.equals(entry.kind, "chapter")
-    assert.equals(entry.section_index, 1)
-    assert.equals(entry.chapter_index, 2)
-    assert.equals(entry:display_number(), "1.2")
+    -- chap1a is 1st chapter (after page "Part One")
+    local entry = state.entries["chap1a"]
+    assert.equals("chapter", entry.kind)
+    assert.equals(1, entry.chapter_index)
+    assert.equals("1", entry:display_number())
+
+    -- chap1b is 2nd chapter
+    entry = state.entries["chap1b"]
+    assert.equals(2, entry.chapter_index)
+    assert.equals("2", entry:display_number())
+
+    -- chap2a is 4th chapter (after 3 in Part 1)
+    entry = state.entries["chap2a"]
+    assert.equals(4, entry.chapter_index)
   end)
 
-  it("sets nil section_index for unsectioned manuscripts", function()
-    state:load("tests/fixtures/flat")
-    local entry = state.entries["ch002"]
-    assert.is_nil(entry.section_index)
-    assert.equals(entry.chapter_index, 2)
-    assert.equals(entry:display_number(), "2")
-  end)
-
-  it("builds entry_groups for sectioned manuscripts", function()
+  it("returns nil display_number for pages", function()
     state:load(fixture_path)
-    assert.equals(#state.entry_groups, 3)
-
-    local group1 = state.entry_groups[1]
-    assert.equals(group1.section.id, "p1x3q8")
-    assert.equals(#group1.entries, 4)
-
-    local group2 = state.entry_groups[2]
-    assert.equals(group2.section.id, "p2y5r4")
-    assert.equals(#group2.entries, 2)
-
-    local group3 = state.entry_groups[3]
-    assert.is_nil(group3.section)
-    assert.equals(#group3.entries, 2)
+    local page = state.entries["part1tp"]
+    assert.equals("page", page.kind)
+    assert.is_nil(page:display_number())
   end)
 
-  it("builds entry_groups for flat manuscripts", function()
+  it("loads flat manuscripts correctly", function()
     state:load("tests/fixtures/flat")
-    assert.equals(#state.entry_groups, 1)
+    assert.equals(3, vim.tbl_count(state.entries))
+    assert.equals(0, vim.tbl_count(state.sections))
 
-    local group = state.entry_groups[1]
-    assert.is_nil(group.section)
-    assert.equals(#group.entries, 3)
-    assert.equals(group.entries[1].title, "The First Sock")
+    local entry = state.entries["ch002"]
+    assert.equals(2, entry.chapter_index)
+    assert.equals("2", entry:display_number())
+  end)
+
+  describe("parent references", function()
+    it("sets parent_items and parent_section for entries in sections", function()
+      state:load(fixture_path)
+      local entry = state.entries["chap1a"]
+      local section = state.sections["p1x3q8"]
+
+      assert.equals(section.items, entry.parent_items)
+      assert.equals(section, entry.parent_section)
+    end)
+
+    it("sets parent_items to root and parent_section to nil for root entries", function()
+      state:load(fixture_path)
+      local entry = state.entries["intrlud"]
+
+      assert.equals(state.manuscript.items, entry.parent_items)
+      assert.is_nil(entry.parent_section)
+    end)
+
+    it("sets parent_items to root and parent_section to nil for sections", function()
+      state:load(fixture_path)
+      local section = state.sections["p1x3q8"]
+
+      assert.equals(state.manuscript.items, section.parent_items)
+      assert.is_nil(section.parent_section)
+    end)
   end)
 end)

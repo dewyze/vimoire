@@ -10,39 +10,44 @@
 
 ## manuscript.json
 
-Flat structure: chapters at top level with section references. Sections maintain chapter ordering via `chapter_ids`.
+Nested structure: `items` array contains entries (chapters, pages) and sections. Sections have their own nested `items` array. This makes tree operations (K/J reordering, moving between sections) natural—just array manipulations.
 
 ```json
 {
-  "title": "The Unreliable Memoirs of Gerald the Sentient Toaster",
   "id": "bk2xqr",
+  "title": "The Unreliable Memoirs of Gerald the Sentient Toaster",
   "description": "",
-  "chapters": [
-    {
-      "id": "chap1a",
-      "title": "The Day I Became Sentient",
-      "section": "sec001"
-    },
-    {
-      "id": "chap1b",
-      "title": "Bread: A Love Story",
-      "section": "sec001"
-    }
-  ],
-  "sections": [
+  "items": [
     {
       "id": "sec001",
+      "kind": "section",
       "title": "Part 1",
-      "chapter_ids": ["chap1a", "chap1b", "chap1c"]
+      "items": [
+        { "id": "part1tp", "kind": "page", "title": "Part One" },
+        { "id": "chap1a", "kind": "chapter", "title": "The Day I Became Sentient" },
+        { "id": "chap1b", "kind": "chapter", "title": "Bread: A Love Story" }
+      ]
     },
+    { "id": "intrlud", "kind": "page", "title": "Interlude" },
     {
       "id": "sec002",
+      "kind": "section",
       "title": "Part 2",
-      "chapter_ids": ["chap2a", "chap2b"]
+      "items": [
+        { "id": "chap2a", "kind": "chapter", "title": "Exile in the Drawer" }
+      ]
     }
-  ]
+  ],
+  "characters": [...],
+  "settings": [...],
+  "reference": [...]
 }
 ```
+
+**Entry kinds:**
+- `chapter` — numbered, has text.md and notes.md
+- `page` — unnumbered (title pages, interludes, appendices), has text.md and notes.md
+- `section` — container only, no files, just groups entries
 
 ---
 
@@ -52,12 +57,8 @@ Flat structure: chapters at top level with section references. Sections maintain
 book_root/
   manuscript.json
 
-  sections/
-    <uuid>/
-      title.md
-
-  chapters/
-    <uuid>/
+  entries/
+    <uuid>/              # chapters and pages
       text.md
       notes.md
       comments.json
@@ -68,7 +69,7 @@ book_root/
       <name>.md
     settings/
       <name>.md
-    research/
+    reference/
       <topic>.md
 
   notes.md
@@ -76,6 +77,8 @@ book_root/
   spell/en.add
   build/
 ```
+
+Note: Sections exist only in manuscript.json as containers—no files on disk.
 
 ---
 

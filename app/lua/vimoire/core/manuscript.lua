@@ -58,7 +58,13 @@ function Manuscript:save()
 end
 
 function Manuscript:sectioned()
-  return #self.sections > 1
+  local section_count = 0
+  for _, item in ipairs(self.items or {}) do
+    if item.kind == "section" then
+      section_count = section_count + 1
+    end
+  end
+  return section_count > 1
 end
 
 return Manuscript

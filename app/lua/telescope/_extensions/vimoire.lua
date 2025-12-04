@@ -18,22 +18,30 @@ local Path = require("plenary.path")
 local function build_manuscript_entries()
   local entries = {}
 
-  for _, group in ipairs(state.entry_groups) do
-    for _, entry in ipairs(group.entries) do
-      local display_number = ""
-      if entry.kind == "chapter" and entry:display_number() then
-        display_number = entry:display_number()
-      end
+  local function process_items(items)
+    for _, item_data in ipairs(items) do
+      if item_data.kind == "section" then
+        process_items(item_data.items or {})
+      else
+        local entry = state.entries[item_data.id]
+        if entry then
+          local display_number = ""
+          if entry.kind == "chapter" and entry:display_number() then
+            display_number = entry:display_number()
+          end
 
-      table.insert(entries, {
-        type = entry.kind,
-        display_number = display_number,
-        title = entry.title,
-        path = entry:text_path(),
-      })
+          table.insert(entries, {
+            type = entry.kind,
+            display_number = display_number,
+            title = entry.title,
+            path = entry:text_path(),
+          })
+        end
+      end
     end
   end
 
+  process_items(state.manuscript.items or {})
   return entries
 end
 

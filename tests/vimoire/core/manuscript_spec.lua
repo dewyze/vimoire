@@ -7,8 +7,8 @@ describe("Manuscript", function()
   it("loads a manuscript from disk", function()
     local manuscript = Manuscript.load(example_path)
 
-    assert.equals(manuscript.title, "The Unreliable Memoirs of Gerald the Sentient Toaster")
-    assert.equals(manuscript.description, "A tragic comedy in five acts, mostly about bread")
+    assert.equals("The Unreliable Memoirs of Gerald the Sentient Toaster", manuscript.title)
+    assert.equals("A tragic comedy in five acts, mostly about bread", manuscript.description)
   end)
 
   it("handles a missing manuscript", function()
@@ -17,16 +17,20 @@ describe("Manuscript", function()
     assert.is_nil(manuscript)
   end)
 
-  it("has correct section count", function()
+  it("has items array", function()
     local manuscript = Manuscript.load(example_path)
 
-    assert.equals(#manuscript.sections, 2)
+    assert.is_not_nil(manuscript.items)
+    assert.equals(4, #manuscript.items) -- 2 sections + 2 unsectioned items
   end)
 
-  it("has correct entry count", function()
+  it("has nested section items", function()
     local manuscript = Manuscript.load(example_path)
 
-    assert.equals(#manuscript.entries, 8)
+    local part1 = manuscript.items[1]
+    assert.equals("section", part1.kind)
+    assert.equals("Part 1", part1.title)
+    assert.equals(4, #part1.items)
   end)
 
   it("saves manuscript back to disk", function()
@@ -34,5 +38,13 @@ describe("Manuscript", function()
     local ok = manuscript:save()
 
     assert.is_true(ok)
+  end)
+
+  it("detects sectioned manuscripts", function()
+    local manuscript = Manuscript.load(example_path)
+    assert.is_true(manuscript:sectioned())
+
+    local flat = Manuscript.load("tests/fixtures/flat")
+    assert.is_false(flat:sectioned())
   end)
 end)
