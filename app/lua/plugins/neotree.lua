@@ -19,6 +19,7 @@ return {
     end
 
     require("neo-tree").setup({
+      use_default_mappings = false,
       sources = {
         "vimoire.navigation.neotree_source",
       },
@@ -29,6 +30,12 @@ return {
         },
       },
       window = {
+        position = "left",
+        width = 40,
+        mapping_options = {
+          noremap = true,
+          nowait = true,
+        },
         mappings = mouse_mappings,
       },
       vimoire = {

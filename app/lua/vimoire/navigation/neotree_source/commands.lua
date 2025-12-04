@@ -4,9 +4,14 @@ local vimoire_state = require("vimoire.state")
 local movement = require("vimoire.core.movement")
 
 -- Custom: refresh tree
-M.refresh = function(state)
+M.refresh = function(state, focus_id)
   local manager = require("neo-tree.sources.manager")
-  manager.refresh(state.name)
+  manager.refresh(state.name, function()
+    if focus_id then
+      local renderer = require("neo-tree.ui.renderer")
+      renderer.focus_node(state, focus_id)
+    end
+  end)
 end
 
 -- Custom: open file or toggle folder
@@ -56,14 +61,14 @@ M.move = function(state)
 end
 
 local function get_id(node)
-  return node.entry_id or node.section_id
+  return node.id
 end
 
 -- Custom: reorder up (K)
 M.move_up = function(state)
   local id = get_id(state.tree:get_node())
   if id and movement.move_up(vimoire_state, id) then
-    M.refresh(state)
+    M.refresh(state, id)
   end
 end
 
@@ -71,7 +76,7 @@ end
 M.move_down = function(state)
   local id = get_id(state.tree:get_node())
   if id and movement.move_down(vimoire_state, id) then
-    M.refresh(state)
+    M.refresh(state, id)
   end
 end
 

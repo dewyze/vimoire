@@ -4,6 +4,7 @@ local M = {
   name = "vimoire",
   display_name = "󱓷 Vimoire",
   default_config = {
+    window = {},
     renderers = {
       manuscript = { { "indent" }, { "icon" }, { "name" } },
       section = { { "indent" }, { "icon" }, { "name" } },
@@ -33,12 +34,11 @@ end
 local function build_item_node(item_data, entry_or_section)
   if item_data.kind == "section" then
     local node = create_node(
-      "section:" .. item_data.id,
+      item_data.id,
       item_data.title,
       "section",
       nil
     )
-    node.section_id = item_data.id
     node.children = build_items_nodes(item_data.items or {})
     return node
   else
@@ -51,13 +51,11 @@ local function build_item_node(item_data, entry_or_section)
     end
 
     local node = create_node(
-      "entry:" .. item_data.id,
+      item_data.id,
       display_name,
       item_data.kind,
       entry_or_section and entry_or_section:text_path() or nil
     )
-    node.entry_id = item_data.id
-    node.kind = item_data.kind
     return node
   end
 end
@@ -149,11 +147,13 @@ local function build_planning_nodes(manuscript)
   return { planning_folder }
 end
 
-function M.navigate(state_param, path, path_to_reveal)
+function M.navigate(state_param, path, path_to_reveal, callback)
   if not state.manuscript then
     vim.notify("No manuscript loaded", vim.log.levels.WARN)
     return
   end
+
+  state_param.path = path or state.manuscript.root
 
   local ok, err = pcall(function()
     local manuscript_node = create_node("manuscript", "Manuscript", "manuscript", nil)
@@ -179,13 +179,17 @@ function M.navigate(state_param, path, path_to_reveal)
       local root = state.manuscript.root
       local entry_id = path_to_reveal:match(root .. "/entries/([^/]+)/")
       if entry_id then
-        renderer.focus_node(state_param, "entry:" .. entry_id)
+        renderer.focus_node(state_param, entry_id)
       end
     end
   end)
 
   if not ok then
     vim.notify("navigate error: " .. err, vim.log.levels.ERROR)
+  end
+
+  if callback then
+    callback()
   end
 end
 
