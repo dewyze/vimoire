@@ -13,8 +13,6 @@ local entry_display = require("telescope.pickers.entry_display")
 local state = require("vimoire.state")
 local vimoire_config = require("vimoire.config")
 
-local Path = require("plenary.path")
-
 local function build_manuscript_entries()
   local entries = {}
 
@@ -41,29 +39,26 @@ end
 
 local function build_planning_entries(planning_key, label)
   local entries = {}
-  local root = state.manuscript.root
-  local items = state.manuscript[planning_key] or {}
-  local base_path = "planning/" .. planning_key .. "/"
 
-  for _, item in ipairs(items) do
-    local relative = item.file:sub(#base_path + 1)
-    local subfolder = relative:match("^(.+)/[^/]+$")
-
-    local name
-    if subfolder then
-      local folder_label = subfolder:sub(1, 1):upper() .. subfolder:sub(2)
-      name = folder_label .. " > " .. item.name
-    else
-      name = item.name
+  local function process_items(items, prefix)
+    for _, item_data in ipairs(items or {}) do
+      if item_data.items then
+        local item = state.items[item_data.id]
+        local new_prefix = prefix and (prefix .. " > " .. item:display_name()) or item:display_name()
+        process_items(item_data.items, new_prefix)
+      else
+        local item = state.items[item_data.id]
+        local name = prefix and (prefix .. " > " .. item:display_name()) or item:display_name()
+        table.insert(entries, {
+          display_number = "",
+          name = name,
+          path = item:text_path(),
+        })
+      end
     end
-
-    table.insert(entries, {
-      display_number = "",
-      name = name,
-      path = Path:new(root, item.file):absolute(),
-    })
   end
 
+  process_items(state.manuscript[planning_key], nil)
   return entries
 end
 

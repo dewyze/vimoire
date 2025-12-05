@@ -3,33 +3,52 @@ Subfolder.__index = Subfolder
 
 local Path = require("plenary.path")
 
-function Subfolder.new(id, name, path, planning_type)
+function Subfolder.new(data, planning_type, base_path)
   local self = setmetatable({}, Subfolder)
-  self.id = id
-  self.name = name
-  self.path = path
+  for k, v in pairs(data) do
+    self[k] = v
+  end
+  self.kind = "subfolder"
   self.planning_type = planning_type
+  self.base_path = base_path
+  self.items = self.items or {}
   return self
+end
+
+function Subfolder:dir_path()
+  return self.base_path .. "/" .. self.name:lower()
+end
+
+function Subfolder:text_path()
+  return nil
+end
+
+function Subfolder:display_name()
+  return self.name
 end
 
 function Subfolder:destroy(state)
   local manifest_array = state.manuscript[self.planning_type] or {}
-
-  -- Remove items in this subfolder from manifest
-  local prefix = "planning/" .. self.planning_type .. "/" .. self.name:lower() .. "/"
-  for i = #manifest_array, 1, -1 do
-    if manifest_array[i].file:sub(1, #prefix) == prefix then
-      table.remove(manifest_array, i)
+  local index = nil
+  for i, item in ipairs(manifest_array) do
+    if item.id == self.id then
+      index = i
+      break
     end
   end
+  if not index then return false end
+
+  -- Remove subfolder from manifest
+  table.remove(manifest_array, index)
 
   -- Delete directory
-  local dir = Path:new(self.path)
+  local dir = Path:new(self:dir_path())
   if dir:exists() then
-    vim.fn.delete(self.path, "rf")
+    vim.fn.delete(self:dir_path(), "rf")
   end
 
   state:save()
+  return true
 end
 
 return Subfolder

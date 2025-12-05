@@ -7,6 +7,7 @@ local Manuscript = require("vimoire.core.manuscript")
 local Entry = require("vimoire.core.entry")
 local PlanningItem = require("vimoire.core.planning_item")
 local Folder = require("vimoire.core.folder")
+local Subfolder = require("vimoire.core.subfolder")
 
 function state:load(manuscript_path)
   self.manuscript = Manuscript.load(manuscript_path)
@@ -54,16 +55,26 @@ function state:rebuild()
 
   process_items(self.manuscript.items or {}, nil)
 
-  -- Planning items
-  local function process_planning(items, planning_type)
+  -- Planning items and subfolders
+  local function process_planning(items, planning_type, base_path, parent_items)
     for _, data in ipairs(items or {}) do
-      self.items[data.id] = PlanningItem.new(data, planning_type, root)
+      if data.items then
+        local subfolder = Subfolder.new(data, planning_type, base_path)
+        subfolder.parent_items = parent_items
+        self.items[data.id] = subfolder
+        process_planning(data.items, planning_type, subfolder:dir_path(), data.items)
+      else
+        local item = PlanningItem.new(data, planning_type, base_path)
+        item.parent_items = parent_items
+        self.items[data.id] = item
+      end
     end
   end
 
-  process_planning(self.manuscript.characters, "characters")
-  process_planning(self.manuscript.settings, "settings")
-  process_planning(self.manuscript.reference, "reference")
+  local planning_base = root .. "/planning"
+  process_planning(self.manuscript.characters, "characters", planning_base .. "/characters", self.manuscript.characters)
+  process_planning(self.manuscript.settings, "settings", planning_base .. "/settings", self.manuscript.settings)
+  process_planning(self.manuscript.reference, "reference", planning_base .. "/reference", self.manuscript.reference)
 end
 
 return state

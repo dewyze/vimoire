@@ -4,88 +4,65 @@ PlanningItem.__index = PlanningItem
 local Path = require("plenary.path")
 local id_util = require("vimoire.util.id")
 
-function PlanningItem.new(data, item_type, root)
+function PlanningItem.new(data, planning_type, base_path)
   local self = setmetatable({}, PlanningItem)
   self.id = data.id
   self.name = data.name
   self.file = data.file
-  self.type = item_type
-  self.root = root
+  self.type = planning_type
+  self.base_path = base_path
   return self
 end
 
-function PlanningItem:full_path()
-  return self.root .. "/" .. self.file
+function PlanningItem:text_path()
+  return self.base_path .. "/" .. self.file
 end
 
-local function get_manifest_array(manuscript, item_type)
-  if item_type == "characters" then
-    return manuscript.characters
-  elseif item_type == "settings" then
-    return manuscript.settings
-  elseif item_type == "reference" then
-    return manuscript.reference
-  end
+function PlanningItem:display_name()
+  return self.name
 end
 
 local function generate_filename(name)
   return name:lower():gsub("%s+", "_"):gsub("[^%w_]", "") .. ".md"
 end
 
-local function create_item(state, item_type, name, subfolder)
-  local manuscript = state.manuscript
-  local items = get_manifest_array(manuscript, item_type)
-
-  local existing_ids = {}
-  for _, item in ipairs(items) do
-    existing_ids[item.id] = true
-  end
-
-  local new_id = id_util.generate(existing_ids)
+local function create_item(state, planning_type, name, parent_items, base_path)
+  local new_id = id_util.generate(state.items)
   local filename = generate_filename(name)
-
-  local file_path
-  if subfolder then
-    file_path = "planning/" .. item_type .. "/" .. subfolder .. "/" .. filename
-  else
-    file_path = "planning/" .. item_type .. "/" .. filename
-  end
 
   local data = {
     id = new_id,
     name = name,
-    file = file_path,
+    file = filename,
   }
 
-  -- Create directory and file
-  local full_path = manuscript.root .. "/" .. file_path
+  -- Create file
+  local full_path = base_path .. "/" .. filename
   local dir = Path:new(full_path):parent()
   dir:mkdir({ parents = true })
   Path:new(full_path):write("# " .. name .. "\n", "w")
 
-  -- Add to manifest
-  table.insert(items, data)
-  manuscript:save()
+  -- Add to parent items array
+  table.insert(parent_items, data)
+  state:save()
 
-  return PlanningItem.new(data, item_type, manuscript.root)
+  return state.items[new_id]
 end
 
-function PlanningItem.create_character(state, name, subfolder)
-  return create_item(state, "characters", name, subfolder)
+function PlanningItem.create_character(state, name, parent_items, base_path)
+  return create_item(state, "characters", name, parent_items, base_path)
 end
 
-function PlanningItem.create_setting(state, name, subfolder)
-  return create_item(state, "settings", name, subfolder)
+function PlanningItem.create_setting(state, name, parent_items, base_path)
+  return create_item(state, "settings", name, parent_items, base_path)
 end
 
-function PlanningItem.create_reference(state, name, subfolder)
-  return create_item(state, "reference", name, subfolder)
+function PlanningItem.create_reference(state, name, parent_items, base_path)
+  return create_item(state, "reference", name, parent_items, base_path)
 end
 
 function PlanningItem:update(state, attrs)
-  local items = get_manifest_array(state.manuscript, self.type)
-
-  for _, item in ipairs(items) do
+  for i, item in ipairs(self.parent_items) do
     if item.id == self.id then
       if attrs.name then
         item.name = attrs.name
@@ -95,24 +72,22 @@ function PlanningItem:update(state, attrs)
     end
   end
 
-  state.manuscript:save()
+  state:save()
 end
 
 function PlanningItem:destroy(state)
-  local items = get_manifest_array(state.manuscript, self.type)
-
   -- Remove file
-  Path:new(self:full_path()):rm()
+  Path:new(self:text_path()):rm()
 
-  -- Remove from manifest
-  for i, item in ipairs(items) do
+  -- Remove from parent items
+  for i, item in ipairs(self.parent_items) do
     if item.id == self.id then
-      table.remove(items, i)
+      table.remove(self.parent_items, i)
       break
     end
   end
 
-  state.manuscript:save()
+  state:save()
 end
 
 return PlanningItem

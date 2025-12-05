@@ -55,71 +55,25 @@ function build_items_nodes(items)
   return nodes
 end
 
-local function build_planning_section(items, folder_id, folder_name, item_type, id_prefix)
-  items = items or {}
-  local base_path = "planning/" .. folder_id .. "/"
-  local subfolders = {}
-  local root_items = {}
-
-  for _, item in ipairs(items) do
-    local relative = item.file:sub(#base_path + 1)
-    local subfolder = relative:match("^(.+)/[^/]+$")
-
-    if subfolder then
-      subfolders[subfolder] = subfolders[subfolder] or {}
-      table.insert(subfolders[subfolder], item)
-    else
-      table.insert(root_items, item)
-    end
-  end
-
+local function build_planning_items(items, item_type)
   local nodes = {}
-
-  for _, item in ipairs(root_items) do
-    local node = create_node(
-      id_prefix .. ":" .. item.id,
-      item.name,
-      item_type,
-      state.manuscript.root .. "/" .. item.file
-    )
-    node.item_id = item.id
-    table.insert(nodes, node)
-  end
-
-  local sorted_subfolders = vim.tbl_keys(subfolders)
-  table.sort(sorted_subfolders)
-
-  for _, subfolder_name in ipairs(sorted_subfolders) do
-    local subfolder_items = subfolders[subfolder_name]
-    local subfolder_label = subfolder_name:sub(1, 1):upper() .. subfolder_name:sub(2)
-    local subfolder_node = create_node(
-      folder_id .. ":" .. subfolder_name,
-      subfolder_label,
-      "planning_subfolder",
-      nil
-    )
-    subfolder_node.planning_type = folder_id
-    subfolder_node.subfolder = subfolder_name
-
-    local subfolder_children = {}
-    for _, item in ipairs(subfolder_items) do
-      local node = create_node(
-        id_prefix .. ":" .. item.id,
-        item.name,
-        item_type,
-        state.manuscript.root .. "/" .. item.file
-      )
-      node.item_id = item.id
-      node.subfolder = subfolder_name
-      table.insert(subfolder_children, node)
+  for _, item_data in ipairs(items or {}) do
+    local item = state.items[item_data.id]
+    if item_data.items then
+      local node = create_node(item_data.id, item:display_name(), "planning_subfolder", nil)
+      node.children = build_planning_items(item_data.items, item_type)
+      table.insert(nodes, node)
+    else
+      local node = create_node(item_data.id, item:display_name(), item_type, item:text_path())
+      table.insert(nodes, node)
     end
-
-    subfolder_node.children = subfolder_children
-    table.insert(nodes, subfolder_node)
   end
+  return nodes
+end
 
+local function build_planning_section(items, folder_id, folder_name, item_type)
   local folder = create_node(folder_id, folder_name, folder_id, nil)
-  folder.children = nodes
+  folder.children = build_planning_items(items, item_type)
   return folder
 end
 
@@ -137,9 +91,9 @@ function M.navigate(state_param, path, path_to_reveal, callback)
 
     local planning_node = create_node("planning", "Planning", "planning", nil)
     planning_node.children = {
-      build_planning_section(state.manuscript.characters, "characters", "Characters", "character", "char"),
-      build_planning_section(state.manuscript.settings, "settings", "Settings", "setting", "set"),
-      build_planning_section(state.manuscript.reference, "reference", "Reference", "reference_file", "ref"),
+      build_planning_section(state.manuscript.characters, "characters", "Characters", "character"),
+      build_planning_section(state.manuscript.settings, "settings", "Settings", "setting"),
+      build_planning_section(state.manuscript.reference, "reference", "Reference", "reference_file"),
     }
 
     local renderer = require("neo-tree.ui.renderer")
