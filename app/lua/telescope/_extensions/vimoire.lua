@@ -20,21 +20,15 @@ local function build_manuscript_entries()
 
   local function process_items(items)
     for _, item_data in ipairs(items) do
-      if item_data.kind == "section" then
-        process_items(item_data.items or {})
+      if item_data.items then
+        process_items(item_data.items)
       else
-        local entry = state.items[item_data.id]
-        if entry then
-          local display_number = ""
-          if entry.kind == "chapter" and entry:display_number() then
-            display_number = entry:display_number()
-          end
-
+        local item = state.items[item_data.id]
+        if item then
           table.insert(entries, {
-            type = entry.kind,
-            display_number = display_number,
-            name = entry.name,
-            path = entry:text_path(),
+            display_number = item:display_number() or "",
+            name = item.name,
+            path = item:text_path(),
           })
         end
       end
@@ -64,7 +58,6 @@ local function build_planning_entries(planning_key, label)
     end
 
     table.insert(entries, {
-      type = planning_key,
       display_number = "",
       name = name,
       path = Path:new(root, item.file):absolute(),

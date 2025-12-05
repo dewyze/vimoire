@@ -1,4 +1,5 @@
 local assert = require("luassert")
+local helpers = require("tests.helpers")
 
 describe("Setup", function()
   local setup = require("vimoire.setup")
@@ -6,8 +7,7 @@ describe("Setup", function()
   local fixture_path = "tests/fixtures/standard"
 
   after_each(function()
-    state.manuscript = nil
-    state.items = {}
+    helpers.reset_state()
   end)
 
   it("loads manuscript from manuscript.json argument", function()

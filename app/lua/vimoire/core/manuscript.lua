@@ -60,7 +60,7 @@ end
 function Manuscript:sectioned()
   local section_count = 0
   for _, item in ipairs(self.items or {}) do
-    if item.kind == "section" then
+    if item.items then
       section_count = section_count + 1
     end
   end

@@ -31,40 +31,26 @@ local function create_node(id, name, type, path)
   }
 end
 
-local function build_item_node(item_data, entry_or_section)
-  if item_data.kind == "section" then
-    local node = create_node(
-      item_data.id,
-      item_data.name,
-      "section",
-      nil
-    )
-    node.children = build_items_nodes(item_data.items or {})
-    return node
-  else
-    -- Chapter or page
-    local display_name
-    if entry_or_section and entry_or_section:display_number() then
-      display_name = entry_or_section:display_number() .. ": " .. item_data.name
-    else
-      display_name = item_data.name
-    end
+local function build_item_node(item_data, item)
+  local node = create_node(
+    item_data.id,
+    item:display_name(),
+    item_data.kind,
+    item:text_path()
+  )
 
-    local node = create_node(
-      item_data.id,
-      display_name,
-      item_data.kind,
-      entry_or_section and entry_or_section:text_path() or nil
-    )
-    return node
+  if item_data.items then
+    node.children = build_items_nodes(item_data.items)
   end
+
+  return node
 end
 
 function build_items_nodes(items)
   local nodes = {}
   for _, item_data in ipairs(items) do
-    local entry_or_section = state.items[item_data.id]
-    table.insert(nodes, build_item_node(item_data, entry_or_section))
+    local item = state.items[item_data.id]
+    table.insert(nodes, build_item_node(item_data, item))
   end
   return nodes
 end
@@ -137,16 +123,6 @@ local function build_planning_section(items, folder_id, folder_name, item_type, 
   return folder
 end
 
-local function build_planning_nodes(manuscript)
-  local planning_folder = create_node("planning", "Planning", "planning", nil)
-  planning_folder.children = {
-    build_planning_section(manuscript.characters, "characters", "Characters", "character", "char"),
-    build_planning_section(manuscript.settings, "settings", "Settings", "setting", "set"),
-    build_planning_section(manuscript.reference, "reference", "Reference", "reference_file", "ref"),
-  }
-  return { planning_folder }
-end
-
 function M.navigate(state_param, path, path_to_reveal, callback)
   if not state.manuscript then
     vim.notify("No manuscript loaded", vim.log.levels.WARN)
@@ -157,23 +133,17 @@ function M.navigate(state_param, path, path_to_reveal, callback)
 
   local ok, err = pcall(function()
     local manuscript_node = create_node("manuscript", "Manuscript", "manuscript", nil)
+    manuscript_node.children = build_items_nodes(state.manuscript.items or {})
 
-    local children = {}
-
-    local item_nodes = build_items_nodes(state.manuscript.items or {})
-    for _, node in ipairs(item_nodes) do
-      table.insert(children, node)
-    end
-
-    local planning_nodes = build_planning_nodes(state.manuscript)
-    for _, node in ipairs(planning_nodes) do
-      table.insert(children, node)
-    end
-
-    manuscript_node.children = children
+    local planning_node = create_node("planning", "Planning", "planning", nil)
+    planning_node.children = {
+      build_planning_section(state.manuscript.characters, "characters", "Characters", "character", "char"),
+      build_planning_section(state.manuscript.settings, "settings", "Settings", "setting", "set"),
+      build_planning_section(state.manuscript.reference, "reference", "Reference", "reference_file", "ref"),
+    }
 
     local renderer = require("neo-tree.ui.renderer")
-    renderer.show_nodes({ manuscript_node }, state_param)
+    renderer.show_nodes({ manuscript_node, planning_node }, state_param)
 
     if path_to_reveal then
       local root = state.manuscript.root

@@ -20,7 +20,7 @@ local function move(state, id, direction)
 
   if has_sibling(items, index, direction) then
     local adjacent = items[index + direction]
-    if adjacent.kind == "section" then
+    if adjacent.items then
       local insert_pos = direction == -1 and #adjacent.items + 1 or 1
       table.insert(adjacent.items, insert_pos, table.remove(items, index))
     else

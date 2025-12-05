@@ -43,6 +43,14 @@ function Chapter:display_number()
   return self.chapter_index and tostring(self.chapter_index) or nil
 end
 
+function Chapter:display_name()
+  local num = self:display_number()
+  if num then
+    return num .. ": " .. self.name
+  end
+  return self.name
+end
+
 function Chapter:update(state, attrs)
   local index = Entry.find_index(self.parent_items, self.id)
   if not index then return self end

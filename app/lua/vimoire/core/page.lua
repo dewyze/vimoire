@@ -43,6 +43,10 @@ function Page:display_number()
   return nil
 end
 
+function Page:display_name()
+  return self.name
+end
+
 function Page:update(state, attrs)
   local index = Entry.find_index(self.parent_items, self.id)
   if not index then return self end

@@ -43,8 +43,8 @@ function state:rebuild()
       item.parent_section = parent_section
       self.items[item.id] = item
 
-      if item.kind == "section" then
-        process_items(item_data.items or {}, item)
+      if item_data.items then
+        process_items(item_data.items, item)
       elseif item.kind == "chapter" then
         chapter_count = chapter_count + 1
         item.chapter_index = chapter_count

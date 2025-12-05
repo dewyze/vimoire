@@ -38,6 +38,10 @@ function Section:display_number()
   return nil
 end
 
+function Section:display_name()
+  return self.name
+end
+
 function Section:update(state, attrs)
   local index = Entry.find_index(self.parent_items, self.id)
   if not index then return self end
