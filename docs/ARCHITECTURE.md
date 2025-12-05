@@ -21,33 +21,53 @@ Nested structure: `items` array contains entries (chapters, pages) and sections.
     {
       "id": "sec001",
       "kind": "section",
-      "title": "Part 1",
+      "name": "Part 1",
       "items": [
-        { "id": "part1tp", "kind": "page", "title": "Part One" },
-        { "id": "chap1a", "kind": "chapter", "title": "The Day I Became Sentient" },
-        { "id": "chap1b", "kind": "chapter", "title": "Bread: A Love Story" }
+        { "id": "part1tp", "kind": "page", "name": "Part One" },
+        { "id": "chap1a", "kind": "chapter", "name": "The Day I Became Sentient" },
+        { "id": "chap1b", "kind": "chapter", "name": "Bread: A Love Story" }
       ]
     },
-    { "id": "intrlud", "kind": "page", "title": "Interlude" },
+    { "id": "intrlud", "kind": "page", "name": "Interlude" },
     {
       "id": "sec002",
       "kind": "section",
-      "title": "Part 2",
+      "name": "Part 2",
       "items": [
-        { "id": "chap2a", "kind": "chapter", "title": "Exile in the Drawer" }
+        { "id": "chap2a", "kind": "chapter", "name": "Exile in the Drawer" }
       ]
     }
   ],
-  "characters": [...],
-  "settings": [...],
-  "reference": [...]
+  "characters": [
+    { "id": "char1", "name": "Gerald", "file": "gerald.md" }
+  ],
+  "settings": [
+    { "id": "set1", "name": "The Kitchen", "file": "kitchen.md" }
+  ],
+  "reference": [
+    { "id": "ref1", "name": "Sentience Theory", "file": "sentience.md" },
+    {
+      "id": "sub1",
+      "kind": "subfolder",
+      "name": "Bread",
+      "items": [
+        { "id": "ref2", "name": "Types of Bread", "file": "types.md" }
+      ]
+    }
+  ]
 }
 ```
+
+Note: The manuscript `title` is the book title. Items use `name` for their display label.
 
 **Entry kinds:**
 - `chapter` — numbered, has text.md and notes.md
 - `page` — unnumbered (title pages, interludes, appendices), has text.md and notes.md
 - `section` — container only, no files, just groups entries
+
+**Planning item kinds:**
+- Planning items have `id`, `name`, and `file` (relative path)
+- `subfolder` — container for nested planning items, has `items` array
 
 ---
 
@@ -67,6 +87,8 @@ book_root/
   planning/
     characters/
       <name>.md
+      <subfolder>/        # optional grouping
+        <name>.md
     settings/
       <name>.md
     reference/
