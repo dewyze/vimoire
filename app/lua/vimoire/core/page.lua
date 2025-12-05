@@ -14,7 +14,7 @@ function Page.new(data, root)
   return self
 end
 
-function Page.create(state, title, parent_items)
+function Page.create(state, name, parent_items)
   local existing_ids = Entry.collect_ids(state.manuscript.items)
   local new_id = Entry.generate_id(existing_ids)
 
@@ -24,11 +24,11 @@ function Page.create(state, title, parent_items)
   local text_file = Path:new(entry_dir:absolute(), "text.md")
   text_file:write("", "w")
 
-  local data = { id = new_id, kind = "page", title = title }
+  local data = { id = new_id, kind = "page", name = name }
   table.insert(parent_items, data)
 
   state:save()
-  return state.entries[new_id]
+  return state.items[new_id]
 end
 
 function Page:text_path()
@@ -53,7 +53,7 @@ function Page:update(state, attrs)
   end
 
   state:save()
-  return state.entries[self.id]
+  return state.items[self.id]
 end
 
 function Page:destroy(state)

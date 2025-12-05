@@ -10,18 +10,18 @@ describe("Entry", function()
 
   describe("factory", function()
     it("builds Chapter for kind=chapter", function()
-      local entry = Entry.build({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
+      local entry = Entry.build({ id = "ch1", kind = "chapter", name = "Test" }, "/root")
       assert.equals("chapter", entry.kind)
       assert.is_not_nil(entry.text_path)
     end)
 
     it("builds Page for kind=page", function()
-      local entry = Entry.build({ id = "p1", kind = "page", title = "Test" }, "/root")
+      local entry = Entry.build({ id = "p1", kind = "page", name = "Test" }, "/root")
       assert.equals("page", entry.kind)
     end)
 
     it("builds Section for kind=section", function()
-      local entry = Entry.build({ id = "s1", kind = "section", title = "Part 1", items = {} }, "/root")
+      local entry = Entry.build({ id = "s1", kind = "section", name = "Part 1", items = {} }, "/root")
       assert.equals("section", entry.kind)
       assert.is_nil(entry:text_path())
     end)
@@ -29,24 +29,24 @@ describe("Entry", function()
 
   describe("Chapter", function()
     it("holds chapter metadata", function()
-      local chapter = Chapter.new({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
+      local chapter = Chapter.new({ id = "ch1", kind = "chapter", name = "Test" }, "/root")
       assert.equals("ch1", chapter.id)
       assert.equals("chapter", chapter.kind)
-      assert.equals("Test", chapter.title)
+      assert.equals("Test", chapter.name)
     end)
 
     it("returns text_path", function()
-      local chapter = Chapter.new({ id = "abc123", kind = "chapter", title = "Test" }, "/some/root")
+      local chapter = Chapter.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root")
       assert.equals("/some/root/entries/abc123/text.md", chapter:text_path())
     end)
 
     it("returns notes_path", function()
-      local chapter = Chapter.new({ id = "abc123", kind = "chapter", title = "Test" }, "/some/root")
+      local chapter = Chapter.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root")
       assert.equals("/some/root/entries/abc123/notes.md", chapter:notes_path())
     end)
 
     it("returns display_number from chapter_index", function()
-      local chapter = Chapter.new({ id = "ch1", kind = "chapter", title = "Test" }, "/root")
+      local chapter = Chapter.new({ id = "ch1", kind = "chapter", name = "Test" }, "/root")
       chapter.chapter_index = 3
       assert.equals("3", chapter:display_number())
     end)
@@ -54,13 +54,13 @@ describe("Entry", function()
 
   describe("Page", function()
     it("holds page metadata", function()
-      local page = Page.new({ id = "p1", kind = "page", title = "Interlude" }, "/root")
+      local page = Page.new({ id = "p1", kind = "page", name = "Interlude" }, "/root")
       assert.equals("p1", page.id)
       assert.equals("page", page.kind)
     end)
 
     it("returns nil for display_number", function()
-      local page = Page.new({ id = "p1", kind = "page", title = "Test" }, "/root")
+      local page = Page.new({ id = "p1", kind = "page", name = "Test" }, "/root")
       page.chapter_index = 3
       assert.is_nil(page:display_number())
     end)
@@ -82,13 +82,13 @@ describe("Entry", function()
 
     describe("Chapter.create", function()
       it("creates a new chapter in section", function()
-        local section = state.sections["p1x3q8"]
+        local section = state.items["p1x3q8"]
         local section_data = state.manuscript.items[1]
 
         local chapter = Chapter.create(state, "New Chapter", section_data.items)
 
         assert.is_not_nil(chapter)
-        assert.equals("New Chapter", chapter.title)
+        assert.equals("New Chapter", chapter.name)
         assert.equals("chapter", chapter.kind)
 
         -- Verify file created
@@ -97,7 +97,7 @@ describe("Entry", function()
 
         -- Verify persistence
         state:load(temp_dir)
-        assert.is_not_nil(state.entries[chapter.id])
+        assert.is_not_nil(state.items[chapter.id])
       end)
 
       it("creates a new chapter at root level", function()
@@ -107,37 +107,37 @@ describe("Entry", function()
 
         -- Verify persistence
         state:load(temp_dir)
-        assert.is_not_nil(state.entries[chapter.id])
+        assert.is_not_nil(state.items[chapter.id])
       end)
     end)
 
     describe("update", function()
-      it("updates the chapter title", function()
-        local entry = state.entries["chap1a"]
-        local updated = entry:update(state, { title = "Renamed Chapter" })
+      it("updates the chapter name", function()
+        local entry = state.items["chap1a"]
+        local updated = entry:update(state, { name = "Renamed Chapter" })
 
-        assert.equals("Renamed Chapter", updated.title)
+        assert.equals("Renamed Chapter", updated.name)
 
         -- Verify persistence
         state:load(temp_dir)
-        assert.equals("Renamed Chapter", state.entries["chap1a"].title)
+        assert.equals("Renamed Chapter", state.items["chap1a"].name)
       end)
     end)
 
     describe("destroy", function()
       it("removes the chapter and its files", function()
-        local entry = state.entries["chap1a"]
+        local entry = state.items["chap1a"]
         local entry_dir = Path:new(temp_dir, "entries", "chap1a")
 
         local result = entry:destroy(state)
 
         assert.is_true(result)
-        assert.is_nil(state.entries["chap1a"])
+        assert.is_nil(state.items["chap1a"])
         assert.is_false(entry_dir:exists())
 
         -- Verify persistence
         state:load(temp_dir)
-        assert.is_nil(state.entries["chap1a"])
+        assert.is_nil(state.items["chap1a"])
       end)
     end)
   end)

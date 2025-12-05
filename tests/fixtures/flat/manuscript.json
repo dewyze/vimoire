@@ -3,9 +3,9 @@
   "title": "A Brief History of Socks",
   "description": "The untold saga of foot coverings",
   "items": [
-    {"id": "ch001", "kind": "chapter", "title": "The First Sock"},
-    {"id": "ch002", "kind": "chapter", "title": "The Missing Sock"},
-    {"id": "aftword", "kind": "page", "title": "Afterword"}
+    {"id": "ch001", "kind": "chapter", "name": "The First Sock"},
+    {"id": "ch002", "kind": "chapter", "name": "The Missing Sock"},
+    {"id": "aftword", "kind": "page", "name": "Afterword"}
   ],
   "characters": [],
   "settings": [],

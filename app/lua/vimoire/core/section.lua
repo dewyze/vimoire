@@ -14,16 +14,16 @@ function Section.new(data, root)
   return self
 end
 
-function Section.create(state, title, parent_items)
+function Section.create(state, name, parent_items)
   local existing_ids = Entry.collect_ids(state.manuscript.items)
   local new_id = Entry.generate_id(existing_ids)
 
   -- Sections have no files
-  local data = { id = new_id, kind = "section", title = title, items = {} }
+  local data = { id = new_id, kind = "section", name = name, items = {} }
   table.insert(parent_items, data)
 
   state:save()
-  return state.sections[new_id]
+  return state.items[new_id]
 end
 
 function Section:text_path()
@@ -50,7 +50,7 @@ function Section:update(state, attrs)
   end
 
   state:save()
-  return state.sections[self.id]
+  return state.items[self.id]
 end
 
 function Section:destroy(state)

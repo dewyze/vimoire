@@ -29,7 +29,7 @@ describe("Manuscript", function()
 
     local part1 = manuscript.items[1]
     assert.equals("section", part1.kind)
-    assert.equals("Part 1", part1.title)
+    assert.equals("Part 1", part1.name)
     assert.equals(4, #part1.items)
   end)
 

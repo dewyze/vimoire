@@ -23,7 +23,7 @@ local function build_manuscript_entries()
       if item_data.kind == "section" then
         process_items(item_data.items or {})
       else
-        local entry = state.entries[item_data.id]
+        local entry = state.items[item_data.id]
         if entry then
           local display_number = ""
           if entry.kind == "chapter" and entry:display_number() then
@@ -33,7 +33,7 @@ local function build_manuscript_entries()
           table.insert(entries, {
             type = entry.kind,
             display_number = display_number,
-            title = entry.title,
+            name = entry.name,
             path = entry:text_path(),
           })
         end
@@ -55,18 +55,18 @@ local function build_planning_entries(planning_key, label)
     local relative = item.file:sub(#base_path + 1)
     local subfolder = relative:match("^(.+)/[^/]+$")
 
-    local title
+    local name
     if subfolder then
       local folder_label = subfolder:sub(1, 1):upper() .. subfolder:sub(2)
-      title = folder_label .. " > " .. item.name
+      name = folder_label .. " > " .. item.name
     else
-      title = item.name
+      name = item.name
     end
 
     table.insert(entries, {
       type = planning_key,
       display_number = "",
-      title = title,
+      name = name,
       path = Path:new(root, item.file):absolute(),
     })
   end
@@ -82,17 +82,17 @@ local function build_all_entries()
   end
 
   for _, entry in ipairs(build_planning_entries("characters", "Characters")) do
-    entry.title = "Characters > " .. entry.title
+    entry.name = "Characters > " .. entry.name
     table.insert(entries, entry)
   end
 
   for _, entry in ipairs(build_planning_entries("settings", "Settings")) do
-    entry.title = "Settings > " .. entry.title
+    entry.name = "Settings > " .. entry.name
     table.insert(entries, entry)
   end
 
   for _, entry in ipairs(build_planning_entries("reference", "Reference")) do
-    entry.title = "Reference > " .. entry.title
+    entry.name = "Reference > " .. entry.name
     table.insert(entries, entry)
   end
 
@@ -113,7 +113,7 @@ local function create_picker(title, entries, opts)
   local make_display = function(entry)
     return displayer({
       { entry.value.display_number, "TelescopeResultsNumber" },
-      entry.value.title,
+      entry.value.name,
     })
   end
 
@@ -138,7 +138,7 @@ local function create_picker(title, entries, opts)
         return {
           value = entry,
           display = make_display,
-          ordinal = entry.display_number .. " " .. entry.title,
+          ordinal = entry.display_number .. " " .. entry.name,
           path = entry.path,
         }
       end,

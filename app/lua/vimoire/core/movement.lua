@@ -3,7 +3,7 @@ local M = {}
 local Entry = require("vimoire.core.entry")
 
 local function get_context(state, id)
-  local item = state.entries[id] or state.sections[id]
+  local item = state.items[id]
   if not item then return nil end
   local index = Entry.find_index(item.parent_items, id)
   return item, item.parent_items, index

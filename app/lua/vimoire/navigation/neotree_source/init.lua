@@ -35,7 +35,7 @@ local function build_item_node(item_data, entry_or_section)
   if item_data.kind == "section" then
     local node = create_node(
       item_data.id,
-      item_data.title,
+      item_data.name,
       "section",
       nil
     )
@@ -45,9 +45,9 @@ local function build_item_node(item_data, entry_or_section)
     -- Chapter or page
     local display_name
     if entry_or_section and entry_or_section:display_number() then
-      display_name = entry_or_section:display_number() .. ": " .. item_data.title
+      display_name = entry_or_section:display_number() .. ": " .. item_data.name
     else
-      display_name = item_data.title
+      display_name = item_data.name
     end
 
     local node = create_node(
@@ -63,7 +63,7 @@ end
 function build_items_nodes(items)
   local nodes = {}
   for _, item_data in ipairs(items) do
-    local entry_or_section = state.entries[item_data.id] or state.sections[item_data.id]
+    local entry_or_section = state.items[item_data.id]
     table.insert(nodes, build_item_node(item_data, entry_or_section))
   end
   return nodes
