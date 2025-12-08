@@ -1,84 +1,86 @@
-- Phase 1: Core Foundation:
-  - 1.1: Utilities & Logging:
+- Completed:
+  - Utilities & Logging:
     - [x] Implement logging utility
     - [x] Implement path helpers and root detection
-  - 1.2: Manuscript & Filesystem:
+  - Manuscript & Filesystem:
     - [x] Load manuscript.json and provide Manuscript/Entry/Section objects
     > Entry factory builds Chapter/Page/Section based on kind field
     > Nested items structure: sections contain their items directly
     > State denormalizes parent_items/parent_section for efficient tree ops
-  - 1.3: Runtime State & Healthcheck:
-    - [ ] Track ephemeral state and cache
-    - [ ] Build healthcheck for data integrity
-    > Health check should verify entries have text.md files
-  - 1.4: Plugin Bootstrap:
-    - [ ] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
-    - [ ] Load user configuration
-    - [ ] Set up command dispatcher
-    - NOTE: Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
-    - NOTE: Handle lazy.nvim auto-updates gracefully (plugin reload without restart)
-
-- Phase 2: Navigation:
-  - 2.1: Neotree Integration:
+  - Neotree Core:
     - [x] Create custom Neotree source for book structure
     - [x] Implement open (toggle folder or edit file)
     - [x] Implement refresh
     - [x] Implement K/J reordering (move_up/move_down)
-    - [ ] Implement add (context-aware)
-    - [ ] Implement rename
-    - [ ] Implement delete
-    - [ ] Implement move (section picker via vim.ui.select)
-    > Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
-    > From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help
-    > Keybindings: a=add, r=rename, d=delete, m=move, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
-    > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
-  - 2.2: File Operations:
+  - File Operations:
     - [x] Implement atomic create/rename/delete/reorder mutations
     > Chapter/Page/Section models with create/update/destroy methods
     > Movement logic in vimoire.core.movement module (tested independently of neotree)
-  - 2.3: Telescope Integration:
+  - Telescope Integration:
     - [x] Build Telescope pickers for chapters and planning
     - [x] Add filtered pickers (manuscript, characters, settings, reference)
-  - 2.4: Navigation:
-    - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
 
-- Phase 3: Authoring Surface:
-  - 3.1: Filetype & Panels:
-    - [ ] Define vimoire.markdown filetype with role-based settings
-    - [ ] Build collapsible panel system
-  - 3.2: Notes & Snippets:
-    - [ ] Implement chapter notes panel
-    - [ ] Manage snippets extraction and insertion
-  - 3.3: Comments:
-    - [ ] Build comments panel with extmark anchors
+- Phase 1: Neotree Commands:
+  - [ ] Implement add (context-aware)
+  - [ ] Implement rename
+  - [ ] Implement delete
+  - [ ] Implement move (section picker via vim.ui.select)
+  > Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
+  > From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help
+  > Keybindings: a=add, r=rename, d=delete, m=move, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
+  > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
 
-- Phase 4: Planning & Plotting:
-  - 4.1: Planning Docs:
+- Phase 2: Scaffolding:
+  - [ ] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
+  - [ ] Load user configuration
+  - [ ] Set up command dispatcher
+  - NOTE: Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
+  - NOTE: Handle lazy.nvim auto-updates gracefully (plugin reload without restart)
+
+- Phase 3: Notes & Snippets:
+  - [ ] Implement chapter notes panel
+  - [ ] Manage snippets extraction and insertion
+
+- Phase 4: Spellcheck:
+  - [ ] Configure book-local spellfile
+  - [ ] Enable conditional spellcheck by role
+
+- Phase 5: UI & Diagnostics:
+  - [ ] Add Neovide-specific enhancements
+  - [ ] Implement friendly error messages
+  - [ ] Custom start screen (replace default Neovim version screen with Vimoire dashboard or minimal writing-focused screen)
+
+- Phase 6: Configuration:
+  - [ ] Centralized keybindings system (registry pattern with mode support)
+
+- Phase 7: Review Enhancements:
+  - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
+
+- Phase 8: Comments:
+  - [ ] Build comments panel with extmark anchors
+
+- Phase 9: Planning & Plotting:
+  - 9.1: Planning Docs:
     - [ ] Discover and index planning documents
     - [ ] Allow pinning planning docs as panels
-  - 4.2: Plotting Foundation:
+  - 9.2: Plotting Foundation:
     - [ ] Build plot data model (JSON structure)
-  - 4.3: Plotting Views:
+  - 9.3: Plotting Views:
     - [ ] Build book-level grid view
     - [ ] Build chapter-level kanban view
-  - 4.4: Plotting Interactions:
+  - 9.4: Plotting Interactions:
     - [ ] Implement card operations (create/move/delete)
 
-- Phase 5: Spellcheck & Export:
-  - 5.1: Spellcheck:
-    - [ ] Configure book-local spellfile
-    - [ ] Enable conditional spellcheck by role
-  - 5.2: Export:
-    - [ ] Assemble manuscript from ordered chapters
-    - [ ] Set up Pandoc export pipeline
+- Phase 10: Export:
+  - [ ] Assemble manuscript from ordered chapters
+  - [ ] Set up Pandoc export pipeline
 
-- Phase 6: Neovide Polish:
-  - 6.1: UI & Diagnostics:
-    - [ ] Add Neovide-specific enhancements
-    - [ ] Implement friendly error messages
-    - [ ] Custom start screen (replace default Neovim version screen with Vimoire dashboard or minimal writing-focused screen)
-  - 6.2: Configuration:
-    - [ ] Centralized keybindings system (registry pattern with mode support)
+- Phase 11: Healthcheck:
+  - [ ] Track ephemeral state and cache
+  - [ ] Build healthcheck for data integrity
+  > Health check should verify entries have text.md files
 
-- Future Enhancements:
-  - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
+- Deferred:
+  - [ ] Define vimoire.markdown filetype with role-based settings
+  - [ ] Build collapsible panel system
+  - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
