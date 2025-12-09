@@ -5,7 +5,7 @@ local state = {
 
 local Manuscript = require("vimoire.core.manuscript")
 local Entry = require("vimoire.core.entry")
-local PlanningItem = require("vimoire.core.planning_item")
+local Document = require("vimoire.core.document")
 local Section = require("vimoire.core.section")
 
 local function icon(hex)
@@ -80,27 +80,27 @@ function state:rebuild()
 
   -- Planning items and sections
   local planning_section_opts = { icon = ICONS.planning_section, highlight = "VimoirePlanningSubfolder" }
-  local planning_item_opts = { icon = ICONS.planning_item, highlight = "VimoirePlanningItem" }
+  local planning_item_opts = { base = "planning", extras = false, icon = ICONS.planning_item, highlight = "VimoirePlanningItem" }
 
-  local function process_planning(items, base_path, parent_items)
+  local function process_planning(items, parent_items)
     for _, data in ipairs(items or {}) do
       if data.items then
         local section = Section.new(data, root, planning_section_opts)
         section.parent_items = parent_items
         self.items[data.id] = section
-        process_planning(data.items, base_path, data.items)
+        process_planning(data.items, data.items)
       else
-        local item = PlanningItem.new(data, base_path, planning_item_opts)
+        data.kind = data.kind or "planning_item"
+        local item = Document.new(data, root, planning_item_opts)
         item.parent_items = parent_items
         self.items[data.id] = item
       end
     end
   end
 
-  local planning_base = root .. "/planning"
-  process_planning(self.manuscript.characters, planning_base .. "/characters", self.manuscript.characters)
-  process_planning(self.manuscript.settings, planning_base .. "/settings", self.manuscript.settings)
-  process_planning(self.manuscript.reference, planning_base .. "/reference", self.manuscript.reference)
+  process_planning(self.manuscript.characters, self.manuscript.characters)
+  process_planning(self.manuscript.settings, self.manuscript.settings)
+  process_planning(self.manuscript.reference, self.manuscript.reference)
 end
 
 return state
