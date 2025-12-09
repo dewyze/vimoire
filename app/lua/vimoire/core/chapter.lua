@@ -4,13 +4,16 @@ Chapter.__index = Chapter
 local Path = require("plenary.path")
 local Entry = require("vimoire.core.entry")
 
-function Chapter.new(data, root)
+function Chapter.new(data, root, opts)
+  opts = opts or {}
   local self = setmetatable({}, Chapter)
   for k, v in pairs(data) do
     self[k] = v
   end
   self.root = root
   self.kind = "chapter"
+  self.icon = opts.icon
+  self.highlight = opts.highlight
   return self
 end
 
@@ -62,6 +65,10 @@ function Chapter:update(state, attrs)
 
   state:save()
   return state.items[self.id]
+end
+
+function Chapter:destroy_children(_state)
+  -- no children
 end
 
 function Chapter:destroy(state)

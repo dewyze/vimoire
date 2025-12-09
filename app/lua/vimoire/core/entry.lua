@@ -3,14 +3,14 @@ local Entry = {}
 local id_util = require("vimoire.util.id")
 
 -- Factory: returns the appropriate class instance
-function Entry.build(data, root)
+function Entry.build(data, root, opts)
   local kind = data.kind
   if kind == "section" then
-    return require("vimoire.core.section").new(data, root)
+    return require("vimoire.core.section").new(data, root, opts)
   elseif kind == "page" then
-    return require("vimoire.core.page").new(data, root)
+    return require("vimoire.core.page").new(data, root, opts)
   else
-    return require("vimoire.core.chapter").new(data, root)
+    return require("vimoire.core.chapter").new(data, root, opts)
   end
 end
 

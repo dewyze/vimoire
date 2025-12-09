@@ -20,17 +20,17 @@ describe("PlanningItem", function()
 
   it("holds planning item metadata", function()
     local data = { id = "char1", name = "Gerald", file = "gerald.md" }
-    local item = PlanningItem.new(data, "characters", planning_base .. "/characters")
+    local item = PlanningItem.new(data, planning_base .. "/characters")
 
     assert.equals(item.id, "char1")
     assert.equals(item.name, "Gerald")
     assert.equals(item.file, "gerald.md")
-    assert.equals(item.type, "characters")
+    assert.equals(item.kind, "planning_item")
   end)
 
   it("resolves full path", function()
     local data = { id = "char1", name = "Gerald", file = "gerald.md" }
-    local item = PlanningItem.new(data, "characters", planning_base .. "/characters")
+    local item = PlanningItem.new(data, planning_base .. "/characters")
 
     assert.equals(item:text_path(), planning_base .. "/characters/gerald.md")
   end)
@@ -44,7 +44,7 @@ describe("PlanningItem", function()
 
         assert.is_not_nil(item)
         assert.equals(item.name, "New Character")
-        assert.equals(item.type, "characters")
+        assert.equals(item.kind, "planning_item")
         assert.equals(item.file, "new_character.md")
 
         -- Check file exists
@@ -67,7 +67,7 @@ describe("PlanningItem", function()
         local base_path = planning_base .. "/settings"
         local item = PlanningItem.create_setting(state, "New Place", parent_items, base_path)
 
-        assert.equals(item.type, "settings")
+        assert.equals(item.kind, "planning_item")
         assert.equals(item.file, "new_place.md")
       end)
 
@@ -76,25 +76,25 @@ describe("PlanningItem", function()
         local base_path = planning_base .. "/reference"
         local item = PlanningItem.create_reference(state, "New Research", parent_items, base_path)
 
-        assert.equals(item.type, "reference")
+        assert.equals(item.kind, "planning_item")
         assert.equals(item.file, "new_research.md")
       end)
 
-      it("creates item in subfolder", function()
-        -- Find the bread subfolder's items array
-        local subfolder = state.items["brdref"]
-        local subfolder_data = nil
+      it("creates item in section", function()
+        -- Find the bread section's items array
+        local section_data = nil
         for _, item in ipairs(state.manuscript.reference) do
           if item.id == "brdref" then
-            subfolder_data = item
+            section_data = item
             break
           end
         end
 
-        local item = PlanningItem.create_reference(state, "New Doc", subfolder_data.items, subfolder:dir_path())
+        -- Items in sections still use the flat base_path (no nesting on disk)
+        local item = PlanningItem.create_reference(state, "New Doc", section_data.items, planning_base .. "/reference")
 
         assert.equals(item.file, "new_doc.md")
-        assert.equals(item:text_path(), subfolder:dir_path() .. "/new_doc.md")
+        assert.equals(item:text_path(), planning_base .. "/reference/new_doc.md")
       end)
     end)
 

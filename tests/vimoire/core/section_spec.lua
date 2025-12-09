@@ -76,27 +76,54 @@ describe("Section", function()
       end)
     end)
 
-    describe("destroy", function()
-      it("removes the section and promotes its entries to parent", function()
+    describe("promote_children", function()
+      it("moves children to parent and clears section items", function()
         local section = state.items["p1x3q8"]
         local child_count = #section.items
+        local original_root_count = #state.manuscript.items
+
+        section:promote_children(state)
+
+        -- Children should be promoted to root level (after section)
+        assert.equals(original_root_count + child_count, #state.manuscript.items)
+        assert.equals(0, #section.items)
+
+        -- Children should still exist
+        assert.is_not_nil(state.items["chap1a"])
+      end)
+    end)
+
+    describe("destroy_children", function()
+      it("recursively destroys all children", function()
+        local section = state.items["p1x3q8"]
+        local child_ids = {}
+        for _, child in ipairs(section.items) do
+          table.insert(child_ids, child.id)
+        end
+
+        section:destroy_children(state)
+
+        -- Children should be gone
+        for _, id in ipairs(child_ids) do
+          assert.is_nil(state.items[id])
+        end
+      end)
+    end)
+
+    describe("destroy", function()
+      it("removes the section from parent", function()
+        local section = state.items["p1x3q8"]
         local original_root_count = #state.manuscript.items
 
         local result = section:destroy(state)
 
         assert.is_true(result)
         assert.is_nil(state.items["p1x3q8"])
-
-        -- Children should be promoted to root level
-        -- Original: 4 items (2 sections + 2 unsectioned)
-        -- After: 4 - 1 section + 4 children = 7 items
-        assert.equals(original_root_count - 1 + child_count, #state.manuscript.items)
+        assert.equals(original_root_count - 1, #state.manuscript.items)
 
         -- Verify persistence
         state:load(temp_dir)
         assert.is_nil(state.items["p1x3q8"])
-        -- Children should still exist
-        assert.is_not_nil(state.items["chap1a"])
       end)
     end)
   end)

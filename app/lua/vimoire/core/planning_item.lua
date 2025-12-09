@@ -4,13 +4,16 @@ PlanningItem.__index = PlanningItem
 local Path = require("plenary.path")
 local id_util = require("vimoire.util.id")
 
-function PlanningItem.new(data, planning_type, base_path)
+function PlanningItem.new(data, base_path, opts)
+  opts = opts or {}
   local self = setmetatable({}, PlanningItem)
   self.id = data.id
   self.name = data.name
   self.file = data.file
-  self.type = planning_type
+  self.kind = "planning_item"
   self.base_path = base_path
+  self.icon = opts.icon
+  self.highlight = opts.highlight
   return self
 end
 
@@ -26,7 +29,7 @@ local function generate_filename(name)
   return name:lower():gsub("%s+", "_"):gsub("[^%w_]", "") .. ".md"
 end
 
-local function create_item(state, planning_type, name, parent_items, base_path)
+local function create_item(state, name, parent_items, base_path)
   local new_id = id_util.generate(state.items)
   local filename = generate_filename(name)
 
@@ -50,15 +53,15 @@ local function create_item(state, planning_type, name, parent_items, base_path)
 end
 
 function PlanningItem.create_character(state, name, parent_items, base_path)
-  return create_item(state, "characters", name, parent_items, base_path)
+  return create_item(state, name, parent_items, base_path)
 end
 
 function PlanningItem.create_setting(state, name, parent_items, base_path)
-  return create_item(state, "settings", name, parent_items, base_path)
+  return create_item(state, name, parent_items, base_path)
 end
 
 function PlanningItem.create_reference(state, name, parent_items, base_path)
-  return create_item(state, "reference", name, parent_items, base_path)
+  return create_item(state, name, parent_items, base_path)
 end
 
 function PlanningItem:update(state, attrs)
@@ -75,6 +78,10 @@ function PlanningItem:update(state, attrs)
   state:save()
 end
 
+function PlanningItem:destroy_children(_state)
+  -- no children
+end
+
 function PlanningItem:destroy(state)
   -- Remove file
   Path:new(self:text_path()):rm()
@@ -88,6 +95,7 @@ function PlanningItem:destroy(state)
   end
 
   state:save()
+  return true
 end
 
 return PlanningItem

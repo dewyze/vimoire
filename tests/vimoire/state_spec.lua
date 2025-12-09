@@ -80,7 +80,7 @@ describe("State", function()
     local gerald = state.items["char1"]
     assert.is_not_nil(gerald)
     assert.equals("Gerald", gerald.name)
-    assert.equals("characters", gerald.type)
+    assert.equals("planning_item", gerald.kind)
   end)
 
   describe("parent references", function()

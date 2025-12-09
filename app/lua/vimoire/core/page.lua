@@ -4,13 +4,16 @@ Page.__index = Page
 local Path = require("plenary.path")
 local Entry = require("vimoire.core.entry")
 
-function Page.new(data, root)
+function Page.new(data, root, opts)
+  opts = opts or {}
   local self = setmetatable({}, Page)
   for k, v in pairs(data) do
     self[k] = v
   end
   self.root = root
   self.kind = "page"
+  self.icon = opts.icon
+  self.highlight = opts.highlight
   return self
 end
 
@@ -58,6 +61,10 @@ function Page:update(state, attrs)
 
   state:save()
   return state.items[self.id]
+end
+
+function Page:destroy_children(_state)
+  -- no children
 end
 
 function Page:destroy(state)

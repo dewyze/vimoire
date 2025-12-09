@@ -2,6 +2,7 @@ local M = {}
 local cc = require("neo-tree.sources.common.commands")
 local vimoire_state = require("vimoire.state")
 local movement = require("vimoire.core.movement")
+local delete_options = require("vimoire.core.delete_options")
 
 -- Custom: refresh tree
 M.refresh = function(state, focus_id)
@@ -50,8 +51,23 @@ end
 
 -- Custom: delete
 M.delete = function(state)
-  -- TODO: implement
-  vim.notify("Delete not yet implemented", vim.log.levels.INFO)
+  local node = state.tree:get_node()
+  local item = vimoire_state.items[node.id]
+  if not item then return end
+
+  local options = delete_options.options_for(item)
+  if not options then return end
+
+  local labels = delete_options.labels(options, item)
+
+  vim.ui.select(labels, {
+    prompt = "Delete " .. item:display_name() .. "?",
+  }, function(choice)
+    local opt = delete_options.find_by_label(options, choice, item)
+    if opt and opt.execute(item, vimoire_state) then
+      M.refresh(state)
+    end
+  end)
 end
 
 -- Custom: move to different section

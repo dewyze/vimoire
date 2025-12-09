@@ -3,7 +3,8 @@ Section.__index = Section
 
 local Entry = require("vimoire.core.entry")
 
-function Section.new(data, root)
+function Section.new(data, root, opts)
+  opts = opts or {}
   local self = setmetatable({}, Section)
   for k, v in pairs(data) do
     self[k] = v
@@ -11,6 +12,9 @@ function Section.new(data, root)
   self.root = root
   self.kind = "section"
   self.items = self.items or {}
+  self.immutable = opts.immutable or false
+  self.icon = opts.icon
+  self.highlight = opts.highlight
   return self
 end
 
@@ -57,19 +61,37 @@ function Section:update(state, attrs)
   return state.items[self.id]
 end
 
+function Section:promote_children(state)
+  local index = Entry.find_index(self.parent_items, self.id)
+  if not index then return end
+
+  local children = self.parent_items[index].items or {}
+
+  -- Insert children after this section
+  for i, child in ipairs(children) do
+    table.insert(self.parent_items, index + i, child)
+  end
+
+  -- Clear our items
+  self.parent_items[index].items = {}
+  self.items = {}
+
+  state:save()
+end
+
+function Section:destroy_children(state)
+  for i = #self.items, 1, -1 do
+    local child = state.items[self.items[i].id]
+    child:destroy_children(state)
+    child:destroy(state)
+  end
+end
+
 function Section:destroy(state)
   local index = Entry.find_index(self.parent_items, self.id)
   if not index then return false end
 
-  local children = self.parent_items[index].items or {}
-
-  -- Remove section
   table.remove(self.parent_items, index)
-
-  -- Insert children where section was
-  for i, child in ipairs(children) do
-    table.insert(self.parent_items, index + i - 1, child)
-  end
 
   state:save()
   return true
