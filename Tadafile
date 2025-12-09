@@ -24,10 +24,9 @@
   - [x] Implement add (context-aware)
   - [x] Implement rename
   - [x] Implement delete
-  - [ ] Implement move (section picker via vim.ui.select)
   > Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
   > From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help
-  > Keybindings: a=add, r=rename, d=delete, m=move, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
+  > Keybindings: a=add, r=rename, d=delete, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
   > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
 
 - Phase 2: Scaffolding:
@@ -84,3 +83,4 @@
   - [ ] Define vimoire.markdown filetype with role-based settings
   - [ ] Build collapsible panel system
   - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
+  - [ ] Move command (direct section picker, J/K covers incremental movement)
