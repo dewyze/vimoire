@@ -94,7 +94,7 @@ describe("Document", function()
   describe("mutations", function()
     describe("create", function()
       it("creates entry document", function()
-        local doc = Document.create(state, "New Chapter", state.manuscript.items, {
+        local doc = Document.create(state, "New Chapter", state.manuscript.items, #state.manuscript.items + 1, {
           kind = "chapter",
           base = "entries",
           extras = true,
@@ -109,7 +109,7 @@ describe("Document", function()
       end)
 
       it("creates planning document", function()
-        local doc = Document.create(state, "New Character", state.manuscript.characters, {
+        local doc = Document.create(state, "New Character", state.manuscript.characters, #state.manuscript.characters + 1, {
           kind = "planning_item",
           base = "planning",
           extras = false,

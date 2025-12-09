@@ -5,36 +5,36 @@ local Document = require("vimoire.core.document")
 
 M.SECTION = {
   label = "Section",
-  execute = function(state, name, parent_items)
-    return Section.create(state, name, parent_items)
+  execute = function(state, name, parent_items, at_index)
+    return Section.create(state, name, parent_items, at_index)
   end,
 }
 
 M.CHAPTER = {
   label = "Chapter",
-  execute = function(state, name, parent_items)
-    return Document.create(state, name, parent_items, { kind = "chapter" })
+  execute = function(state, name, parent_items, at_index)
+    return Document.create(state, name, parent_items, at_index, { kind = "chapter" })
   end,
 }
 
 M.PAGE = {
   label = "Page",
-  execute = function(state, name, parent_items)
-    return Document.create(state, name, parent_items, { kind = "page" })
+  execute = function(state, name, parent_items, at_index)
+    return Document.create(state, name, parent_items, at_index, { kind = "page" })
   end,
 }
 
 M.PLANNING_ITEM = {
   label = "Item",
-  execute = function(state, name, parent_items)
-    return Document.create(state, name, parent_items, { kind = "planning_item", base = "planning" })
+  execute = function(state, name, parent_items, at_index)
+    return Document.create(state, name, parent_items, at_index, { kind = "planning_item", base = "planning" })
   end,
 }
 
 M.SUBFOLDER = {
   label = "Subfolder",
-  execute = function(state, name, parent_items)
-    return Section.create(state, name, parent_items)
+  execute = function(state, name, parent_items, at_index)
+    return Section.create(state, name, parent_items, at_index)
   end,
 }
 

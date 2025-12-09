@@ -113,6 +113,40 @@ describe("add_options", function()
     end)
   end)
 
+  describe("item:add_index()", function()
+    it("returns 1 for manuscript", function()
+      local manuscript = state.items["manuscript"]
+
+      assert.equals(1, manuscript:add_index())
+    end)
+
+    it("returns 1 for section", function()
+      local section = state.items["p1x3q8"]
+
+      assert.equals(1, section:add_index())
+    end)
+
+    it("returns index + 1 for chapter (after self)", function()
+      local chapter = state.items["chap1a"]
+      -- chap1a is at index 2 in Part 1 (after part1tp page)
+
+      assert.equals(3, chapter:add_index())
+    end)
+
+    it("returns 1 for characters folder", function()
+      local characters = state.items["characters"]
+
+      assert.equals(1, characters:add_index())
+    end)
+
+    it("returns index + 1 for planning item (after self)", function()
+      local item = state.items["char1"]
+      -- char1 is at index 1 in characters
+
+      assert.equals(2, item:add_index())
+    end)
+  end)
+
   describe("item:add_parent_items()", function()
     it("returns manuscript.items for manuscript", function()
       local manuscript = state.items["manuscript"]

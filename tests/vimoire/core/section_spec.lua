@@ -51,7 +51,7 @@ describe("Section", function()
 
     describe("create", function()
       it("creates a new section", function()
-        local section = Section.create(state, "Part 3", state.manuscript.items)
+        local section = Section.create(state, "Part 3", state.manuscript.items, #state.manuscript.items + 1)
 
         assert.is_not_nil(section)
         assert.equals("Part 3", section.name)

@@ -33,13 +33,13 @@ function Section.new(data, root, opts)
   return self
 end
 
-function Section.create(state, name, parent_items)
+function Section.create(state, name, parent_items, at_index)
   local existing_ids = collect_ids(state.manuscript.items)
   local new_id = id_util.generate(existing_ids)
 
   -- Sections have no files
   local data = { id = new_id, kind = "section", name = name, items = {} }
-  table.insert(parent_items, data)
+  table.insert(parent_items, at_index, data)
 
   state:save()
   return state.items[new_id]
@@ -67,6 +67,10 @@ end
 
 function Section:add_parent_items()
   return self.items
+end
+
+function Section:add_index()
+  return 1
 end
 
 function Section:update(state, attrs)

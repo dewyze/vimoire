@@ -3,6 +3,7 @@ Document.__index = Document
 
 local Path = require("plenary.path")
 local id_util = require("vimoire.util.id")
+local items_util = require("vimoire.util.items")
 
 function Document.new(data, root, opts)
   opts = opts or {}
@@ -48,7 +49,12 @@ function Document:add_parent_items()
   return self.parent_items
 end
 
-function Document.create(state, name, parent_items, opts)
+function Document:add_index()
+  local index = items_util.find_index(self.parent_items, self.id)
+  return index and (index + 1) or 1
+end
+
+function Document.create(state, name, parent_items, at_index, opts)
   opts = opts or {}
   local new_id = id_util.generate(state.items)
 
@@ -65,7 +71,7 @@ function Document.create(state, name, parent_items, opts)
   local text_file = Path:new(doc_dir:absolute(), "text.md")
   text_file:write("", "w")
 
-  table.insert(parent_items, data)
+  table.insert(parent_items, at_index, data)
   state:save()
 
   return state.items[new_id]

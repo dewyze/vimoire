@@ -82,7 +82,7 @@ describe("Entry", function()
       it("creates a new chapter in section", function()
         local section_data = state.manuscript.items[1]
 
-        local doc = Document.create(state, "New Chapter", section_data.items, {
+        local doc = Document.create(state, "New Chapter", section_data.items, #section_data.items + 1, {
           kind = "chapter",
           base = "entries",
           extras = true,
@@ -102,7 +102,7 @@ describe("Entry", function()
       end)
 
       it("creates a new chapter at root level", function()
-        local doc = Document.create(state, "Root Chapter", state.manuscript.items, {
+        local doc = Document.create(state, "Root Chapter", state.manuscript.items, #state.manuscript.items + 1, {
           kind = "chapter",
           base = "entries",
         })
