@@ -1,13 +1,15 @@
 local M = {}
 local cc = require("neo-tree.sources.common.components")
+local vimoire_state = require("vimoire.state")
 
 M.icon = function(config, node, state)
   local padding = config.padding or " "
+  local item = vimoire_state.items[node.id]
 
-  if node.icon then
+  if item and item.icon then
     return {
-      text = node.icon .. padding,
-      highlight = node.highlight,
+      text = item.icon .. padding,
+      highlight = item.highlight,
     }
   end
 
@@ -15,9 +17,12 @@ M.icon = function(config, node, state)
 end
 
 M.name = function(config, node, state)
+  local item = vimoire_state.items[node.id]
+  local highlight = item and item.highlight or "NeoTreeFileName"
+
   return {
     text = node.name,
-    highlight = node.highlight,
+    highlight = highlight,
   }
 end
 

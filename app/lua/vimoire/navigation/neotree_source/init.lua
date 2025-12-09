@@ -20,8 +20,6 @@ local function node_from_item(item)
     name = item:display_name(),
     type = item.kind,
     path = item:text_path(),
-    icon = item.icon,
-    highlight = item.highlight,
   }
 end
 
