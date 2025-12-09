@@ -22,8 +22,8 @@
 
 - Phase 1: Neotree Commands:
   - [ ] Implement add (context-aware)
-  - [ ] Implement rename
-  - [ ] Implement delete
+  - [x] Implement rename
+  - [x] Implement delete
   - [ ] Implement move (section picker via vim.ui.select)
   > Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
   > From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help

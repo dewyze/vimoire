@@ -3,6 +3,7 @@ local cc = require("neo-tree.sources.common.commands")
 local vimoire_state = require("vimoire.state")
 local movement = require("vimoire.core.movement")
 local delete_options = require("vimoire.core.delete_options")
+local rename = require("vimoire.core.rename")
 
 -- Custom: refresh tree
 M.refresh = function(state, focus_id)
@@ -45,8 +46,23 @@ end
 
 -- Custom: rename
 M.rename = function(state)
-  -- TODO: implement
-  vim.notify("Rename not yet implemented", vim.log.levels.INFO)
+  local node = state.tree:get_node()
+  local item = vimoire_state.items[node.id]
+  if not item then return end
+
+  vim.ui.input({
+    prompt = "Rename: ",
+    default = item.name,
+  }, function(new_name)
+    if not new_name then return end -- cancelled
+
+    local ok, err = rename.execute(item, vimoire_state, new_name)
+    if ok then
+      M.refresh(state, item.id)
+    else
+      vim.notify(err, vim.log.levels.ERROR)
+    end
+  end)
 end
 
 -- Custom: delete
