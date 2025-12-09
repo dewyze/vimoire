@@ -126,21 +126,20 @@ The plugin is organized into logical modules:
 The neotree source provides a hierarchical manuscript view with the following operations:
 
 **Manuscript (root):**
-- Add section
-- Add chapter (only if default section exists)
+- Add section, chapter, or page
 
 **Section:**
 - Rename section
 - Remove section (with safety checks)
 - Move section up/down (reorder)
-- Add chapter
+- Add chapter or page
 
-**Chapter:**
+**Chapter/Page:**
 - Open text.md
-- Rename chapter
-- Add another chapter in same section
-- Remove chapter (prompts user about snippet handling: transfer or delete)
-- Move chapter up/down (reorder)
+- Rename
+- Add sibling (chapter or page in same parent)
+- Remove (prompts user about snippet handling: transfer or delete)
+- Move up/down (reorder)
 
 **Planning Folders (Characters, Settings, Reference):**
 - Add item (character, setting, or reference)
@@ -148,6 +147,7 @@ The neotree source provides a hierarchical manuscript view with the following op
 
 **Planning Items (Character, Setting, Reference files):**
 - Open file
+- Add sibling item
 - Remove file
 - Edit frontmatter (name, age/location) directly in editor
 

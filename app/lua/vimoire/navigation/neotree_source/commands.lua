@@ -3,6 +3,7 @@ local cc = require("neo-tree.sources.common.commands")
 local vimoire_state = require("vimoire.state")
 local movement = require("vimoire.core.movement")
 local delete_options = require("vimoire.core.delete_options")
+local add_options = require("vimoire.core.add_options")
 local rename = require("vimoire.core.rename")
 
 -- Custom: refresh tree
@@ -40,8 +41,33 @@ M.show_help = cc.show_help
 
 -- Custom: add (context-aware)
 M.add = function(state)
-  -- TODO: implement
-  vim.notify("Add not yet implemented", vim.log.levels.INFO)
+  local node = state.tree:get_node()
+  local item = vimoire_state.items[node.id]
+  if not item then return end
+
+  local options = item:add_options()
+  if not options then return end
+
+  local labels = add_options.labels(options)
+
+  vim.ui.select(labels, {
+    prompt = "Add:",
+  }, function(choice)
+    local opt = add_options.find_by_label(options, choice)
+    if not opt or opt == add_options.CANCEL then return end
+
+    vim.ui.input({
+      prompt = "Name: ",
+    }, function(name)
+      if not name or name:match("^%s*$") then return end
+
+      local parent_items = item:add_parent_items()
+      local new_item = opt.execute(vimoire_state, name, parent_items)
+      if new_item then
+        M.refresh(state, new_item.id)
+      end
+    end)
+  end)
 end
 
 -- Custom: rename

@@ -15,6 +15,7 @@ function Document.new(data, root, opts)
   self.extras = opts.extras ~= false
   self.icon = opts.icon
   self.highlight = opts.highlight
+  self._add_options = opts.add_options
   return self
 end
 
@@ -37,6 +38,14 @@ function Document:display_name()
     return num .. ": " .. self.name
   end
   return self.name
+end
+
+function Document:add_options()
+  return self._add_options
+end
+
+function Document:add_parent_items()
+  return self.parent_items
 end
 
 function Document.create(state, name, parent_items, opts)

@@ -29,6 +29,7 @@ function Section.new(data, root, opts)
   self.immutable = opts.immutable or false
   self.icon = opts.icon
   self.highlight = opts.highlight
+  self._add_options = opts.add_options
   return self
 end
 
@@ -58,6 +59,14 @@ end
 
 function Section:display_name()
   return self.name
+end
+
+function Section:add_options()
+  return self._add_options
+end
+
+function Section:add_parent_items()
+  return self.items
 end
 
 function Section:update(state, attrs)

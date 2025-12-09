@@ -21,7 +21,7 @@
     - [x] Add filtered pickers (manuscript, characters, settings, reference)
 
 - Phase 1: Neotree Commands:
-  - [ ] Implement add (context-aware)
+  - [x] Implement add (context-aware)
   - [x] Implement rename
   - [x] Implement delete
   - [ ] Implement move (section picker via vim.ui.select)

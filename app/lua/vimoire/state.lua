@@ -7,6 +7,7 @@ local Manuscript = require("vimoire.core.manuscript")
 local Entry = require("vimoire.core.entry")
 local Document = require("vimoire.core.document")
 local Section = require("vimoire.core.section")
+local add_options = require("vimoire.core.add_options")
 
 local function icon(hex)
   return vim.fn.nr2char(tonumber(hex, 16))
@@ -45,18 +46,24 @@ function state:rebuild()
   local root = self.manuscript.root
   local chapter_count = 0
 
+  -- Add option sets
+  local manuscript_add = { add_options.SECTION, add_options.CHAPTER, add_options.PAGE, add_options.CANCEL }
+  local entry_add = { add_options.CHAPTER, add_options.PAGE, add_options.CANCEL }
+  local planning_item_add = { add_options.PLANNING_ITEM, add_options.CANCEL }
+  local reference_add = { add_options.PLANNING_ITEM, add_options.SUBFOLDER, add_options.CANCEL }
+
   -- Immutable sections (top-level containers)
-  self.items["manuscript"] = Section.new({ id = "manuscript", name = "Manuscript" }, root, { immutable = true, icon = ICONS.manuscript, highlight = "VimoireManuscript" })
+  self.items["manuscript"] = Section.new({ id = "manuscript", name = "Manuscript", items = self.manuscript.items }, root, { immutable = true, icon = ICONS.manuscript, highlight = "VimoireManuscript", add_options = manuscript_add })
   self.items["planning"] = Section.new({ id = "planning", name = "Planning" }, root, { immutable = true, icon = ICONS.planning, highlight = "VimoirePlanning" })
-  self.items["characters"] = Section.new({ id = "characters", name = "Characters" }, root, { immutable = true, icon = ICONS.characters, highlight = "VimoirePlanningSubfolder" })
-  self.items["settings"] = Section.new({ id = "settings", name = "Settings" }, root, { immutable = true, icon = ICONS.settings, highlight = "VimoirePlanningSubfolder" })
-  self.items["reference"] = Section.new({ id = "reference", name = "Reference" }, root, { immutable = true, icon = ICONS.reference, highlight = "VimoirePlanningSubfolder" })
+  self.items["characters"] = Section.new({ id = "characters", name = "Characters", items = self.manuscript.characters }, root, { immutable = true, icon = ICONS.characters, highlight = "VimoirePlanningSubfolder", add_options = planning_item_add })
+  self.items["settings"] = Section.new({ id = "settings", name = "Settings", items = self.manuscript.settings }, root, { immutable = true, icon = ICONS.settings, highlight = "VimoirePlanningSubfolder", add_options = planning_item_add })
+  self.items["reference"] = Section.new({ id = "reference", name = "Reference", items = self.manuscript.reference }, root, { immutable = true, icon = ICONS.reference, highlight = "VimoirePlanningSubfolder", add_options = reference_add })
 
   -- Entries and sections
   local entry_opts = {
-    section = { icon = ICONS.section, highlight = "VimoireSection" },
-    chapter = { icon = ICONS.chapter, highlight = "VimoireChapter" },
-    page = { icon = ICONS.page, highlight = "VimoirePage" },
+    section = { icon = ICONS.section, highlight = "VimoireSection", add_options = entry_add },
+    chapter = { icon = ICONS.chapter, highlight = "VimoireChapter", add_options = entry_add },
+    page = { icon = ICONS.page, highlight = "VimoirePage", add_options = entry_add },
   }
 
   local function process_items(items, parent_section)
@@ -79,8 +86,8 @@ function state:rebuild()
   process_items(self.manuscript.items or {}, nil)
 
   -- Planning items and sections
-  local planning_section_opts = { icon = ICONS.planning_section, highlight = "VimoirePlanningSubfolder" }
-  local planning_item_opts = { base = "planning", extras = false, icon = ICONS.planning_item, highlight = "VimoirePlanningItem" }
+  local planning_section_opts = { icon = ICONS.planning_section, highlight = "VimoirePlanningSubfolder", add_options = planning_item_add }
+  local planning_item_opts = { base = "planning", extras = false, icon = ICONS.planning_item, highlight = "VimoirePlanningItem", add_options = planning_item_add }
 
   local function process_planning(items, parent_items)
     for _, data in ipairs(items or {}) do
