@@ -1,11 +1,11 @@
 local M = {}
 
-local Entry = require("vimoire.core.entry")
+local items_util = require("vimoire.util.items")
 
 local function get_context(state, id)
   local item = state.items[id]
   if not item then return nil end
-  local index = Entry.find_index(item.parent_items, id)
+  local index = items_util.find_index(item.parent_items, id)
   return item, item.parent_items, index
 end
 
@@ -28,7 +28,7 @@ local function move(state, id, direction)
     end
   elseif item.parent_section then
     local section = item.parent_section
-    local section_index = Entry.find_index(section.parent_items, section.id)
+    local section_index = items_util.find_index(section.parent_items, section.id)
     local insert_pos = direction == -1 and section_index or section_index + 1
     table.insert(section.parent_items, insert_pos, table.remove(items, index))
   else

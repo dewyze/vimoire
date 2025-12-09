@@ -1,7 +1,21 @@
 local Section = {}
 Section.__index = Section
 
-local Entry = require("vimoire.core.entry")
+local id_util = require("vimoire.util.id")
+local items_util = require("vimoire.util.items")
+
+local function collect_ids(items, ids)
+  ids = ids or {}
+  for _, item in ipairs(items) do
+    if item.id then
+      table.insert(ids, item.id)
+    end
+    if item.items then
+      collect_ids(item.items, ids)
+    end
+  end
+  return ids
+end
 
 function Section.new(data, root, opts)
   opts = opts or {}
@@ -19,8 +33,8 @@ function Section.new(data, root, opts)
 end
 
 function Section.create(state, name, parent_items)
-  local existing_ids = Entry.collect_ids(state.manuscript.items)
-  local new_id = Entry.generate_id(existing_ids)
+  local existing_ids = collect_ids(state.manuscript.items)
+  local new_id = id_util.generate(existing_ids)
 
   -- Sections have no files
   local data = { id = new_id, kind = "section", name = name, items = {} }
@@ -47,7 +61,7 @@ function Section:display_name()
 end
 
 function Section:update(state, attrs)
-  local index = Entry.find_index(self.parent_items, self.id)
+  local index = items_util.find_index(self.parent_items, self.id)
   if not index then return self end
 
   for k, v in pairs(attrs) do
@@ -62,7 +76,7 @@ function Section:update(state, attrs)
 end
 
 function Section:promote_children(state)
-  local index = Entry.find_index(self.parent_items, self.id)
+  local index = items_util.find_index(self.parent_items, self.id)
   if not index then return end
 
   local children = self.parent_items[index].items or {}
@@ -88,7 +102,7 @@ function Section:destroy_children(state)
 end
 
 function Section:destroy(state)
-  local index = Entry.find_index(self.parent_items, self.id)
+  local index = items_util.find_index(self.parent_items, self.id)
   if not index then return false end
 
   table.remove(self.parent_items, index)
