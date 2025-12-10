@@ -7,12 +7,12 @@ describe("Document", function()
   local temp_dir
 
   before_each(function()
-    temp_dir = helpers.create_temp_fixture("tests/fixtures/standard")
+    temp_dir = helpers.temp_copy("tests/fixtures/standard")
     state:load(temp_dir)
   end)
 
   after_each(function()
-    helpers.cleanup_temp_fixture(temp_dir)
+    helpers.cleanup(temp_dir)
     helpers.reset_state()
   end)
 

@@ -34,3 +34,6 @@ vim.g.maplocalleader = "\\"
 
 -- Package path for tests
 package.path = package.path .. ";app/lua/?.lua;app/lua/?/init.lua"
+
+-- Add app to runtimepath so nvim_get_runtime_file() can find templates
+vim.opt.rtp:prepend("app")

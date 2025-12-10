@@ -41,7 +41,7 @@ M.defaults = {
     preview = true,
   },
   neovide = {
-    font = "Iosevka Term Slab:h15",
+    font = "Iosevka Term Slab:h16",
     linespace = 8,
     padding = {
       top = 20,

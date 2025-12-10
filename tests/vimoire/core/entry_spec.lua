@@ -69,12 +69,12 @@ describe("Entry", function()
     local fixture_path = "tests/fixtures/standard"
 
     before_each(function()
-      temp_dir = helpers.create_temp_fixture(fixture_path)
+      temp_dir = helpers.temp_copy(fixture_path)
       state:load(temp_dir)
     end)
 
     after_each(function()
-      helpers.cleanup_temp_fixture(temp_dir)
+      helpers.cleanup(temp_dir)
       helpers.reset_state()
     end)
 

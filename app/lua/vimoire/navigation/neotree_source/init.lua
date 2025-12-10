@@ -63,6 +63,12 @@ function M.navigate(state_param, path, path_to_reveal, callback)
     return
   end
 
+  -- Update source selector display name with manuscript title
+  local neotree_config = require("neo-tree.setup").config
+  if neotree_config.source_selector and neotree_config.source_selector.sources then
+    neotree_config.source_selector.sources[1].display_name = "󱓷 " .. state.manuscript.title
+  end
+
   state_param.path = path or state.manuscript.root
 
   local ok, err = pcall(function()
