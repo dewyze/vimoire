@@ -20,13 +20,17 @@ function Document.new(data, root, opts)
   return self
 end
 
+function Document:dir_path()
+  return self.root .. "/" .. self.base .. "/" .. self.id
+end
+
 function Document:text_path()
-  return self.root .. "/" .. self.base .. "/" .. self.id .. "/text.md"
+  return self:dir_path() .. "/text.md"
 end
 
 function Document:notes_path()
   if not self.extras then return nil end
-  return self.root .. "/" .. self.base .. "/" .. self.id .. "/notes.md"
+  return self:dir_path() .. "/notes.md"
 end
 
 function Document:display_number()
@@ -106,7 +110,7 @@ function Document:destroy(state)
   end
 
   -- Delete directory
-  local doc_dir = Path:new(self.root, self.base, self.id)
+  local doc_dir = Path:new(self:dir_path())
   if doc_dir:exists() then
     vim.fn.delete(doc_dir:absolute(), "rf")
   end

@@ -55,6 +55,7 @@ return {
             ["a"] = "add",
             ["r"] = "rename",
             ["d"] = "delete",
+            ["n"] = "notes",
             ["m"] = "move",
             ["J"] = "move_down",
             ["K"] = "move_up",

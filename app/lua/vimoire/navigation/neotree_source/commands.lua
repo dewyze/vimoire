@@ -5,6 +5,7 @@ local movement = require("vimoire.core.movement")
 local delete_options = require("vimoire.core.delete_options")
 local add_options = require("vimoire.core.add_options")
 local rename = require("vimoire.core.rename")
+local open = require("vimoire.navigation.open")
 
 -- Custom: refresh tree
 M.refresh = function(state, focus_id)
@@ -20,11 +21,25 @@ end
 -- Custom: open file or toggle folder
 M.open = function(state)
   local node = state.tree:get_node()
-  if node.path then
-    vim.cmd("edit " .. node.path)
+  local item = vimoire_state.items[node.id]
+  if item and item.text_path then
+    open.open_item(item)
   else
     cc.toggle_node(state)
   end
+end
+
+-- Custom: open notes
+M.notes = function(state)
+  local node = state.tree:get_node()
+  local item = vimoire_state.items[node.id]
+  if not item then return end
+
+  local notes_path = item:notes_path()
+  if not notes_path then return end
+
+  vim.cmd("edit " .. notes_path)
+  vim.b.vimoire_item_id = item.id
 end
 
 -- From common: navigation

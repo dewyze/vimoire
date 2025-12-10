@@ -12,6 +12,7 @@ local entry_display = require("telescope.pickers.entry_display")
 
 local state = require("vimoire.state")
 local vimoire_config = require("vimoire.config")
+local open = require("vimoire.navigation.open")
 
 local function build_manuscript_entries()
   local entries = {}
@@ -24,6 +25,7 @@ local function build_manuscript_entries()
         local item = state.items[item_data.id]
         if item then
           table.insert(entries, {
+            id = item.id,
             display_number = item:display_number() or "",
             name = item.name,
             path = item:text_path(),
@@ -50,6 +52,7 @@ local function build_planning_entries(planning_key, label)
         local item = state.items[item_data.id]
         local name = prefix and (prefix .. " > " .. item:display_name()) or item:display_name()
         table.insert(entries, {
+          id = item.id,
           display_number = "",
           name = name,
           path = item:text_path(),
@@ -137,8 +140,11 @@ local function create_picker(title, entries, opts)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        if selection and selection.path then
-          vim.cmd("edit " .. selection.path)
+        if selection and selection.value.id then
+          local item = state.items[selection.value.id]
+          if item then
+            open.open_item(item)
+          end
         end
       end)
       return true

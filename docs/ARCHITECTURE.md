@@ -69,6 +69,12 @@ Note: The manuscript `title` is the book title. Items use `name` for their displ
 - Planning items have `id`, `name`, and `file` (relative path)
 - `subfolder` — container for nested planning items, has `items` array
 
+**Extras (notes, snippets, comments):**
+- Documents have an `extras` flag controlling access to notes.md, snippets.json, and comments.json
+- Entries (chapters, pages) have `extras = true` — they get extras
+- Planning items have `extras = false` — just the main file
+- `Document:notes_path()` returns the path when extras enabled, nil otherwise
+
 ---
 
 ## Book Project File Structure
@@ -85,14 +91,8 @@ book_root/
       snippets.json
 
   planning/
-    characters/
-      <name>.md
-      <subfolder>/        # optional grouping
-        <name>.md
-    settings/
-      <name>.md
-    reference/
-      <topic>.md
+    <uuid>/              # planning items (characters, settings, reference)
+      text.md
 
   notes.md
   assets/
@@ -158,6 +158,7 @@ The neotree source provides a hierarchical manuscript view with the following op
 - This is a suggested structure. Adjust as needed.
 - Vimoire runs in isolated `NVIM_APPNAME=vimoire` config.
 - Plotting can be extracted to separate plugin later.
+- **Files should be opened via plugin commands** (neotree, telescope), not directly with `:e`. This allows buffer metadata to be set on open (e.g., `vim.b.vimoire_entry_id`).
 
 ---
 

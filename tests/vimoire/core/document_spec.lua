@@ -35,6 +35,15 @@ describe("Document", function()
     end)
   end)
 
+  describe("dir_path", function()
+    it("returns document directory path", function()
+      local data = { id = "abc123", name = "Test", kind = "chapter" }
+      local doc = Document.new(data, temp_dir, { base = "entries" })
+
+      assert.equals(temp_dir .. "/entries/abc123", doc:dir_path())
+    end)
+  end)
+
   describe("text_path", function()
     it("returns path for entries", function()
       local data = { id = "abc123", name = "Test", kind = "chapter" }
