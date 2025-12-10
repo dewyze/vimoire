@@ -1,0 +1,293 @@
+# Vimoire — Prose Editing Experience Spec
+
+Phase 4 implementation spec. See `ARCHITECTURE.md` for general plugin structure.
+
+---
+
+## Overview
+
+Custom filetypes and display settings that make editing long-form fiction feel like prose, not markup. Markdown is the storage/export format, but the editing experience should be clean and distraction-free.
+
+---
+
+## Filetypes
+
+| Filetype | Use | Spell | Style |
+|----------|-----|-------|-------|
+| `vimoire_text` | Chapter/page text.md | ON | Prose (concealed, centered) |
+| `vimoire_notes` | Entry notes.md | OFF | Standard markdown |
+| `vimoire_planning` | Planning docs | OFF | Standard markdown |
+
+All filetypes use the markdown treesitter parser (registered via `vim.treesitter.language.register`), but with different highlight queries and buffer settings.
+
+---
+
+## Prose Mode (`vimoire_text`)
+
+### Centering
+
+Text displays in a fixed-width column (~86 characters) centered in the window.
+
+**Implementation:** Use `no-neck-pain.nvim` — creates side buffer splits as padding. Chosen over `zen-mode.nvim` because:
+- Persistent layout (not a toggle mode)
+- Integrates with neotree (tree stays left, padding adjusts)
+- Survives buffer switching
+
+**Neotree integration:** When neotree is open, it occupies the left side. The centered prose area shrinks/adjusts. Padding is always present on the right.
+
+**Fallback:** If no-neck-pain proves problematic, `zen-mode.nvim` is the backup option.
+
+**Neovide polish (optional):**
+- `vim.opt.linespace = 2` for manuscript-feel line spacing
+- `neovide_padding_*` for GUI window margins (doesn't affect text centering, just visual polish)
+
+### Display Settings
+
+```lua
+vim.opt_local.wrap = true
+vim.opt_local.linebreak = true      -- wrap at word boundaries
+vim.opt_local.breakindent = false   -- wrapped lines flush left
+vim.opt_local.textwidth = 0         -- no hard wrapping
+vim.opt_local.spell = true
+vim.opt_local.spelllang = "en"
+vim.opt_local.spellfile = "<book_root>/spell/en.add"
+```
+
+### Navigation
+
+Remap `j`/`k` to `gj`/`gk` for visual line movement (soft-wrap aware):
+
+```lua
+vim.keymap.set('n', 'j', 'gj', { buffer = true })
+vim.keymap.set('n', 'k', 'gk', { buffer = true })
+```
+
+### Paragraph Behavior
+
+**File format:** Paragraphs separated by blank lines (markdown standard). Each paragraph starts with a literal tab (`\t`).
+
+```
+	This is paragraph one. When the text wraps it
+goes back to the margin without indent, just
+like a printed book.
+
+	Next paragraph starts indented again.
+```
+
+**Enter key:** Always inserts paragraph break (newline + blank line + tab). User presses Enter once, gets proper paragraph separation.
+
+```lua
+-- Insert mode: Enter creates paragraph break
+vim.keymap.set('i', '<CR>', '<CR><CR>\t', { buffer = true })
+```
+
+**Backspace at paragraph start:** Joins with previous paragraph (deletes tab, blank line, moves to end of previous paragraph).
+
+**New files:** Start with a tab character so first paragraph is properly indented.
+
+**Blank lines:** Required for markdown/Pandoc export. Ideally rendered with minimal visual height, but acceptable if not achievable.
+
+### Concealing
+
+Aggressive concealment — hide markdown syntax, show styled text.
+
+| Markdown | Display | Notes |
+|----------|---------|-------|
+| `_italics_` | *italics* | Underscores hidden, italic highlight |
+| `**bold**` | **bold** | Asterisks hidden, bold highlight |
+| `---` | § | Scene break rendered as section sign, centered |
+| `# Title` | Title | Hash hidden, styled as chapter header |
+
+**Scene break sigil:** Default `§` (section sign). Should be configurable.
+
+**Implementation:** Custom treesitter highlight queries with `conceal` and `@conceal` captures. Set `conceallevel=2` and `concealcursor=nc`.
+
+### Chapter Numbers
+
+Chapters can include a number tag that updates when reordered:
+
+```markdown
+# Chapter {{chapter}}: The Day I Became Sentient
+```
+
+**Behavior:**
+- `{{chapter}}` displays as the chapter's current position number
+- Updates automatically when chapters are reordered in neotree
+- Export pipeline replaces tag with actual number
+
+**Implementation options:**
+- Extmarks with virtual text replacement
+- Conceal + virtual text overlay
+- Process on save/export only (simpler)
+
+**Deferred decision:** Exact implementation TBD during spike.
+
+### Cursor Line
+
+Subtle highlight — not a bright bar, just enough to track position.
+
+```lua
+vim.opt_local.cursorline = true
+-- Plus subtle highlight group definition
+```
+
+---
+
+## Standard Markdown Mode (`vimoire_notes`, `vimoire_planning`)
+
+More traditional markdown editing for notes and planning documents.
+
+### Display Settings
+
+```lua
+vim.opt_local.wrap = true
+vim.opt_local.linebreak = true
+vim.opt_local.spell = false         -- no spellcheck
+```
+
+### Features
+
+- Headers (`#`, `##`, `###`) render at different sizes/styles
+- Links enabled (useful for reference docs)
+- Less aggressive concealing (or none)
+- Standard Enter behavior (single newline)
+
+### Tab Settings
+
+```lua
+vim.opt_local.tabstop = 4
+vim.opt_local.shiftwidth = 4
+vim.opt_local.expandtab = true      -- or false, TBD
+```
+
+---
+
+## Spellcheck
+
+**Scope:** Only `vimoire_text` buffers (chapter/page prose).
+
+**Dictionary:** Book-local at `<book_root>/spell/en.add`.
+
+**Setup:**
+```lua
+vim.opt_local.spell = true
+vim.opt_local.spelllang = "en"
+vim.opt_local.spellfile = vim.fn.expand(book_root .. "/spell/en.add")
+```
+
+**Directory creation:** `spell/` directory created on first `zg` (add word) if it doesn't exist.
+
+---
+
+## Filetype Detection
+
+Set filetype based on buffer type when opened via neotree/telescope:
+
+```lua
+-- In open_item() or via autocmd
+if buffer_type == "text" then
+  vim.bo.filetype = "vimoire_text"
+elseif buffer_type == "notes" then
+  vim.bo.filetype = "vimoire_notes"
+elseif buffer_type == "planning" then
+  vim.bo.filetype = "vimoire_planning"
+end
+```
+
+Buffer metadata (`vim.b.vimoire_item_id`, `vim.b.vimoire_buffer_type`) set on open.
+
+---
+
+## Treesitter Integration
+
+Register markdown parser for all custom filetypes:
+
+```lua
+vim.treesitter.language.register('markdown', 'vimoire_text')
+vim.treesitter.language.register('markdown', 'vimoire_notes')
+vim.treesitter.language.register('markdown', 'vimoire_planning')
+```
+
+Custom highlight queries in:
+- `queries/vimoire_text/highlights.scm` — prose concealing
+- `queries/vimoire_notes/highlights.scm` — standard markdown (or inherit)
+- `queries/vimoire_planning/highlights.scm` — standard markdown (or inherit)
+
+---
+
+## Deferred / Out of Scope
+
+**Dialogue highlighting:** Quoted text gets subtle highlight. Treesitter may not parse this natively — needs spike. Many edge cases (nested quotes, apostrophes, etc.). Implement later.
+
+**Chapter number export processing:** `{{chapter}}` tag replacement in export pipeline. Implement with export phase.
+
+**Header navigation in notes:** Treesitter-based outline/navigation for headers in notes.md. Nice to have, not Phase 4.
+
+**Images:** `![alt](path)` syntax. Leave as-is for now (not concealed, not rendered). Revisit if needed.
+
+---
+
+## Implementation Order
+
+1. **Custom filetypes** — register filetypes, treesitter parser
+2. **Prose settings** — wrap, linebreak, breakindent, j/k remaps
+3. **Centering** — integrate no-neck-pain.nvim, configure neotree interaction
+4. **Paragraph behavior** — Enter/backspace remaps, new file template
+5. **Concealing** — highlight queries for italics, bold, scene breaks
+6. **Scene break sigil** — centered `§` rendering
+7. **Spellcheck** — enable for vimoire_text, book-local dictionary
+8. **Notes/planning settings** — standard markdown behavior
+
+---
+
+## Dependencies
+
+**Required:**
+- `no-neck-pain.nvim` — text centering
+
+**Already present:**
+- `nvim-treesitter` — syntax parsing
+- `plenary.nvim` — utilities
+
+---
+
+## Configuration (User)
+
+Configurable options (via `~/.config/vimoire/config.lua`):
+
+```lua
+{
+  prose = {
+    width = 86,                    -- centered column width
+    scene_break_sigil = "§",       -- scene break display character
+    line_numbers = false,          -- show line numbers in prose
+    cursorline = true,             -- subtle cursor line highlight
+  },
+  spell = {
+    enabled = true,                -- spellcheck in prose
+    lang = "en",
+  },
+}
+```
+
+---
+
+## Research Notes
+
+### Centering Approaches Evaluated
+
+| Approach | Verdict | Notes |
+|----------|---------|-------|
+| `no-neck-pain.nvim` | ✅ Chosen | Side buffer splits, persistent, neotree-friendly |
+| `zen-mode.nvim` | Backup | Floating window, feels like a "mode" |
+| Neovide padding | Polish only | Pads window, doesn't constrain text |
+| Extmarks/virtual text | ❌ | Breaks soft-wrap |
+| statuscolumn | ❌ | Performance issues, breaks soft-wrap |
+
+### Variable-Width Fonts
+
+Not supported. Neovim/Neovide are grid-based — every cell same width. All positioning assumes monospace. Neovide font config is for choosing which monospace font, not enabling proportional text.
+
+### Blank Line Minimization
+
+Investigated options for reducing visual height of blank lines. No clean solution found. Accept as-is — the blank line is structurally required for markdown, visual spacing is acceptable.

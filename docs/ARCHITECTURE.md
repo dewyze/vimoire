@@ -114,7 +114,7 @@ The plugin is organized into logical modules:
 
 - **Core**: Manuscript loading, state management, healthcheck
 - **Navigation**: Neotree source, Telescope pickers, surface navigation
-- **Authoring**: Filetype configuration, panels system, notes/snippets/comments
+- **Authoring**: Filetype configuration, panels system, notes/snippets/comments (see `PROSE_SPEC.md`)
 - **Planning**: Planning doc discovery and management
 - **Plotting**: Plot grid and chapter kanban views
 - **Spell**: Book-local spellchecking
