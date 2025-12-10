@@ -30,14 +30,18 @@
   > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
 
 - Phase 2: Scaffolding:
-  - [ ] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
-  - [ ] Load user configuration
-  - [ ] Set up command dispatcher
+  - [x] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
+  - [x] Load user configuration
+  - [x] Set up command dispatcher
+  > Command dispatcher is neotree itself - structural operations live in the tree
+  > Buffer commands (like :VimoireNotes) for context-aware actions from editor
   - NOTE: Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
   - NOTE: Handle lazy.nvim auto-updates gracefully (plugin reload without restart)
 
 - Phase 3: Notes & Snippets:
-  - [ ] Implement chapter notes panel
+  - [x] Implement chapter notes access (neotree n key, :VimoireNotes command)
+  > Notes.md opened via neotree or buffer command, created on first access
+  > Buffer metadata (vim.b.vimoire_item_id) tracks which item a buffer belongs to
   - [ ] Manage snippets extraction and insertion
 
 - Phase 4: Spellcheck:
