@@ -14,15 +14,14 @@ Custom filetypes and display settings that make editing long-form fiction feel l
 
 | Filetype | Use | Spell | Style |
 |----------|-----|-------|-------|
-| `vimoire_text` | Chapter/page text.md | ON | Prose (concealed, centered) |
-| `vimoire_notes` | Entry notes.md | OFF | Standard markdown |
-| `vimoire_planning` | Planning docs | OFF | Standard markdown |
+| `vimoire_prose` | Chapter/page text.md | ON | Prose (concealed, centered) |
+| `vimoire_markdown` | Notes, planning docs | OFF | Standard markdown |
 
-All filetypes use the markdown treesitter parser (registered via `vim.treesitter.language.register`), but with different highlight queries and buffer settings.
+Both filetypes use the markdown treesitter parser (registered via `vim.treesitter.language.register`), but with different highlight queries and buffer settings.
 
 ---
 
-## Prose Mode (`vimoire_text`)
+## Prose Mode (`vimoire_prose`)
 
 ### Centering
 
@@ -133,7 +132,7 @@ vim.opt_local.cursorline = true
 
 ---
 
-## Standard Markdown Mode (`vimoire_notes`, `vimoire_planning`)
+## Standard Markdown Mode (`vimoire_markdown`)
 
 More traditional markdown editing for notes and planning documents.
 
@@ -164,7 +163,7 @@ vim.opt_local.expandtab = true      -- or false, TBD
 
 ## Spellcheck
 
-**Scope:** Only `vimoire_text` buffers (chapter/page prose).
+**Scope:** Only `vimoire_prose` buffers (chapter/page prose).
 
 **Dictionary:** Book-local at `<book_root>/spell/en.add`.
 
@@ -183,18 +182,9 @@ vim.opt_local.spellfile = vim.fn.expand(book_root .. "/spell/en.add")
 
 Set filetype based on buffer type when opened via neotree/telescope:
 
-```lua
--- In open_item() or via autocmd
-if buffer_type == "text" then
-  vim.bo.filetype = "vimoire_text"
-elseif buffer_type == "notes" then
-  vim.bo.filetype = "vimoire_notes"
-elseif buffer_type == "planning" then
-  vim.bo.filetype = "vimoire_planning"
-end
-```
+Set filetype when opening: `vimoire_prose` for chapter/page text.md, `vimoire_markdown` for notes and planning docs.
 
-Buffer metadata (`vim.b.vimoire_item_id`, `vim.b.vimoire_buffer_type`) set on open.
+Buffer metadata (`vim.b.vimoire_item_id`) set on open for plugin commands.
 
 ---
 
@@ -203,15 +193,13 @@ Buffer metadata (`vim.b.vimoire_item_id`, `vim.b.vimoire_buffer_type`) set on op
 Register markdown parser for all custom filetypes:
 
 ```lua
-vim.treesitter.language.register('markdown', 'vimoire_text')
-vim.treesitter.language.register('markdown', 'vimoire_notes')
-vim.treesitter.language.register('markdown', 'vimoire_planning')
+vim.treesitter.language.register('markdown', 'vimoire_prose')
+vim.treesitter.language.register('markdown', 'vimoire_markdown')
 ```
 
 Custom highlight queries in:
-- `queries/vimoire_text/highlights.scm` — prose concealing
-- `queries/vimoire_notes/highlights.scm` — standard markdown (or inherit)
-- `queries/vimoire_planning/highlights.scm` — standard markdown (or inherit)
+- `queries/vimoire_prose/highlights.scm` — prose concealing
+- `queries/vimoire_markdown/highlights.scm` — standard markdown (or inherit)
 
 ---
 
@@ -235,7 +223,7 @@ Custom highlight queries in:
 4. **Paragraph behavior** — Enter/backspace remaps, new file template
 5. **Concealing** — highlight queries for italics, bold, scene breaks
 6. **Scene break sigil** — centered `§` rendering
-7. **Spellcheck** — enable for vimoire_text, book-local dictionary
+7. **Spellcheck** — enable for vimoire_prose, book-local dictionary
 8. **Notes/planning settings** — standard markdown behavior
 
 ---

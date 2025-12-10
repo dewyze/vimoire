@@ -44,7 +44,7 @@
   > Buffer metadata (vim.b.vimoire_item_id) tracks which item a buffer belongs to
 
 - Phase 4: Prose Editing Experience (see docs/PROSE_SPEC.md):
-  - [ ] Custom filetypes (vimoire_text, vimoire_notes, vimoire_planning)
+  - [ ] Custom filetypes (vimoire_prose, vimoire_markdown)
   - [ ] Register markdown treesitter parser for custom filetypes
   - [ ] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
   - [ ] Text centering via no-neck-pain.nvim (spike first)
@@ -94,3 +94,4 @@
   - [ ] Build collapsible panel system
   - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
   - [ ] Move command (direct section picker, J/K covers incremental movement)
+  - [ ] Store last edited file per project in recents.json, auto-open on project load
