@@ -31,7 +31,7 @@
 
 - Phase 2: Scaffolding:
   - [x] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
-  - [x] Load user configuration
+  - [x] Custom start screen
   - [x] Set up command dispatcher
   > Command dispatcher is neotree itself - structural operations live in the tree
   > Buffer commands (like :VimoireNotes) for context-aware actions from editor
@@ -45,16 +45,16 @@
   - [ ] Manage snippets extraction and insertion
 
 - Phase 4: Spellcheck:
-  - [ ] Configure book-local spellfile
-  - [ ] Enable conditional spellcheck by role
+  - [ ] Configure book-local spellfile (spell/en.add)
+  - [ ] Enable spellcheck in chapter/page buffers
 
-- Phase 5: UI & Diagnostics:
+- Phase 5: User Configuration:
+  - [ ] Load user config from ~/.config/vimoire/config.lua (currently stubbed)
+  - [ ] Centralized keybindings system (registry pattern with mode support)
+
+- Phase 6: UI Polish:
   - [ ] Add Neovide-specific enhancements
   - [ ] Implement friendly error messages
-  - [ ] Custom start screen (replace default Neovim version screen with Vimoire dashboard or minimal writing-focused screen)
-
-- Phase 6: Configuration:
-  - [ ] Centralized keybindings system (registry pattern with mode support)
 
 - Phase 7: Review Enhancements:
   - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
