@@ -2,6 +2,10 @@ local DocumentBase = {}
 DocumentBase.__index = DocumentBase
 
 local Path = require("plenary.path")
+
+local FILE_DISPLAY_SUFFIXES = {
+  ["notes.md"] = " - Notes",
+}
 local id_util = require("vimoire.util.id")
 local items_util = require("vimoire.util.items")
 
@@ -37,6 +41,12 @@ function DocumentBase:display_name()
     return num .. ": " .. self.name
   end
   return self.name
+end
+
+function DocumentBase:display_name_for_path(filepath)
+  local filename = filepath:match("([^/]+)$")
+  local suffix = FILE_DISPLAY_SUFFIXES[filename] or ""
+  return self:display_name() .. suffix
 end
 
 function DocumentBase:add_parent_items()

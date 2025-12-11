@@ -16,7 +16,7 @@ function setup.on_manuscript_loaded()
       local item = state.paths[args.file]
       if item then
         vim.b.vimoire_item_id = item.id
-        vim.b.vimoire_display_name = item:display_name()
+        vim.b.vimoire_display_name = item:display_name_for_path(args.file)
       end
     end
   })
