@@ -48,7 +48,7 @@
   - [x] Register markdown treesitter parser for custom filetypes
   > Filetype detection via filename: prose.md → vimoire_prose, notes.md/text.md → vimoire_markdown
   > Entries use prose.md, planning items use text.md
-  - [ ] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
+  - [x] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
   - [ ] Paragraph behavior (Enter inserts blank line + tab, backspace joins)
   - [ ] Concealing (italics, bold, scene breaks as §)
   - [ ] Chapter number tag {{chapter}} display
