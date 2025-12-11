@@ -2,41 +2,43 @@ local setup = {}
 local state = require("vimoire.state")
 local recent = require("vimoire.core.recent")
 
-local function get_manuscript_path()
-  local args = vim.fn.argv()
-
-  if #args > 0 then
-    local arg = args[1]
-    if arg:match("manuscript%.json$") then
-      return vim.fn.fnamemodify(arg, ":h")
-    end
-    return arg
-  end
-
-  return "."
-end
-
-local function on_manuscript_loaded()
+function setup.on_manuscript_loaded()
   local neotree_source = require("vimoire.navigation.neotree_source")
   neotree_source.display_name = "󱓷 " .. state.manuscript.title
-  recent.add(state.root, state.manuscript.title)
+  recent.add(state.manuscript.root, state.manuscript.title)
+  vim.o.statusline = "%{get(b:, 'vimoire_display_name', expand('%:t'))}"
+
+  local augroup = vim.api.nvim_create_augroup("VimoireStatusline", { clear = true })
+
+  vim.api.nvim_create_autocmd("BufEnter", {
+    group = augroup,
+    callback = function(args)
+      local item = state.paths[args.file]
+      if item then
+        vim.b.vimoire_item_id = item.id
+        vim.b.vimoire_display_name = item:display_name()
+      end
+    end
+  })
+
+  vim.api.nvim_create_autocmd("FileType", {
+    group = augroup,
+    pattern = "neo-tree",
+    callback = function()
+      vim.wo.statusline = " "
+    end
+  })
+
+  vim.schedule(function()
+    require("neo-tree.command").execute({ source = "vimoire" })
+  end)
 end
 
 function setup.load_manuscript()
-  local path = get_manuscript_path()
-  state:load(path)
-
-  if state.manuscript then
-    on_manuscript_loaded()
-    return true
-  end
-
   vim.schedule(function()
     local start_screen = require("vimoire.ui.start_screen")
     start_screen.show()
   end)
-
-  return false
 end
 
 function setup.show_start_screen()

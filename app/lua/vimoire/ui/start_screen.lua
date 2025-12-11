@@ -186,12 +186,11 @@ local function move_selection(delta)
   render()
 end
 
-local function open_project(path, title)
+local function open_project(path)
   M.hide()
   local state = require("vimoire.state")
   state:load(path)
-  recent.add(path, title or state.manuscript.title)
-  vim.cmd("Neotree show")
+  require("vimoire.setup").on_manuscript_loaded()
 end
 
 local function open_selected()
@@ -200,7 +199,7 @@ local function open_selected()
   end
   local project = M.projects[M.selected_index]
   if project then
-    open_project(project.path, project.title)
+    open_project(project.path)
   end
 end
 
@@ -215,7 +214,7 @@ local function create_project_at(parent_path)
       end
       local project_path = parent_path .. "/" .. folder_name
       scaffold.create(project_path, title)
-      open_project(project_path, title)
+      open_project(project_path)
     end)
   end)
 end

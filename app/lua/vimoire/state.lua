@@ -1,6 +1,7 @@
 local state = {
   manuscript = nil,
   items = {},
+  paths = {},
 }
 
 local Manuscript = require("vimoire.core.manuscript")
@@ -28,8 +29,16 @@ function state:save()
   self:rebuild()
 end
 
+local function register_path(state, item)
+  local path = item:text_path()
+  if path then
+    state.paths[vim.fn.fnamemodify(path, ":p")] = item
+  end
+end
+
 function state:rebuild()
   self.items = {}
+  self.paths = {}
 
   if not self.manuscript then
     return
@@ -62,6 +71,7 @@ function state:rebuild()
       item.parent_section = parent_section
       apply_view(item)
       self.items[item.id] = item
+      register_path(self, item)
 
       if item.items then
         process_items(item.items, item)
@@ -86,6 +96,7 @@ function state:rebuild()
       item.parent_items = parent_items
       apply_view(item)
       self.items[data.id] = item
+      register_path(self, item)
 
       if data.items then
         process_planning(data.items, data.items)
