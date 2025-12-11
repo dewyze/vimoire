@@ -219,23 +219,23 @@ Custom highlight queries in:
 
 1. **Custom filetypes** — register filetypes, treesitter parser
 2. **Prose settings** — wrap, linebreak, breakindent, j/k remaps
-3. **Centering** — integrate no-neck-pain.nvim, configure neotree interaction
-4. **Paragraph behavior** — Enter/backspace remaps, new file template
-5. **Concealing** — highlight queries for italics, bold, scene breaks
-6. **Scene break sigil** — centered `§` rendering
-7. **Spellcheck** — enable for vimoire_prose, book-local dictionary
-8. **Notes/planning settings** — standard markdown behavior
+3. **Paragraph behavior** — Enter/backspace remaps, new file template
+4. **Concealing** — highlight queries for italics, bold, scene breaks
+5. **Scene break sigil** — centered `§` rendering
+6. **Spellcheck** — enable for vimoire_prose, book-local dictionary
+7. **Notes/planning settings** — standard markdown behavior
+8. **Centering** — DEFERRED (see Research Notes)
 
 ---
 
 ## Dependencies
 
-**Required:**
-- `no-neck-pain.nvim` — text centering
-
 **Already present:**
 - `nvim-treesitter` — syntax parsing
 - `plenary.nvim` — utilities
+
+**Deferred:**
+- `no-neck-pain.nvim` — text centering (installed but not integrated, see Research Notes)
 
 ---
 
@@ -266,11 +266,25 @@ Configurable options (via `~/.config/vimoire/config.lua`):
 
 | Approach | Verdict | Notes |
 |----------|---------|-------|
-| `no-neck-pain.nvim` | ✅ Chosen | Side buffer splits, persistent, neotree-friendly |
+| `no-neck-pain.nvim` | ⏸️ Deferred | Model mismatch with neotree (see below) |
 | `zen-mode.nvim` | Backup | Floating window, feels like a "mode" |
 | Neovide padding | Polish only | Pads window, doesn't constrain text |
 | Extmarks/virtual text | ❌ | Breaks soft-wrap |
 | statuscolumn | ❌ | Performance issues, breaks soft-wrap |
+
+### no-neck-pain.nvim Spike (2024-12)
+
+**Problem:** no-neck-pain pads the entire vim frame, not individual windows. With neotree on left, it creates: `[left-pad] [neotree] [text]` instead of desired `[neotree] [left-pad] [text] [right-pad]`.
+
+**Root cause:** The plugin's model is "center everything in vim" not "center this specific window." The NeoTree integration only tells it to subtract neotree's width from calculations, not to place padding *around* the editing area.
+
+**Options to revisit:**
+1. Right-only padding (`left.enabled = false`) — neotree acts as left margin
+2. zen-mode.nvim — different model, may handle sidebars better
+3. Custom solution — manual scratch buffer splits with precise positioning
+4. Investigate order of operations — enable no-neck-pain before neotree opens
+
+**Decision:** Defer centering. Rest of prose experience (filetypes, concealing, paragraph behavior, spellcheck) is independent.
 
 ### Variable-Width Fonts
 

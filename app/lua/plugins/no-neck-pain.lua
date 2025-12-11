@@ -13,6 +13,12 @@ return {
           fillchars = "eob: ",
         },
       },
+      integrations = {
+        NeoTree = {
+          position = "left",
+          reopen = true, -- reopen neotree when NoNeckPain is toggled
+        },
+      },
     })
   end,
 }

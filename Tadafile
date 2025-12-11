@@ -47,12 +47,12 @@
   - [ ] Custom filetypes (vimoire_prose, vimoire_markdown)
   - [ ] Register markdown treesitter parser for custom filetypes
   - [ ] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
-  - [ ] Text centering via no-neck-pain.nvim (spike first)
   - [ ] Paragraph behavior (Enter inserts blank line + tab, backspace joins)
   - [ ] Concealing (italics, bold, scene breaks as §)
   - [ ] Chapter number tag {{chapter}} display
   - [ ] Spellcheck (book-local dictionary at spell/en.add)
   - [ ] Notes/planning filetype settings (standard markdown)
+  - [ ] Text centering (DEFERRED - no-neck-pain model mismatch with neotree, see PROSE_SPEC.md)
 
 - Phase 5: User Configuration:
   - [ ] Load user config from ~/.config/vimoire/config.lua (currently stubbed)
