@@ -37,8 +37,10 @@ local function build_items_nodes(items)
       vim.notify("No item for id: " .. item_data.id, vim.log.levels.ERROR)
     else
       local node = node_from_item(item)
-      if item.items and #item.items > 0 then
-        node.children = build_items_nodes(item.items)
+      if item.items then
+        node.children = #item.items > 0 and build_items_nodes(item.items) or {}
+        node.loaded = true
+        node.expanded = true
       end
       table.insert(nodes, node)
     end
@@ -52,7 +54,9 @@ local function build_planning_items(items)
     local item = state.items[item_data.id]
     local node = node_from_item(item)
     if item_data.items then
-      node.children = build_planning_items(item_data.items)
+      node.children = #item_data.items > 0 and build_planning_items(item_data.items) or {}
+      node.loaded = true
+      node.expanded = true
     end
     table.insert(nodes, node)
   end
@@ -92,6 +96,9 @@ function M.navigate(state_param, path, path_to_reveal, callback)
     planning_node.children = planning_children
     planning_node.loaded = true
     planning_node.expanded = true
+
+    -- Set default expanded nodes before rendering (neo-tree uses this, not per-node expanded)
+    state_param.default_expanded_nodes = { "manuscript", "planning", "characters", "settings", "reference" }
 
     local renderer = require("neo-tree.ui.renderer")
     renderer.show_nodes({ manuscript_node, planning_node }, state_param)
