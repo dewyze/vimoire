@@ -63,28 +63,22 @@ vim.keymap.set('n', 'k', 'gk', { buffer = true })
 
 ### Paragraph Behavior
 
-**File format:** Paragraphs separated by blank lines (markdown standard). Each paragraph starts with a literal tab (`\t`).
+**File format:** Each paragraph on its own line, starting with a literal tab (`\t`). No blank lines between paragraphs in the source file.
 
 ```
 	This is paragraph one. When the text wraps it
 goes back to the margin without indent, just
 like a printed book.
-
 	Next paragraph starts indented again.
+	"Dialogue works the same way," she said.
+	"Each line is a new paragraph," he replied.
 ```
 
-**Enter key:** Always inserts paragraph break (newline + blank line + tab). User presses Enter once, gets proper paragraph separation.
-
-```lua
--- Insert mode: Enter creates paragraph break
-vim.keymap.set('i', '<CR>', '<CR><CR>\t', { buffer = true })
-```
-
-**Backspace at paragraph start:** Joins with previous paragraph (deletes tab, blank line, moves to end of previous paragraph).
+**Autoindent:** `autoindent` is enabled so Enter preserves the tab indent from the current line. No keymap override needed.
 
 **New files:** Start with a tab character so first paragraph is properly indented.
 
-**Blank lines:** Required for markdown/Pandoc export. Ideally rendered with minimal visual height, but acceptable if not achievable.
+**Export preprocessing:** Standard markdown requires blank lines between paragraphs. The export pipeline converts single `\n` to `\n\n` before feeding to pandoc, so `<p>` tags are generated correctly. This keeps the editor experience clean (no visible blank lines) while producing valid markdown for pandoc.
 
 ### Concealing
 
@@ -94,10 +88,12 @@ Aggressive concealment — hide markdown syntax, show styled text.
 |----------|---------|-------|
 | `_italics_` | *italics* | Underscores hidden, italic highlight |
 | `**bold**` | **bold** | Asterisks hidden, bold highlight |
-| `---` | § | Scene break rendered as section sign, centered |
+| `***` | § | Scene break rendered as section sign, centered |
 | `# Title` | Title | Hash hidden, styled as chapter header |
 
 **Scene break sigil:** Default `§` (section sign). Should be configurable.
+
+**Why `***` not `---`:** Without blank lines between paragraphs, `---` directly after text can be parsed as a setext heading underline. `***` is unambiguous.
 
 **Implementation:** Custom treesitter highlight queries with `conceal` and `@conceal` captures. Set `conceallevel=2` and `concealcursor=nc`.
 
@@ -219,7 +215,7 @@ Custom highlight queries in:
 
 1. **Custom filetypes** — register filetypes, treesitter parser
 2. **Prose settings** — wrap, linebreak, breakindent, j/k remaps
-3. **Paragraph behavior** — Enter/backspace remaps, new file template
+3. **Paragraph behavior** — autoindent, new file template
 4. **Concealing** — highlight queries for italics, bold, scene breaks
 5. **Scene break sigil** — centered `§` rendering
 6. **Spellcheck** — enable for vimoire_prose, book-local dictionary

@@ -39,5 +39,13 @@ describe("filetypes", function()
       assert.equals(1, j_map.buffer, "j should be buffer-local")
       assert.equals(1, k_map.buffer, "k should be buffer-local")
     end)
+
+    it("enables autoindent for paragraph continuation", function()
+      local buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_set_current_buf(buf)
+      vim.bo[buf].filetype = "vimoire_prose"
+
+      assert.is_true(vim.bo.autoindent)
+    end)
   end)
 end)

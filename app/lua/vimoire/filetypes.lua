@@ -7,6 +7,8 @@ local function setup_prose_buffer()
   vim.bo.textwidth = 0
   vim.wo.cursorline = true
 
+  vim.bo.autoindent = true
+
   vim.keymap.set("n", "j", "gj", { buffer = true })
   vim.keymap.set("n", "k", "gk", { buffer = true })
 end
