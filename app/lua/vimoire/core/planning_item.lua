@@ -6,6 +6,7 @@ setmetatable(PlanningItem, { __index = DocumentBase })
 
 PlanningItem.KIND = "planning_item"
 PlanningItem.BASE = "planning"
+PlanningItem.TEXT_FILENAME = "text.md"
 
 function PlanningItem.new(data, root)
   local self = DocumentBase.new(data, root)
@@ -24,6 +25,10 @@ end
 
 function PlanningItem:extras()
   return false
+end
+
+function PlanningItem:text_path()
+  return self:dir_path() .. "/" .. PlanningItem.TEXT_FILENAME
 end
 
 return PlanningItem

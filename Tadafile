@@ -44,8 +44,10 @@
   > Buffer metadata (vim.b.vimoire_item_id) tracks which item a buffer belongs to
 
 - Phase 4: Prose Editing Experience (see docs/PROSE_SPEC.md):
-  - [ ] Custom filetypes (vimoire_prose, vimoire_markdown)
-  - [ ] Register markdown treesitter parser for custom filetypes
+  - [x] Custom filetypes (vimoire_prose, vimoire_markdown)
+  - [x] Register markdown treesitter parser for custom filetypes
+  > Filetype detection via filename: prose.md → vimoire_prose, notes.md/text.md → vimoire_markdown
+  > Entries use prose.md, planning items use text.md
   - [ ] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
   - [ ] Paragraph behavior (Enter inserts blank line + tab, backspace joins)
   - [ ] Concealing (italics, bold, scene breaks as §)

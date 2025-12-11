@@ -61,8 +61,8 @@ Nested structure: `items` array contains entries (chapters, pages) and sections.
 Note: The manuscript `title` is the book title. Items use `name` for their display label.
 
 **Entry kinds:**
-- `chapter` — numbered, has text.md and notes.md
-- `page` — unnumbered (title pages, interludes, appendices), has text.md and notes.md
+- `chapter` — numbered, has prose.md and notes.md
+- `page` — unnumbered (title pages, interludes, appendices), has prose.md and notes.md
 - `section` — container only, no files, just groups entries
 
 **Planning item kinds:**
@@ -76,7 +76,7 @@ Note: The manuscript `title` is the book title. Items use `name` for their displ
 
 **Document path methods:**
 - `dir_path()` — base directory for the document (`<root>/<base>/<id>`)
-- `text_path()` — main content file (`dir_path()/text.md`)
+- `text_path()` — main content file (entries: `prose.md`, planning: `text.md`)
 - `notes_path()` — notes file, nil if extras disabled (`dir_path()/notes.md`)
 
 ---
@@ -89,7 +89,7 @@ book_root/
 
   entries/
     <uuid>/              # chapters and pages
-      text.md
+      prose.md
       notes.md
       comments.json
       snippets.json
@@ -139,7 +139,7 @@ The neotree source provides a hierarchical manuscript view with the following op
 - Add chapter or page
 
 **Chapter/Page:**
-- Open text.md
+- Open prose.md
 - Rename
 - Add sibling (chapter or page in same parent)
 - Remove (prompts user about snippet handling: transfer or delete)

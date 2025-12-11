@@ -6,6 +6,7 @@ setmetatable(Chapter, { __index = DocumentBase })
 
 Chapter.KIND = "chapter"
 Chapter.BASE = "entries"
+Chapter.TEXT_FILENAME = "prose.md"
 
 function Chapter.new(data, root)
   local self = DocumentBase.new(data, root)
@@ -24,6 +25,10 @@ end
 
 function Chapter:extras()
   return true
+end
+
+function Chapter:text_path()
+  return self:dir_path() .. "/" .. Chapter.TEXT_FILENAME
 end
 
 return Chapter

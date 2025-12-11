@@ -30,9 +30,13 @@ function state:save()
 end
 
 local function register_path(state, item)
-  local path = item:text_path()
-  if path then
-    state.paths[vim.fn.fnamemodify(path, ":p")] = item
+  local text_path = item:text_path()
+  if text_path then
+    state.paths[vim.fn.fnamemodify(text_path, ":p")] = item
+  end
+  local notes_path = item:notes_path()
+  if notes_path then
+    state.paths[vim.fn.fnamemodify(notes_path, ":p")] = item
   end
 end
 

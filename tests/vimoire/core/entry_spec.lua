@@ -38,7 +38,7 @@ describe("Entry", function()
 
     it("returns text_path", function()
       local chapter = Chapter.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root")
-      assert.equals("/some/root/entries/abc123/text.md", chapter:text_path())
+      assert.equals("/some/root/entries/abc123/prose.md", chapter:text_path())
     end)
 
     it("returns notes_path", function()

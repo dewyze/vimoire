@@ -19,7 +19,7 @@ function DocumentBase:dir_path()
 end
 
 function DocumentBase:text_path()
-  return self:dir_path() .. "/text.md"
+  error("Subclass must implement text_path()")
 end
 
 function DocumentBase:notes_path()
@@ -57,10 +57,10 @@ function DocumentBase.create_document(class, state, name, parent_items, at_index
     kind = class.KIND,
   }
 
-  -- Create directory and text.md
+  -- Create directory and text file
   local doc_dir = Path:new(state.manuscript.root, class.BASE, new_id)
   doc_dir:mkdir({ parents = true })
-  local text_file = Path:new(doc_dir:absolute(), "text.md")
+  local text_file = Path:new(doc_dir:absolute(), class.TEXT_FILENAME)
   text_file:write("", "w")
 
   table.insert(parent_items, at_index, data)

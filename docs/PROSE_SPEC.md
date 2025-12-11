@@ -14,7 +14,7 @@ Custom filetypes and display settings that make editing long-form fiction feel l
 
 | Filetype | Use | Spell | Style |
 |----------|-----|-------|-------|
-| `vimoire_prose` | Chapter/page text.md | ON | Prose (concealed, centered) |
+| `vimoire_prose` | Chapter/page prose.md | ON | Prose (concealed, centered) |
 | `vimoire_markdown` | Notes, planning docs | OFF | Standard markdown |
 
 Both filetypes use the markdown treesitter parser (registered via `vim.treesitter.language.register`), but with different highlight queries and buffer settings.
@@ -182,7 +182,7 @@ vim.opt_local.spellfile = vim.fn.expand(book_root .. "/spell/en.add")
 
 Set filetype based on buffer type when opened via neotree/telescope:
 
-Set filetype when opening: `vimoire_prose` for chapter/page text.md, `vimoire_markdown` for notes and planning docs.
+Set filetype when opening: `vimoire_prose` for chapter/page prose.md, `vimoire_markdown` for notes and planning docs.
 
 Buffer metadata (`vim.b.vimoire_item_id`) set on open for plugin commands.
 

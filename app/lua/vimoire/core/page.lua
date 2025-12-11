@@ -6,6 +6,7 @@ setmetatable(Page, { __index = DocumentBase })
 
 Page.KIND = "page"
 Page.BASE = "entries"
+Page.TEXT_FILENAME = "prose.md"
 
 function Page.new(data, root)
   local self = DocumentBase.new(data, root)
@@ -24,6 +25,10 @@ end
 
 function Page:extras()
   return true
+end
+
+function Page:text_path()
+  return self:dir_path() .. "/" .. Page.TEXT_FILENAME
 end
 
 return Page

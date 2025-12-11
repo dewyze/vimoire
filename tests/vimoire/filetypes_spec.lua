@@ -1,0 +1,11 @@
+local filetypes = require("vimoire.filetypes")
+
+describe("filetypes", function()
+  describe("setup", function()
+    it("registers filetypes and treesitter without error", function()
+      assert.has_no.errors(function()
+        filetypes.setup()
+      end)
+    end)
+  end)
+end)

@@ -7,4 +7,5 @@ if vim.g.neovide then
   require("config.neovide")
 end
 
+require("vimoire.filetypes").setup()
 require("vimoire.setup").load_manuscript()
