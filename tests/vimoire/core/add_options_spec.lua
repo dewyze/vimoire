@@ -17,11 +17,11 @@ describe("add_options", function()
     helpers.reset_state()
   end)
 
-  describe("item:add_options()", function()
+  describe("item.add_options", function()
     it("returns SECTION, CHAPTER, PAGE, CANCEL for manuscript", function()
       local manuscript = state.items["manuscript"]
 
-      local options = manuscript:add_options()
+      local options = manuscript.add_options
 
       assert.equals(4, #options)
       assert.equals(add_options.SECTION, options[1])
@@ -33,7 +33,7 @@ describe("add_options", function()
     it("returns CHAPTER, PAGE, CANCEL for section", function()
       local section = state.items["p1x3q8"]
 
-      local options = section:add_options()
+      local options = section.add_options
 
       assert.equals(3, #options)
       assert.equals(add_options.CHAPTER, options[1])
@@ -44,7 +44,7 @@ describe("add_options", function()
     it("returns CHAPTER, PAGE, CANCEL for chapter (sibling)", function()
       local chapter = state.items["chap1a"]
 
-      local options = chapter:add_options()
+      local options = chapter.add_options
 
       assert.equals(3, #options)
       assert.equals(add_options.CHAPTER, options[1])
@@ -55,7 +55,7 @@ describe("add_options", function()
     it("returns CHAPTER, PAGE, CANCEL for page (sibling)", function()
       local page = state.items["intrlud"]
 
-      local options = page:add_options()
+      local options = page.add_options
 
       assert.equals(3, #options)
       assert.equals(add_options.CHAPTER, options[1])
@@ -66,7 +66,7 @@ describe("add_options", function()
     it("returns PLANNING_ITEM, CANCEL for characters folder", function()
       local characters = state.items["characters"]
 
-      local options = characters:add_options()
+      local options = characters.add_options
 
       assert.equals(2, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
@@ -76,7 +76,7 @@ describe("add_options", function()
     it("returns PLANNING_ITEM, CANCEL for settings folder", function()
       local settings = state.items["settings"]
 
-      local options = settings:add_options()
+      local options = settings.add_options
 
       assert.equals(2, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
@@ -86,7 +86,7 @@ describe("add_options", function()
     it("returns PLANNING_ITEM, SUBFOLDER, CANCEL for reference folder", function()
       local reference = state.items["reference"]
 
-      local options = reference:add_options()
+      local options = reference.add_options
 
       assert.equals(3, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
@@ -97,7 +97,7 @@ describe("add_options", function()
     it("returns PLANNING_ITEM, CANCEL for planning item (sibling)", function()
       local item = state.items["char1"]
 
-      local options = item:add_options()
+      local options = item.add_options
 
       assert.equals(2, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
@@ -107,7 +107,7 @@ describe("add_options", function()
     it("returns nil for planning folder", function()
       local planning = state.items["planning"]
 
-      local options = planning:add_options()
+      local options = planning.add_options
 
       assert.is_nil(options)
     end)
@@ -192,7 +192,7 @@ describe("add_options", function()
   describe("labels", function()
     it("returns array of label strings", function()
       local manuscript = state.items["manuscript"]
-      local options = manuscript:add_options()
+      local options = manuscript.add_options
 
       local labels = add_options.labels(options)
 
@@ -207,7 +207,7 @@ describe("add_options", function()
   describe("find_by_label", function()
     it("finds option by its label", function()
       local manuscript = state.items["manuscript"]
-      local options = manuscript:add_options()
+      local options = manuscript.add_options
 
       local found = add_options.find_by_label(options, "Chapter")
 
@@ -216,7 +216,7 @@ describe("add_options", function()
 
     it("returns nil for unknown label", function()
       local manuscript = state.items["manuscript"]
-      local options = manuscript:add_options()
+      local options = manuscript.add_options
 
       local found = add_options.find_by_label(options, "Unknown")
 

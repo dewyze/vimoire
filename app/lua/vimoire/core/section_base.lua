@@ -1,5 +1,5 @@
-local Section = {}
-Section.__index = Section
+local SectionBase = {}
+SectionBase.__index = SectionBase
 
 local id_util = require("vimoire.util.id")
 local items_util = require("vimoire.util.items")
@@ -17,68 +17,58 @@ local function collect_ids(items, ids)
   return ids
 end
 
-function Section.new(data, root, opts)
-  opts = opts or {}
-  local self = setmetatable({}, Section)
+function SectionBase.new(data, root)
+  local self = setmetatable({}, SectionBase)
   for k, v in pairs(data) do
     self[k] = v
   end
   self.root = root
-  self.kind = "section"
+  self.kind = data.kind or "section"
   self.items = self.items or {}
-  self.immutable = opts.immutable or false
-  self.icon = opts.icon
-  self.highlight = opts.highlight
-  self._add_options = opts.add_options
   return self
 end
 
-function Section.create(state, name, parent_items, at_index)
+function SectionBase.create_section(class, state, name, parent_items, at_index)
   local existing_ids = collect_ids(state.manuscript.items)
   local new_id = id_util.generate(existing_ids)
 
-  -- Sections have no files
-  local data = { id = new_id, kind = "section", name = name, items = {} }
+  local data = { id = new_id, kind = class.KIND, name = name, items = {} }
   table.insert(parent_items, at_index, data)
 
   state:save()
   return state.items[new_id]
 end
 
-function Section:text_path()
+function SectionBase:text_path()
   return nil
 end
 
-function Section:notes_path()
+function SectionBase:notes_path()
   return nil
 end
 
-function Section:display_number()
+function SectionBase:display_number()
   return nil
 end
 
-function Section:display_name()
+function SectionBase:display_name()
   return self.name
 end
 
-function Section:add_options()
-  return self._add_options
-end
-
-function Section:add_parent_items()
+function SectionBase:add_parent_items()
   return self.items
 end
 
-function Section:add_index()
+function SectionBase:add_index()
   return 1
 end
 
-function Section:update(state, attrs)
+function SectionBase:update(state, attrs)
   local index = items_util.find_index(self.parent_items, self.id)
   if not index then return self end
 
   for k, v in pairs(attrs) do
-    if k ~= "items" then -- Don't overwrite items via update
+    if k ~= "items" then
       self[k] = v
       self.parent_items[index][k] = v
     end
@@ -88,25 +78,23 @@ function Section:update(state, attrs)
   return state.items[self.id]
 end
 
-function Section:promote_children(state)
+function SectionBase:promote_children(state)
   local index = items_util.find_index(self.parent_items, self.id)
   if not index then return end
 
   local children = self.parent_items[index].items or {}
 
-  -- Insert children after this section
   for i, child in ipairs(children) do
     table.insert(self.parent_items, index + i, child)
   end
 
-  -- Clear our items
   self.parent_items[index].items = {}
   self.items = {}
 
   state:save()
 end
 
-function Section:destroy_children(state)
+function SectionBase:destroy_children(state)
   for i = #self.items, 1, -1 do
     local child = state.items[self.items[i].id]
     child:destroy_children(state)
@@ -114,7 +102,7 @@ function Section:destroy_children(state)
   end
 end
 
-function Section:destroy(state)
+function SectionBase:destroy(state)
   local index = items_util.find_index(self.parent_items, self.id)
   if not index then return false end
 
@@ -124,4 +112,4 @@ function Section:destroy(state)
   return true
 end
 
-return Section
+return SectionBase

@@ -49,8 +49,8 @@ describe("delete_options", function()
     end)
 
     it("returns DELETE, CANCEL for empty sections", function()
-      local Section = require("vimoire.core.section")
-      local section = Section.create(state, "Empty Section", state.manuscript.items, #state.manuscript.items + 1)
+      local ManuscriptSection = require("vimoire.core.manuscript_section")
+      local section = ManuscriptSection.create(state, "Empty Section", state.manuscript.items, #state.manuscript.items + 1)
 
       local options = delete_options.options_for(section)
 

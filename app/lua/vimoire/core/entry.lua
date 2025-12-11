@@ -1,17 +1,18 @@
 local Entry = {}
 
-local Section = require("vimoire.core.section")
-local Document = require("vimoire.core.document")
+local ManuscriptSection = require("vimoire.core.manuscript_section")
+local Chapter = require("vimoire.core.chapter")
+local Page = require("vimoire.core.page")
 
-function Entry.build(data, root, opts)
-  if data.kind == "section" then
-    return Section.new(data, root, opts)
-  else
-    opts = opts or {}
-    opts.base = "entries"
-    opts.extras = true
-    return Document.new(data, root, opts)
-  end
+local KINDS = {
+  section = ManuscriptSection,
+  chapter = Chapter,
+  page = Page,
+}
+
+function Entry.build(data, root)
+  local class = KINDS[data.kind] or Page
+  return class.new(data, root)
 end
 
 return Entry

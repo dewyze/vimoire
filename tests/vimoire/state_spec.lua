@@ -83,6 +83,38 @@ describe("State", function()
     assert.equals("planning_item", gerald.kind)
   end)
 
+  describe("view attributes", function()
+    it("applies icon to manuscript folder", function()
+      state:load(fixture_path)
+      assert.is_not_nil(state.items["manuscript"].icon)
+    end)
+
+    it("applies highlight to chapter", function()
+      state:load(fixture_path)
+      local chapter = state.items["chap1a"]
+      assert.equals("VimoireChapter", chapter.highlight)
+    end)
+
+    it("applies add_options to section", function()
+      state:load(fixture_path)
+      local section = state.items["p1x3q8"]
+      assert.is_table(section.add_options)
+      assert.is_true(#section.add_options > 0)
+    end)
+
+    it("marks folders as immutable", function()
+      state:load(fixture_path)
+      assert.is_true(state.items["manuscript"].immutable)
+      assert.is_true(state.items["characters"].immutable)
+    end)
+
+    it("does not mark entries as immutable", function()
+      state:load(fixture_path)
+      local chapter = state.items["chap1a"]
+      assert.is_false(chapter.immutable)
+    end)
+  end)
+
   describe("parent references", function()
     it("sets parent_items and parent_section for entries in sections", function()
       state:load(fixture_path)

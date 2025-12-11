@@ -1,40 +1,43 @@
 local M = {}
 
-local Section = require("vimoire.core.section")
-local Document = require("vimoire.core.document")
+local ManuscriptSection = require("vimoire.core.manuscript_section")
+local PlanningSection = require("vimoire.core.planning_section")
+local Chapter = require("vimoire.core.chapter")
+local Page = require("vimoire.core.page")
+local PlanningItem = require("vimoire.core.planning_item")
 
 M.SECTION = {
   label = "Section",
   execute = function(state, name, parent_items, at_index)
-    return Section.create(state, name, parent_items, at_index)
+    return ManuscriptSection.create(state, name, parent_items, at_index)
   end,
 }
 
 M.CHAPTER = {
   label = "Chapter",
   execute = function(state, name, parent_items, at_index)
-    return Document.create(state, name, parent_items, at_index, { kind = "chapter" })
+    return Chapter.create(state, name, parent_items, at_index)
   end,
 }
 
 M.PAGE = {
   label = "Page",
   execute = function(state, name, parent_items, at_index)
-    return Document.create(state, name, parent_items, at_index, { kind = "page" })
+    return Page.create(state, name, parent_items, at_index)
   end,
 }
 
 M.PLANNING_ITEM = {
   label = "Item",
   execute = function(state, name, parent_items, at_index)
-    return Document.create(state, name, parent_items, at_index, { kind = "planning_item", base = "planning" })
+    return PlanningItem.create(state, name, parent_items, at_index)
   end,
 }
 
 M.SUBFOLDER = {
   label = "Subfolder",
   execute = function(state, name, parent_items, at_index)
-    return Section.create(state, name, parent_items, at_index)
+    return PlanningSection.create(state, name, parent_items, at_index)
   end,
 }
 

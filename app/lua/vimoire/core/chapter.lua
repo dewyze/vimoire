@@ -1,0 +1,29 @@
+local DocumentBase = require("vimoire.core.document_base")
+
+local Chapter = {}
+Chapter.__index = Chapter
+setmetatable(Chapter, { __index = DocumentBase })
+
+Chapter.KIND = "chapter"
+Chapter.BASE = "entries"
+
+function Chapter.new(data, root)
+  local self = DocumentBase.new(data, root)
+  setmetatable(self, Chapter)
+  self.kind = Chapter.KIND
+  return self
+end
+
+function Chapter.create(state, name, parent_items, at_index)
+  return DocumentBase.create_document(Chapter, state, name, parent_items, at_index)
+end
+
+function Chapter:base()
+  return Chapter.BASE
+end
+
+function Chapter:extras()
+  return true
+end
+
+return Chapter

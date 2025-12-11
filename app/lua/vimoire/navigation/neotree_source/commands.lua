@@ -22,7 +22,7 @@ end
 M.open = function(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
-  if item and item.text_path then
+  if item and item:text_path() then
     open.open_item(item)
   else
     cc.toggle_node(state)
@@ -60,7 +60,7 @@ M.add = function(state)
   local item = vimoire_state.items[node.id]
   if not item then return end
 
-  local options = item:add_options()
+  local options = item.add_options
   if not options then return end
 
   local labels = add_options.labels(options)

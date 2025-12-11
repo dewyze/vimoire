@@ -6,10 +6,16 @@ local M = {
   default_config = {
     window = {},
     renderers = {
+      manuscript = { { "indent" }, { "icon" }, { "name" } },
+      planning = { { "indent" }, { "icon" }, { "name" } },
+      characters = { { "indent" }, { "icon" }, { "name" } },
+      settings = { { "indent" }, { "icon" }, { "name" } },
+      reference = { { "indent" }, { "icon" }, { "name" } },
       section = { { "indent" }, { "icon" }, { "name" } },
       chapter = { { "indent" }, { "icon" }, { "name" } },
       page = { { "indent" }, { "icon" }, { "name" } },
       planning_item = { { "indent" }, { "icon" }, { "name" } },
+      subfolder = { { "indent" }, { "icon" }, { "name" } },
     },
   },
 }
@@ -27,11 +33,15 @@ local function build_items_nodes(items)
   local nodes = {}
   for _, item_data in ipairs(items) do
     local item = state.items[item_data.id]
-    local node = node_from_item(item)
-    if item_data.items then
-      node.children = build_items_nodes(item_data.items)
+    if not item then
+      vim.notify("No item for id: " .. item_data.id, vim.log.levels.ERROR)
+    else
+      local node = node_from_item(item)
+      if item.items and #item.items > 0 then
+        node.children = build_items_nodes(item.items)
+      end
+      table.insert(nodes, node)
     end
-    table.insert(nodes, node)
   end
   return nodes
 end
@@ -52,8 +62,7 @@ end
 local function build_planning_folder(folder_id)
   local folder = state.items[folder_id]
   local node = node_from_item(folder)
-  local items = state.manuscript[folder_id] or {}
-  node.children = build_planning_items(items)
+  node.children = build_planning_items(folder.items)
   return node
 end
 
@@ -73,14 +82,16 @@ function M.navigate(state_param, path, path_to_reveal, callback)
 
   local ok, err = pcall(function()
     local manuscript_node = node_from_item(state.items["manuscript"])
-    manuscript_node.children = build_items_nodes(state.manuscript.items or {})
+    local manuscript_children = build_items_nodes(state.manuscript.items or {})
+    manuscript_node.children = manuscript_children
+    manuscript_node.loaded = true
+    manuscript_node.expanded = true
 
     local planning_node = node_from_item(state.items["planning"])
-    planning_node.children = {
-      build_planning_folder("characters"),
-      build_planning_folder("settings"),
-      build_planning_folder("reference"),
-    }
+    local planning_children = build_items_nodes(state.items["planning"].items)
+    planning_node.children = planning_children
+    planning_node.loaded = true
+    planning_node.expanded = true
 
     local renderer = require("neo-tree.ui.renderer")
     renderer.show_nodes({ manuscript_node, planning_node }, state_param)

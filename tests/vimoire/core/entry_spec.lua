@@ -5,62 +5,64 @@ local state = require("vimoire.state")
 
 describe("Entry", function()
   local Entry = require("vimoire.core.entry")
-  local Document = require("vimoire.core.document")
+  local Chapter = require("vimoire.core.chapter")
+  local Page = require("vimoire.core.page")
+  local ManuscriptSection = require("vimoire.core.manuscript_section")
 
   describe("factory", function()
-    it("builds Document for kind=chapter", function()
+    it("builds Chapter for kind=chapter", function()
       local entry = Entry.build({ id = "ch1", kind = "chapter", name = "Test" }, "/root")
       assert.equals("chapter", entry.kind)
       assert.is_not_nil(entry.text_path)
     end)
 
-    it("builds Document for kind=page", function()
+    it("builds Page for kind=page", function()
       local entry = Entry.build({ id = "p1", kind = "page", name = "Test" }, "/root")
       assert.equals("page", entry.kind)
     end)
 
-    it("builds Section for kind=section", function()
+    it("builds ManuscriptSection for kind=section", function()
       local entry = Entry.build({ id = "s1", kind = "section", name = "Part 1", items = {} }, "/root")
       assert.equals("section", entry.kind)
       assert.is_nil(entry:text_path())
     end)
   end)
 
-  describe("Document as chapter", function()
+  describe("Chapter", function()
     it("holds chapter metadata", function()
-      local doc = Document.new({ id = "ch1", kind = "chapter", name = "Test" }, "/root", { base = "entries" })
-      assert.equals("ch1", doc.id)
-      assert.equals("chapter", doc.kind)
-      assert.equals("Test", doc.name)
+      local chapter = Chapter.new({ id = "ch1", kind = "chapter", name = "Test" }, "/root")
+      assert.equals("ch1", chapter.id)
+      assert.equals("chapter", chapter.kind)
+      assert.equals("Test", chapter.name)
     end)
 
     it("returns text_path", function()
-      local doc = Document.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root", { base = "entries" })
-      assert.equals("/some/root/entries/abc123/text.md", doc:text_path())
+      local chapter = Chapter.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root")
+      assert.equals("/some/root/entries/abc123/text.md", chapter:text_path())
     end)
 
     it("returns notes_path", function()
-      local doc = Document.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root", { base = "entries", extras = true })
-      assert.equals("/some/root/entries/abc123/notes.md", doc:notes_path())
+      local chapter = Chapter.new({ id = "abc123", kind = "chapter", name = "Test" }, "/some/root")
+      assert.equals("/some/root/entries/abc123/notes.md", chapter:notes_path())
     end)
 
     it("returns display_number from chapter_index", function()
-      local doc = Document.new({ id = "ch1", kind = "chapter", name = "Test" }, "/root", { base = "entries" })
-      doc.chapter_index = 3
-      assert.equals("3", doc:display_number())
+      local chapter = Chapter.new({ id = "ch1", kind = "chapter", name = "Test" }, "/root")
+      chapter.chapter_index = 3
+      assert.equals("3", chapter:display_number())
     end)
   end)
 
-  describe("Document as page", function()
+  describe("Page", function()
     it("holds page metadata", function()
-      local doc = Document.new({ id = "p1", kind = "page", name = "Interlude" }, "/root", { base = "entries" })
-      assert.equals("p1", doc.id)
-      assert.equals("page", doc.kind)
+      local page = Page.new({ id = "p1", kind = "page", name = "Interlude" }, "/root")
+      assert.equals("p1", page.id)
+      assert.equals("page", page.kind)
     end)
 
     it("returns nil for display_number without chapter_index", function()
-      local doc = Document.new({ id = "p1", kind = "page", name = "Test" }, "/root", { base = "entries" })
-      assert.is_nil(doc:display_number())
+      local page = Page.new({ id = "p1", kind = "page", name = "Test" }, "/root")
+      assert.is_nil(page:display_number())
     end)
   end)
 
@@ -78,40 +80,33 @@ describe("Entry", function()
       helpers.reset_state()
     end)
 
-    describe("Document.create", function()
+    describe("Chapter.create", function()
       it("creates a new chapter in section", function()
         local section_data = state.manuscript.items[1]
 
-        local doc = Document.create(state, "New Chapter", section_data.items, #section_data.items + 1, {
-          kind = "chapter",
-          base = "entries",
-          extras = true,
-        })
+        local chapter = Chapter.create(state, "New Chapter", section_data.items, #section_data.items + 1)
 
-        assert.is_not_nil(doc)
-        assert.equals("New Chapter", doc.name)
-        assert.equals("chapter", doc.kind)
+        assert.is_not_nil(chapter)
+        assert.equals("New Chapter", chapter.name)
+        assert.equals("chapter", chapter.kind)
 
         -- Verify file created
-        local entry_dir = Path:new(temp_dir, "entries", doc.id)
+        local entry_dir = Path:new(temp_dir, "entries", chapter.id)
         assert.is_true(entry_dir:exists())
 
         -- Verify persistence
         state:load(temp_dir)
-        assert.is_not_nil(state.items[doc.id])
+        assert.is_not_nil(state.items[chapter.id])
       end)
 
       it("creates a new chapter at root level", function()
-        local doc = Document.create(state, "Root Chapter", state.manuscript.items, #state.manuscript.items + 1, {
-          kind = "chapter",
-          base = "entries",
-        })
+        local chapter = Chapter.create(state, "Root Chapter", state.manuscript.items, #state.manuscript.items + 1)
 
-        assert.is_not_nil(doc)
+        assert.is_not_nil(chapter)
 
         -- Verify persistence
         state:load(temp_dir)
-        assert.is_not_nil(state.items[doc.id])
+        assert.is_not_nil(state.items[chapter.id])
       end)
     end)
 
