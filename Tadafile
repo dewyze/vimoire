@@ -55,7 +55,7 @@
   > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
   > Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
   > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
-  - [ ] Spellcheck (book-local dictionary at spell/en.add)
+  - [x] Spellcheck (book-local dictionary at spell/en.add)
   - [ ] Notes/planning filetype settings (standard markdown via treesitter)
   - [ ] Color themes (app-level, user-selectable)
   > Theme definitions in app/themes.json (dark, light, typewriter, etc.)
