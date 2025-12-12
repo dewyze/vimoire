@@ -229,9 +229,9 @@ vim.opt_local.spell = false         -- no spellcheck
 ### Tab Settings
 
 ```lua
-vim.opt_local.tabstop = 4
-vim.opt_local.shiftwidth = 4
-vim.opt_local.expandtab = true      -- or false, TBD
+vim.opt_local.tabstop = 2
+vim.opt_local.shiftwidth = 2
+vim.opt_local.expandtab = true
 ```
 
 ---

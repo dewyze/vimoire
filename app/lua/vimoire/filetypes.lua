@@ -2,6 +2,21 @@ local M = {}
 
 local state = require("vimoire.state")
 
+local function setup_markdown_buffer()
+  vim.wo.wrap = true
+  vim.wo.linebreak = true
+  vim.wo.cursorline = true
+
+  vim.wo.spell = false
+
+  vim.bo.tabstop = 2
+  vim.bo.shiftwidth = 2
+  vim.bo.expandtab = true
+
+  vim.keymap.set("n", "j", "gj", { buffer = true })
+  vim.keymap.set("n", "k", "gk", { buffer = true })
+end
+
 local function setup_prose_buffer()
   vim.wo.wrap = true
   vim.wo.linebreak = true
@@ -33,6 +48,11 @@ function M.setup()
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "vimoire_prose",
     callback = setup_prose_buffer,
+  })
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "vimoire_markdown",
+    callback = setup_markdown_buffer,
   })
 end
 
