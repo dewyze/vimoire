@@ -1,5 +1,6 @@
 local Manuscript = {}
 local Path = require("plenary.path")
+local json = require("vendor.dkjson")
 
 function Manuscript.load(root_path)
   local manuscript_file = Path:new(root_path, "manuscript.json")
@@ -29,6 +30,9 @@ function Manuscript.new(data)
   return self
 end
 
+-- Key order for consistent JSON output (no more random diffs)
+local keyorder = { "id", "title", "description", "created_at", "updated_at", "name", "kind", "items", "characters", "settings", "reference" }
+
 function Manuscript:save()
   if not self.root then
     return false, "No root path set. Cannot save."
@@ -44,10 +48,10 @@ function Manuscript:save()
     end
   end
 
-  local json = vim.fn.json_encode(data)
+  local encoded = json.encode(data, { keyorder = keyorder })
 
   local ok, err = pcall(function()
-    manuscript_file:write(json, "w")
+    manuscript_file:write(encoded, "w")
   end)
 
   if not ok then
