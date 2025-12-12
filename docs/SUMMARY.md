@@ -28,11 +28,6 @@ See `ARCHITECTURE.md` for book.yml structure, project filesystem layout, and plu
 
 **Neovide Polish** — Optional variable-width fonts, line spacing, smooth animations for a manuscript feel on Neovide.
 
-## Building Order
+## Progress
 
-1. Core (directory structure, manuscript.json parsing, healthcheck)
-2. Navigation (Neotree, Telescope, file ops)
-3. Authoring (filetype, panels)
-4. Planning & plotting
-5. Spellcheck & export
-6. Neovide polish
+See `Tadafile` for detailed phase breakdown and progress tracking.

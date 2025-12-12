@@ -51,10 +51,11 @@
   - [x] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
   - [x] Paragraph behavior (autoindent enabled, no blank lines between paragraphs)
   > Scene breaks use *** not --- (avoids setext heading ambiguity)
-  - [ ] Concealing (italics, bold, scene breaks as §)
-  - [ ] Chapter number tag {{chapter}} display
+  - [ ] Syntax highlighting (visible delimiters, styled content - no concealing)
+  > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
+  > Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
   - [ ] Spellcheck (book-local dictionary at spell/en.add)
-  - [ ] Notes/planning filetype settings (standard markdown)
+  - [ ] Notes/planning filetype settings (standard markdown via treesitter)
   - [ ] Text centering (DEFERRED - no-neck-pain model mismatch with neotree, see PROSE_SPEC.md)
 
 - Phase 5: User Configuration:
@@ -100,3 +101,5 @@
   - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
   - [ ] Move command (direct section picker, J/K covers incremental movement)
   - [ ] Store last edited file per project in recents.json, auto-open on project load
+  - [ ] Help/docs system (prose syntax, keybindings, commands — :VimoireHelp + markdown in repo)
+  - [ ] Image management (assets folder, insertion workflow, reference tracking)

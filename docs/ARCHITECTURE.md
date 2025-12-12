@@ -108,23 +108,6 @@ Note: Sections exist only in manuscript.json as containers—no files on disk.
 
 ---
 
-## Plugin Architecture
-
-The plugin is organized into logical modules:
-
-- **Core**: Manuscript loading, state management, healthcheck
-- **Navigation**: Neotree source, Telescope pickers, surface navigation
-- **Authoring**: Filetype configuration, panels system, notes/snippets/comments (see `PROSE_SPEC.md`)
-- **Planning**: Planning doc discovery and management
-- **Plotting**: Plot grid and chapter kanban views
-- **Spell**: Book-local spellchecking
-- **Export**: Manuscript assembly and Pandoc pipeline
-- **QoL**: Diagnostics and Neovide-specific enhancements
-
----
-
----
-
 ## Neotree Navigation Operations
 
 The neotree source provides a hierarchical manuscript view with the following operations:

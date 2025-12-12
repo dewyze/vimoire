@@ -14,10 +14,10 @@ Custom filetypes and display settings that make editing long-form fiction feel l
 
 | Filetype | Use | Spell | Style |
 |----------|-----|-------|-------|
-| `vimoire_prose` | Chapter/page prose.md | ON | Prose (concealed, centered) |
+| `vimoire_prose` | Chapter/page prose.md | ON | Prose (styled, visible syntax) |
 | `vimoire_markdown` | Notes, planning docs | OFF | Standard markdown |
 
-Both filetypes use the markdown treesitter parser (registered via `vim.treesitter.language.register`), but with different highlight queries and buffer settings.
+`vimoire_prose` uses a custom vim syntax file (not treesitter) because standard markdown treats tab-indented lines as code blocks. `vimoire_markdown` uses the treesitter markdown parser.
 
 ---
 
@@ -80,44 +80,71 @@ like a printed book.
 
 **Export preprocessing:** Standard markdown requires blank lines between paragraphs. The export pipeline converts single `\n` to `\n\n` before feeding to pandoc, so `<p>` tags are generated correctly. This keeps the editor experience clean (no visible blank lines) while producing valid markdown for pandoc.
 
-### Concealing
+### Syntax Styling
 
-Aggressive concealment — hide markdown syntax, show styled text.
+Markdown syntax remains visible; styled text gets formatting applied. No concealing (hide/reveal as cursor moves was deemed more distracting than helpful).
 
 | Markdown | Display | Notes |
 |----------|---------|-------|
-| `_italics_` | *italics* | Underscores hidden, italic highlight |
-| `**bold**` | **bold** | Asterisks hidden, bold highlight |
-| `***` | § | Scene break rendered as section sign, centered |
-| `# Title` | Title | Hash hidden, styled as chapter header |
+| `*text*` | `*text*` (italic) | Asterisks visible, content styled italic |
+| `**text**` | `**text**` (bold) | Asterisks visible, content styled bold |
+| `***text***` | `***text***` (bold+italic) | Both styles applied |
+| `_text_` | `_text_` (underline) | Underscores visible, content underlined |
+| `***` | `***` (styled) | Scene break, distinct highlight |
+| `# Title` | `# Title` (styled) | Hash visible, header styling applied |
+| `##` through `######` | Styled | All 6 header levels supported |
+| `::: name` | `::: name` (dimmed) | Fenced div markers, subtle styling |
 
-**Scene break sigil:** Default `§` (section sign). Should be configurable.
+**Why `***` not `---` for scene breaks:** Without blank lines between paragraphs, `---` directly after text can be parsed as a setext heading underline. `***` is unambiguous.
 
-**Why `***` not `---`:** Without blank lines between paragraphs, `---` directly after text can be parsed as a setext heading underline. `***` is unambiguous.
+**Implementation:** Custom vim syntax file. See "Syntax Highlighting Strategy" section for details.
 
-**Implementation:** Vim syntax file with `concealends` for inline formatting and `conceal cchar=` for replacements. See "Syntax Highlighting Strategy" section for details.
+### Vimoire Metadata Tags (`{{...}}`)
 
-### Chapter Numbers (Inline Replacement)
+The `{{...}}` syntax is reserved for metadata that requires vimoire context. Pandoc doesn't understand these — vimoire's preprocessor handles them before export.
 
-Chapters can include a number tag that updates when reordered:
+| Tag | Purpose | Export behavior |
+|-----|---------|-----------------|
+| `{{chapter}}` | Chapter position number | Replaced with number |
+| `{{mark}}` | Navigation point | Stripped |
+| `{{todo}}` | Action item | Stripped |
+| `{{todo:description}}` | Action item with text | Stripped |
+
+**Chapter numbers:**
 
 ```markdown
 # Chapter {{chapter}}: The Day I Became Sentient
 ```
 
-**Behavior:**
-- `{{chapter}}` displays as the chapter's current position number
-- Updates automatically when chapters are reordered in neotree
-- Export pipeline replaces tag with actual number
+- Displays current chapter position
+- Updates when chapters reordered in neotree
+- Export replaces with actual number
 
-**Syntax note:** `{{...}}` is reserved for inline replacements that require vimoire/manuscript context. Pandoc doesn't know chapter order — vimoire's preprocessor handles these before export.
+**Marks:**
 
-**Implementation options:**
-- Extmarks with virtual text replacement
-- Conceal + virtual text overlay
-- Process on save/export only (simpler)
+```markdown
+	The hero arrived at the castle gates.
+{{mark}}
+	"Who goes there?" called the guard.
+```
 
-**Deferred decision:** Exact implementation TBD during spike.
+- Navigation points for jumping within/between chapters
+- Visible in editor, stripped on export
+- Future: telescope picker for marks, named marks (`{{mark:name}}`)
+
+**Todos:**
+
+```markdown
+	She reached into her pocket and pulled out {{todo:what does she pull out?}}
+{{todo}}
+	The next scene needs work.
+```
+
+- Action items visible in editor
+- Future: todo navigator/panel to list all todos across manuscript
+- Stripped on export
+
+**In-editor display:** Metadata tags get distinct styling (dimmed or highlighted) to stand out from prose without being distracting.
 
 ### Styled Blocks (Pandoc Fenced Divs)
 
@@ -262,89 +289,27 @@ We still need markdown's inline formatting: `*italics*`, `**bold**`, block quote
 
 ### Chosen Solution: Vim Syntax
 
-Use a custom vim syntax file for `vimoire_prose`. No treesitter parser—tabs are just tabs.
+Use a custom vim syntax file (`syntax/vimoire_prose.vim`). No treesitter parser—tabs are just tabs.
 
-**What we need:**
-- Inline formatting: `*italic*`, `**bold**`, `_underline_`
-- Block quotes: `>` for letters, excerpts
-- Scene breaks: `***`
-- Fenced divs: `::: name` blocks for styled sections
-- Escape sequences: `\*` for literal asterisks
+**What to highlight:**
+- Inline formatting: `*italic*`, `**bold**`, `_underline_`, `***bold italic***`
+- Headers: `#` through `######` (all 6 levels)
+- Block quotes: `>` lines
+- Scene breaks: `***` on its own line
+- Fenced divs: `::: name` opening/closing markers
+- Metadata tags: `{{chapter}}`, `{{mark}}`, `{{todo}}`, `{{todo:text}}`
 
-**Implementation:** `syntax/vimoire_prose.vim`
-
-```vim
-" Italic: *text* (single asterisks)
-syn region vimoireItalic matchgroup=vimoireDelimiter start=/\\\@<!\*\ze[^*]/ end=/\\\@<!\*/ concealends contains=@Spell
-hi def vimoireItalic cterm=italic gui=italic
-
-" Bold: **text**
-syn region vimoireBold matchgroup=vimoireDelimiter start=/\*\*/ end=/\*\*/ concealends contains=@Spell
-hi def vimoireBold cterm=bold gui=bold
-
-" Bold italic: ***text***
-syn region vimoireBoldItalic matchgroup=vimoireDelimiter start=/\*\*\*/ end=/\*\*\*/ concealends contains=@Spell
-hi def vimoireBoldItalic cterm=bold,italic gui=bold,italic
-
-" Underline: _text_ (convention, not standard markdown)
-syn region vimoireUnderline matchgroup=vimoireDelimiter start=/\\\@<!_\ze[^_]/ end=/\\\@<!_/ concealends contains=@Spell
-hi def vimoireUnderline cterm=underline gui=underline
-
-" Scene break: *** on its own line → § (concealed)
-syn match vimoireSceneBreak /^\*\*\*$/ conceal cchar=§
-hi def link vimoireSceneBreak Special
-
-" Block quote: lines starting with >
-syn region vimoireQuote start=/^>/ end=/$/ contains=vimoireItalic,vimoireBold,@Spell
-hi def link vimoireQuote Comment
-
-" Chapter header: # Title (conceal the #)
-syn match vimoireHeaderMark /^#\s\+/ conceal
-syn match vimoireHeader /^#\s\+.*$/ contains=vimoireHeaderMark
-hi def vimoireHeader cterm=bold gui=bold
-
-" Escaped characters: \* \_ etc.
-syn match vimoireEscape /\\[*_\\]/ conceal cchar=
-
-" Fenced divs: ::: name ... :::
-syn match vimoireFence /^:::\s*\w*$/
-hi def link vimoireFence Comment
-
-" Delimiter highlighting (hidden via conceal)
-hi def link vimoireDelimiter Conceal
-```
-
-**Buffer settings:** `ftplugin/vimoire_prose.vim`
-
-```vim
-setlocal conceallevel=2
-setlocal concealcursor=nc
-```
+No concealing — all syntax remains visible, only styling applied.
 
 ### Edge Cases
 
 | Case | Handling |
 |------|----------|
 | Nested `***bold italic***` | Matched before `**` and `*` (order matters in syntax file) |
-| Escaped `\*not italic\*` | Explicit match with conceal, shows literal character |
 | Multi-line block quotes | `syn region` handles continuation; or use line-by-line matching |
 | Fenced divs `::: letter` | Fence lines highlighted as Comment, content inside gets normal prose highlighting |
 | Apostrophes in contractions | `_` underline requires non-`_` after opening, avoids `don_t` false match |
-
-### Why Not Treesitter
-
-Treesitter is a code parser repurposed for markdown. It's excellent at that job, but we're not writing markdown—we're writing prose that uses some markdown inline syntax.
-
-**We lose:**
-- Treesitter-based folding (not needed for prose)
-- Injected language highlighting (no code blocks anyway)
-- Treesitter text objects (can implement with vim patterns if needed)
-
-**We gain:**
-- Complete control over what's highlighted
-- No fighting the parser about what tabs mean
-- Simpler debugging (it's just regex, not grammar rules)
-- Concealing that works everywhere
+| `{{todo:text with spaces}}` | Regex matches everything up to `}}` |
 
 ### vimoire_markdown Filetype
 
@@ -370,7 +335,9 @@ Vimoire's export pipeline preprocesses prose before pandoc processes it:
 | Task | Handled by | Notes |
 |------|------------|-------|
 | `\n` → `\n\n` | Vimoire | Our single-newline paragraphs need blank lines for pandoc |
-| `{{chapter}}` | Vimoire | Requires manuscript state to know chapter position |
+| `{{chapter}}` | Vimoire | Replaced with chapter position number |
+| `{{mark}}` | Vimoire | Stripped (navigation only, not in output) |
+| `{{todo}}`, `{{todo:text}}` | Vimoire | Stripped (author notes, not in output) |
 | `::: letter` divs | Pandoc | Native support, no preprocessing needed |
 | `*italic*`, `**bold**` | Pandoc | Native markdown, no preprocessing needed |
 
@@ -383,42 +350,25 @@ Vimoire's export pipeline preprocesses prose before pandoc processes it:
 
 ## Deferred / Out of Scope
 
-**Dialogue highlighting:** Quoted text gets subtle highlight. Treesitter may not parse this natively — needs spike. Many edge cases (nested quotes, apostrophes, etc.). Implement later.
+**Named marks:** `{{mark:name}}` for labeled navigation points. Basic `{{mark}}` first, named variant later.
 
-**Chapter number export processing:** `{{chapter}}` tag replacement in export pipeline. Implement with export phase.
+**Mark navigator:** Telescope picker to jump between marks across manuscript.
 
-**Header navigation in notes:** Treesitter-based outline/navigation for headers in notes.md. Nice to have, not Phase 4.
+**Todo navigator:** Panel or picker showing all `{{todo}}` items across manuscript.
 
-**Images:** `![alt](path)` syntax. Leave as-is for now (not concealed, not rendered). Revisit if needed.
+**`{{chapter}}` live display:** Show chapter number in editor (extmarks/virtual text). For now, just export replacement.
 
-**Inline styled spans:** Mid-sentence styling like `<span class="emphasis">word</span>`. Fenced divs are block-level only. Options: raw HTML pass-through, or custom `{{name}}...{{/name}}` syntax. Revisit if needed.
+**`{{date:Day 3}}`:** Timeline/chronology tracking within narrative. Cool idea, revisit later.
 
----
+**`{{ref:name}}`:** Links to planning docs (characters, settings). Revisit if needed.
 
-## Implementation Order
+**Dialogue highlighting:** Quoted text gets subtle highlight. Many edge cases (nested quotes, apostrophes). Implement later.
 
-1. **Custom filetypes** — register filetypes, treesitter parser
-2. **Prose settings** — wrap, linebreak, breakindent, j/k remaps
-3. **Paragraph behavior** — autoindent, new file template
-4. **Syntax highlighting** — vim syntax for italics, bold, scene breaks, fenced divs
-5. **Scene break sigil** — centered `§` rendering
-6. **Spellcheck** — enable for vimoire_prose, book-local dictionary
-7. **Notes/planning settings** — standard markdown behavior
-8. **Centering** — DEFERRED (see Research Notes)
+**Header navigation in notes:** Treesitter-based outline/navigation for headers in notes.md.
 
----
+**Images:** `![alt](path)` syntax. Leave as-is for now.
 
-## Dependencies
-
-**Neovim plugins (already present):**
-- `nvim-treesitter` — syntax parsing (for `vimoire_markdown`)
-- `plenary.nvim` — utilities
-
-**External tools:**
-- `pandoc` — export processing (fenced divs, markdown → HTML/DOCX/PDF)
-
-**Deferred:**
-- `no-neck-pain.nvim` — text centering (installed but not integrated, see Research Notes)
+**Inline styled spans:** Mid-sentence styling like `<span class="emphasis">word</span>`. Fenced divs are block-level only.
 
 ---
 
@@ -429,8 +379,7 @@ Configurable options (via `~/.config/vimoire/config.lua`):
 ```lua
 {
   prose = {
-    width = 86,                    -- centered column width
-    scene_break_sigil = "§",       -- scene break display character
+    width = 86,                    -- centered column width (when centering implemented)
     line_numbers = false,          -- show line numbers in prose
     cursorline = true,             -- subtle cursor line highlight
   },
@@ -467,7 +416,7 @@ Configurable options (via `~/.config/vimoire/config.lua`):
 3. Custom solution — manual scratch buffer splits with precise positioning
 4. Investigate order of operations — enable no-neck-pain before neotree opens
 
-**Decision:** Defer centering. Rest of prose experience (filetypes, concealing, paragraph behavior, spellcheck) is independent.
+**Decision:** Defer centering. Rest of prose experience (filetypes, syntax styling, paragraph behavior, spellcheck) is independent.
 
 ### Variable-Width Fonts
 
