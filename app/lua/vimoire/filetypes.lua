@@ -1,5 +1,7 @@
 local M = {}
 
+local state = require("vimoire.state")
+
 local function setup_prose_buffer()
   vim.wo.wrap = true
   vim.wo.linebreak = true
@@ -8,6 +10,10 @@ local function setup_prose_buffer()
   vim.wo.cursorline = true
 
   vim.bo.autoindent = true
+
+  vim.wo.spell = true
+  vim.bo.spelllang = "en"
+  vim.bo.spellfile = state.manuscript.root .. "/spell/en.add"
 
   vim.keymap.set("n", "j", "gj", { buffer = true })
   vim.keymap.set("n", "k", "gk", { buffer = true })

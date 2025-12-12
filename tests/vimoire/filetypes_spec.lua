@@ -1,4 +1,5 @@
 local filetypes = require("vimoire.filetypes")
+local state = require("vimoire.state")
 
 describe("filetypes", function()
   describe("setup", function()
@@ -11,6 +12,7 @@ describe("filetypes", function()
 
   describe("vimoire_prose settings", function()
     before_each(function()
+      state:load("tests/fixtures/standard")
       filetypes.setup()
     end)
 
