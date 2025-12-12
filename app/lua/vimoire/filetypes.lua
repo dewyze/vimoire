@@ -22,7 +22,6 @@ function M.setup()
     },
   })
 
-  vim.treesitter.language.register("markdown", "vimoire_prose")
   vim.treesitter.language.register("markdown", "vimoire_markdown")
 
   vim.api.nvim_create_autocmd("FileType", {

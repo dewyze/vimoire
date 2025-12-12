@@ -51,11 +51,16 @@
   - [x] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
   - [x] Paragraph behavior (autoindent enabled, no blank lines between paragraphs)
   > Scene breaks use *** not --- (avoids setext heading ambiguity)
-  - [ ] Syntax highlighting (visible delimiters, styled content - no concealing)
+  - [x] Syntax highlighting (visible delimiters, styled content - no concealing)
   > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
   > Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
+  > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
   - [ ] Spellcheck (book-local dictionary at spell/en.add)
   - [ ] Notes/planning filetype settings (standard markdown via treesitter)
+  - [ ] Color themes (app-level, user-selectable)
+  > Theme definitions in app/themes.json (dark, light, typewriter, etc.)
+  > User preference in ~/.config/vimoire/preferences.json
+  > :VimoireTheme command to switch and persist
   - [ ] Text centering (DEFERRED - no-neck-pain model mismatch with neotree, see PROSE_SPEC.md)
 
 - Phase 5: User Configuration:
