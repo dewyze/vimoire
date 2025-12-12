@@ -95,9 +95,9 @@ Aggressive concealment — hide markdown syntax, show styled text.
 
 **Why `***` not `---`:** Without blank lines between paragraphs, `---` directly after text can be parsed as a setext heading underline. `***` is unambiguous.
 
-**Implementation:** Custom treesitter highlight queries with `conceal` and `@conceal` captures. Set `conceallevel=2` and `concealcursor=nc`.
+**Implementation:** Vim syntax file with `concealends` for inline formatting and `conceal cchar=` for replacements. See "Syntax Highlighting Strategy" section for details.
 
-### Chapter Numbers
+### Chapter Numbers (Inline Replacement)
 
 Chapters can include a number tag that updates when reordered:
 
@@ -110,12 +110,64 @@ Chapters can include a number tag that updates when reordered:
 - Updates automatically when chapters are reordered in neotree
 - Export pipeline replaces tag with actual number
 
+**Syntax note:** `{{...}}` is reserved for inline replacements that require vimoire/manuscript context. Pandoc doesn't know chapter order — vimoire's preprocessor handles these before export.
+
 **Implementation options:**
 - Extmarks with virtual text replacement
 - Conceal + virtual text overlay
 - Process on save/export only (simpler)
 
 **Deferred decision:** Exact implementation TBD during spike.
+
+### Styled Blocks (Pandoc Fenced Divs)
+
+For prose that needs distinct visual treatment (letters, telegrams, journal entries, epigraphs), use pandoc's native fenced div syntax:
+
+```markdown
+::: letter
+Dear Sir,
+
+I write to inform you that your application has been denied.
+
+Yours truly,
+The Committee
+:::
+```
+
+**Why fenced divs:**
+- Pandoc handles them natively — no preprocessing needed for structure
+- Visually distinct from inline `{{...}}` replacements
+- Clear block semantics (opening and closing fences)
+- Works across all pandoc output formats
+
+**Output by format:**
+
+| Format | Result |
+|--------|--------|
+| HTML | `<div class="letter">...</div>` |
+| DOCX | Paragraphs with "Letter" style applied |
+| PDF | LaTeX `\begin{letter}...\end{letter}` environment |
+
+**Styling configuration:**
+- HTML: CSS targets `.letter`, `.telegram`, etc.
+- DOCX: Define styles in a reference template document
+- PDF: Define LaTeX environments in custom template
+
+**Common block types:**
+- `letter` — correspondence embedded in narrative
+- `telegram` — terse period communications
+- `journal` — diary entries, personal logs
+- `epigraph` — chapter-opening quotes
+- `newspaper` — clippings, articles
+
+**In-editor display:** Vim syntax can match fenced divs and apply subtle styling (dimmed fences, distinct background). Content inside still gets normal prose highlighting.
+
+**Syntax distinction:**
+
+| Syntax | Type | Handled by |
+|--------|------|------------|
+| `{{chapter}}` | Inline replacement | Vimoire preprocessor |
+| `::: letter` | Block wrapper | Pandoc native |
 
 ### Cursor Line
 
@@ -184,18 +236,148 @@ Buffer metadata (`vim.b.vimoire_item_id`) set on open for plugin commands.
 
 ---
 
-## Treesitter Integration
+## Syntax Highlighting Strategy
 
-Register markdown parser for all custom filetypes:
+### The Core Problem
+
+**Standard markdown interprets tab-indented lines as code blocks.**
+
+Vimoire prose uses tab indentation for paragraphs (essential for distinguishing dialogue from narration at a glance). This conflicts with markdown's design:
+
+- Treesitter's markdown parser sees tabs → marks as `indented_code_block`
+- Code blocks get syntax highlighting (typically blue/different color)
+- Concealing may not work inside code block nodes
+- Text objects and motions may misbehave
+
+We still need markdown's inline formatting: `*italics*`, `**bold**`, block quotes, and `***` scene breaks. But we don't need code blocks, links, images, lists, or tables.
+
+### Options Evaluated
+
+| Approach | Effort | Verdict | Notes |
+|----------|--------|---------|-------|
+| **Pure Vim Syntax** | Low | ✅ Chosen | Full control, no parser fighting us |
+| Custom Treesitter Grammar | High | ❌ Overkill | Fork markdown grammar, remove code block rule. Correct but maintenance burden. |
+| Override Highlights | Low | ❌ Risky | Parser still thinks tabs=code. Concealing, text objects may break. |
+| Accept Standard Markdown | None | ❌ Rejected | Violates core requirement (visible tab indents) |
+
+### Chosen Solution: Vim Syntax
+
+Use a custom vim syntax file for `vimoire_prose`. No treesitter parser—tabs are just tabs.
+
+**What we need:**
+- Inline formatting: `*italic*`, `**bold**`, `_underline_`
+- Block quotes: `>` for letters, excerpts
+- Scene breaks: `***`
+- Fenced divs: `::: name` blocks for styled sections
+- Escape sequences: `\*` for literal asterisks
+
+**Implementation:** `syntax/vimoire_prose.vim`
+
+```vim
+" Italic: *text* (single asterisks)
+syn region vimoireItalic matchgroup=vimoireDelimiter start=/\\\@<!\*\ze[^*]/ end=/\\\@<!\*/ concealends contains=@Spell
+hi def vimoireItalic cterm=italic gui=italic
+
+" Bold: **text**
+syn region vimoireBold matchgroup=vimoireDelimiter start=/\*\*/ end=/\*\*/ concealends contains=@Spell
+hi def vimoireBold cterm=bold gui=bold
+
+" Bold italic: ***text***
+syn region vimoireBoldItalic matchgroup=vimoireDelimiter start=/\*\*\*/ end=/\*\*\*/ concealends contains=@Spell
+hi def vimoireBoldItalic cterm=bold,italic gui=bold,italic
+
+" Underline: _text_ (convention, not standard markdown)
+syn region vimoireUnderline matchgroup=vimoireDelimiter start=/\\\@<!_\ze[^_]/ end=/\\\@<!_/ concealends contains=@Spell
+hi def vimoireUnderline cterm=underline gui=underline
+
+" Scene break: *** on its own line → § (concealed)
+syn match vimoireSceneBreak /^\*\*\*$/ conceal cchar=§
+hi def link vimoireSceneBreak Special
+
+" Block quote: lines starting with >
+syn region vimoireQuote start=/^>/ end=/$/ contains=vimoireItalic,vimoireBold,@Spell
+hi def link vimoireQuote Comment
+
+" Chapter header: # Title (conceal the #)
+syn match vimoireHeaderMark /^#\s\+/ conceal
+syn match vimoireHeader /^#\s\+.*$/ contains=vimoireHeaderMark
+hi def vimoireHeader cterm=bold gui=bold
+
+" Escaped characters: \* \_ etc.
+syn match vimoireEscape /\\[*_\\]/ conceal cchar=
+
+" Fenced divs: ::: name ... :::
+syn match vimoireFence /^:::\s*\w*$/
+hi def link vimoireFence Comment
+
+" Delimiter highlighting (hidden via conceal)
+hi def link vimoireDelimiter Conceal
+```
+
+**Buffer settings:** `ftplugin/vimoire_prose.vim`
+
+```vim
+setlocal conceallevel=2
+setlocal concealcursor=nc
+```
+
+### Edge Cases
+
+| Case | Handling |
+|------|----------|
+| Nested `***bold italic***` | Matched before `**` and `*` (order matters in syntax file) |
+| Escaped `\*not italic\*` | Explicit match with conceal, shows literal character |
+| Multi-line block quotes | `syn region` handles continuation; or use line-by-line matching |
+| Fenced divs `::: letter` | Fence lines highlighted as Comment, content inside gets normal prose highlighting |
+| Apostrophes in contractions | `_` underline requires non-`_` after opening, avoids `don_t` false match |
+
+### Why Not Treesitter
+
+Treesitter is a code parser repurposed for markdown. It's excellent at that job, but we're not writing markdown—we're writing prose that uses some markdown inline syntax.
+
+**We lose:**
+- Treesitter-based folding (not needed for prose)
+- Injected language highlighting (no code blocks anyway)
+- Treesitter text objects (can implement with vim patterns if needed)
+
+**We gain:**
+- Complete control over what's highlighted
+- No fighting the parser about what tabs mean
+- Simpler debugging (it's just regex, not grammar rules)
+- Concealing that works everywhere
+
+### vimoire_markdown Filetype
+
+For notes.md and planning docs, standard markdown highlighting is fine. These files don't use our tab-indent convention.
+
+**Options:**
+1. Use treesitter markdown parser (standard behavior)
+2. Use built-in vim markdown syntax
+3. Use `vimoire_prose` syntax (consistent concealing)
+
+**Recommendation:** Treesitter markdown for notes/planning. Only prose needs the custom syntax.
 
 ```lua
-vim.treesitter.language.register('markdown', 'vimoire_prose')
 vim.treesitter.language.register('markdown', 'vimoire_markdown')
 ```
 
-Custom highlight queries in:
-- `queries/vimoire_prose/highlights.scm` — prose concealing
-- `queries/vimoire_markdown/highlights.scm` — standard markdown (or inherit)
+---
+
+## Export Preprocessing
+
+Vimoire's export pipeline preprocesses prose before pandoc processes it:
+
+| Task | Handled by | Notes |
+|------|------------|-------|
+| `\n` → `\n\n` | Vimoire | Our single-newline paragraphs need blank lines for pandoc |
+| `{{chapter}}` | Vimoire | Requires manuscript state to know chapter position |
+| `::: letter` divs | Pandoc | Native support, no preprocessing needed |
+| `*italic*`, `**bold**` | Pandoc | Native markdown, no preprocessing needed |
+
+**Export templates:** Format-specific styling configured via:
+- `templates/style.css` — HTML/ebook styling
+- `templates/reference.docx` — Word style definitions
+- `templates/template.tex` — LaTeX environment definitions
 
 ---
 
@@ -209,6 +391,8 @@ Custom highlight queries in:
 
 **Images:** `![alt](path)` syntax. Leave as-is for now (not concealed, not rendered). Revisit if needed.
 
+**Inline styled spans:** Mid-sentence styling like `<span class="emphasis">word</span>`. Fenced divs are block-level only. Options: raw HTML pass-through, or custom `{{name}}...{{/name}}` syntax. Revisit if needed.
+
 ---
 
 ## Implementation Order
@@ -216,7 +400,7 @@ Custom highlight queries in:
 1. **Custom filetypes** — register filetypes, treesitter parser
 2. **Prose settings** — wrap, linebreak, breakindent, j/k remaps
 3. **Paragraph behavior** — autoindent, new file template
-4. **Concealing** — highlight queries for italics, bold, scene breaks
+4. **Syntax highlighting** — vim syntax for italics, bold, scene breaks, fenced divs
 5. **Scene break sigil** — centered `§` rendering
 6. **Spellcheck** — enable for vimoire_prose, book-local dictionary
 7. **Notes/planning settings** — standard markdown behavior
@@ -226,9 +410,12 @@ Custom highlight queries in:
 
 ## Dependencies
 
-**Already present:**
-- `nvim-treesitter` — syntax parsing
+**Neovim plugins (already present):**
+- `nvim-treesitter` — syntax parsing (for `vimoire_markdown`)
 - `plenary.nvim` — utilities
+
+**External tools:**
+- `pandoc` — export processing (fenced divs, markdown → HTML/DOCX/PDF)
 
 **Deferred:**
 - `no-neck-pain.nvim` — text centering (installed but not integrated, see Research Notes)
