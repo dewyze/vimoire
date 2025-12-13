@@ -57,7 +57,7 @@
   > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
   - [x] Spellcheck (book-local dictionary at spell/en.add)
   - [x] Notes/planning filetype settings (standard markdown via treesitter)
-  - [/] Color themes (app-level, user-selectable)
+  - [x] Color themes (app-level, user-selectable)
   > Using native Neovim colorscheme system (app/colors/*.lua)
   > User config at ~/.vimoire/config.lua (separate from app code)
   > Syntax file handles prose highlight defaults, highlights.lua handles UI fallbacks
@@ -66,7 +66,7 @@
   > [x] vimoire-vellum colorscheme (sepia)
   > [x] vimoire-umbra colorscheme (high contrast monochrome dark)
   > [x] vimoire-lumen colorscheme (high contrast monochrome light)
-  > [ ] :VimoireTheme command
+  > [x] :VimoireTheme command
   - [ ] Text centering (DEFERRED - no-neck-pain model mismatch with neotree, see PROSE_SPEC.md)
 
 - Phase 5: User Configuration:
