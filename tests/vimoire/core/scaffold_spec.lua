@@ -64,8 +64,8 @@ describe("scaffold", function()
       local dedication_id = content.items[1].id
       local chapter_id = content.items[2].id
 
-      assert.is_true(Path:new(project_dir, "entries", dedication_id, "text.md"):exists())
-      assert.is_true(Path:new(project_dir, "entries", chapter_id, "text.md"):exists())
+      assert.is_true(Path:new(project_dir, "entries", dedication_id, "prose.md"):exists())
+      assert.is_true(Path:new(project_dir, "entries", chapter_id, "prose.md"):exists())
     end)
 
     it("creates planning files with content", function()
