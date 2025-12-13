@@ -40,8 +40,9 @@ Reference docs organized by purpose:
 - `settings/` — where things happen
 - `reference/` — research, worldbuilding, whatever you need
 
-### Keymaps
-Modal editing optimized for prose, not code. (Documentation coming.)
+### Configuration
+
+Customize Vimoire via `~/.vimoire/config.lua`. See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options including keymaps, themes, and editor settings.
 
 ## Planned Features
 

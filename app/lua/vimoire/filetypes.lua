@@ -1,6 +1,14 @@
 local M = {}
 
 local state = require("vimoire.state")
+local config = require("vimoire.config")
+
+local function setup_visual_line_navigation()
+  if config.get("editor.visual_line_navigation") then
+    vim.keymap.set("n", "j", "gj", { buffer = true })
+    vim.keymap.set("n", "k", "gk", { buffer = true })
+  end
+end
 
 local function setup_markdown_buffer()
   vim.wo.wrap = true
@@ -13,8 +21,7 @@ local function setup_markdown_buffer()
   vim.bo.shiftwidth = 2
   vim.bo.expandtab = true
 
-  vim.keymap.set("n", "j", "gj", { buffer = true })
-  vim.keymap.set("n", "k", "gk", { buffer = true })
+  setup_visual_line_navigation()
 end
 
 local function setup_prose_buffer()
@@ -30,8 +37,7 @@ local function setup_prose_buffer()
   vim.bo.spelllang = "en"
   vim.bo.spellfile = state.manuscript.root .. "/spell/en.add"
 
-  vim.keymap.set("n", "j", "gj", { buffer = true })
-  vim.keymap.set("n", "k", "gk", { buffer = true })
+  setup_visual_line_navigation()
 end
 
 function M.setup()

@@ -25,6 +25,7 @@ M.defaults = {
     shiftwidth = 4,
     wrap = true,
     linebreak = true,
+    visual_line_navigation = true,
   },
   finder = {
     preview = true,

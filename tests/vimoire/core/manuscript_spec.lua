@@ -21,7 +21,7 @@ describe("Manuscript", function()
     local manuscript = Manuscript.load(example_path)
 
     assert.is_not_nil(manuscript.items)
-    assert.equals(4, #manuscript.items) -- 2 sections + 2 unsectioned items
+    assert.equals(5, #manuscript.items) -- 2 sections + 3 unsectioned items
   end)
 
   it("has nested section items", function()
