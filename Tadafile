@@ -71,7 +71,10 @@
 
 - Phase 5: User Configuration:
   - [x] Load user config from ~/.vimoire/config.lua
-  - [ ] Centralized keybindings system (registry pattern with mode support)
+  - [x] Centralized keybindings system (registry pattern with mode support)
+  > Keymaps defined in config.lua defaults, overridable via user config
+  > Added visual_line_navigation toggle for j/k → gj/gk
+  > Full options documented in docs/CONFIGURATION.md
 
 - Phase 6: UI Polish:
   - [ ] Add Neovide-specific enhancements
