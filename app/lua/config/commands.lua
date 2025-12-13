@@ -16,3 +16,22 @@ vim.api.nvim_create_user_command("VimoireNotes", function()
   vim.cmd("edit " .. notes_path)
   vim.b.vimoire_item_id = item.id
 end, { desc = "Open notes for current chapter/page" })
+
+local THEMES = {
+  "vimoire-inkwell",
+  "vimoire-parchment",
+  "vimoire-vellum",
+  "vimoire-umbra",
+  "vimoire-lumen",
+}
+
+vim.api.nvim_create_user_command("VimoireTheme", function()
+  vim.ui.select(THEMES, {
+    prompt = "Select theme:",
+  }, function(choice)
+    if not choice then return end
+
+    vim.cmd.colorscheme(choice)
+    require("vimoire.core.preferences").set("colorscheme", choice)
+  end)
+end, { desc = "Select and save Vimoire colorscheme" })

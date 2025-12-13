@@ -1,5 +1,11 @@
 require("config.lazy")
 require("config.defaults")
+require("vimoire.highlights").setup()
+
+-- Load colorscheme with precedence: user config > preferences > default
+local colorscheme = require("vimoire.config").effective_colorscheme()
+vim.cmd.colorscheme(colorscheme)
+
 require("config.keymaps")
 require("config.commands")
 

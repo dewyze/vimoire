@@ -3,20 +3,21 @@ local helpers = require("tests.helpers")
 
 describe("recent", function()
   local recent
-  local data_dir
+  local prefs_dir
   local original_expand
 
   before_each(function()
+    package.loaded["vimoire.core.preferences"] = nil
     package.loaded["vimoire.core.recent"] = nil
 
-    -- Create temp directory for test data
-    data_dir = helpers.temp_dir()
+    -- Create temp directory for preferences
+    prefs_dir = helpers.temp_dir()
 
-    -- Stub vim.fn.expand to redirect ~/.local/share/vimoire
+    -- Stub vim.fn.expand to redirect ~/.vimoire
     original_expand = vim.fn.expand
     vim.fn.expand = function(path)
-      if path == "~/.local/share/vimoire" then
-        return data_dir
+      if path == "~/.vimoire" then
+        return prefs_dir
       end
       return original_expand(path)
     end
@@ -26,7 +27,7 @@ describe("recent", function()
 
   after_each(function()
     vim.fn.expand = original_expand
-    helpers.cleanup(data_dir)
+    helpers.cleanup(prefs_dir)
   end)
 
   describe("list", function()
@@ -36,12 +37,17 @@ describe("recent", function()
       assert.are.same({}, projects)
     end)
 
-    it("returns projects from recent file", function()
+    it("returns projects from preferences file", function()
       local project_dir = helpers.temp_copy("tests/fixtures/standard")
-      local recent_data = {
-        { path = project_dir, title = "Test Book", last_opened = 1000 },
+      local prefs_data = {
+        recent_projects = {
+          { path = project_dir, title = "Test Book", last_opened = 1000 },
+        },
       }
-      helpers.write_file(data_dir .. "/recent.json", vim.json.encode(recent_data))
+      helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode(prefs_data))
+      package.loaded["vimoire.core.preferences"] = nil
+      package.loaded["vimoire.core.recent"] = nil
+      recent = require("vimoire.core.recent")
 
       local projects = recent.list()
 
@@ -54,11 +60,16 @@ describe("recent", function()
 
     it("prunes non-existent paths", function()
       local valid_dir = helpers.temp_copy("tests/fixtures/standard")
-      local recent_data = {
-        { path = valid_dir, title = "Valid Book", last_opened = 2000 },
-        { path = "/nonexistent/path", title = "Gone Book", last_opened = 1000 },
+      local prefs_data = {
+        recent_projects = {
+          { path = valid_dir, title = "Valid Book", last_opened = 2000 },
+          { path = "/nonexistent/path", title = "Gone Book", last_opened = 1000 },
+        },
       }
-      helpers.write_file(data_dir .. "/recent.json", vim.json.encode(recent_data))
+      helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode(prefs_data))
+      package.loaded["vimoire.core.preferences"] = nil
+      package.loaded["vimoire.core.recent"] = nil
+      recent = require("vimoire.core.recent")
 
       local projects = recent.list()
 
@@ -70,10 +81,10 @@ describe("recent", function()
   end)
 
   describe("add", function()
-    it("creates data directory if it doesn't exist", function()
-      helpers.cleanup(data_dir)
-      data_dir = helpers.temp_dir()
-      helpers.cleanup(data_dir) -- Remove it so add() has to create it
+    it("creates preferences directory if it doesn't exist", function()
+      helpers.cleanup(prefs_dir)
+      prefs_dir = helpers.temp_dir()
+      helpers.cleanup(prefs_dir) -- Remove it so add() has to create it
 
       local project_dir = helpers.temp_copy("tests/fixtures/standard")
       recent.add(project_dir, "New Book")

@@ -1,29 +1,12 @@
 local Path = require("plenary.path")
+local preferences = require("vimoire.core.preferences")
 
 local M = {}
 
-local DATA_DIR = vim.fn.expand("~/.local/share/vimoire")
-local RECENT_FILE = DATA_DIR .. "/recent.json"
 local MAX_RECENT = 10
 
-local function ensure_data_dir()
-  local dir = Path:new(DATA_DIR)
-  if not dir:exists() then
-    dir:mkdir({ parents = true })
-  end
-end
-
 function M.list()
-  local path = Path:new(RECENT_FILE)
-  if not path:exists() then
-    return {}
-  end
-
-  local content = path:read()
-  local ok, projects = pcall(vim.json.decode, content)
-  if not ok then
-    return {}
-  end
+  local projects = preferences.get("recent_projects") or {}
 
   -- Prune non-existent paths
   local valid = {}
@@ -38,8 +21,6 @@ function M.list()
 end
 
 function M.add(path, title)
-  ensure_data_dir()
-
   local projects = M.list()
   local abs_path = vim.fn.fnamemodify(path, ":p"):gsub("/$", "")
 
@@ -60,9 +41,7 @@ function M.add(path, title)
     table.remove(projects)
   end
 
-  -- Write
-  local json = vim.json.encode(projects)
-  Path:new(RECENT_FILE):write(json, "w")
+  preferences.set("recent_projects", projects)
 end
 
 return M

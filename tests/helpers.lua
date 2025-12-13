@@ -27,6 +27,11 @@ function M.write_file(file_path, content)
   path:write(content, "w")
 end
 
+function M.read_file(file_path)
+  local path = Path:new(file_path)
+  return path:read()
+end
+
 function M.reset_state()
   state.manuscript = nil
   state.items = {}

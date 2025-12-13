@@ -1,6 +1,7 @@
 local M = {}
 
 M.defaults = {
+  colorscheme = "vimoire-inkwell",
   keymaps = {
     finder = {
       navigate = "<leader>ff",
@@ -16,18 +17,6 @@ M.defaults = {
   },
   ui = {
     mouse_mode = "single_click", -- "single_click" | "double_click"
-  },
-  navigator = {
-    colors = {
-      manuscript = "#c792ea",
-      section = "#82aaff",
-      chapter = "#89ddff",
-      page = "#c3e88d",
-      planning = "#f78c6c",
-      planning_subfolder = "#ff9e64",
-      planning_item = "#ffc79b",
-      winbar = "#a3d9a5",
-    },
   },
   editor = {
     textwidth = 80,
@@ -62,14 +51,15 @@ function M.load()
 
   local config = vim.deepcopy(M.defaults)
 
-  -- TODO: Load user config from ~/.config/vimoire/config.lua
-  -- local user_config_path = vim.fn.expand("~/.config/vimoire/config.lua")
-  -- if vim.fn.filereadable(user_config_path) == 1 then
-  --   local ok, user_config = pcall(dofile, user_config_path)
-  --   if ok then
-  --     config = vim.tbl_deep_extend("force", config, user_config)
-  --   end
-  -- end
+  -- Load user config from ~/.vimoire/config.lua
+  -- This is separate from ~/.config/vimoire/ (app code via NVIM_APPNAME)
+  local user_config_path = vim.fn.expand("~/.vimoire/config.lua")
+  if vim.fn.filereadable(user_config_path) == 1 then
+    local ok, user_config = pcall(dofile, user_config_path)
+    if ok and type(user_config) == "table" then
+      config = vim.tbl_deep_extend("force", config, user_config)
+    end
+  end
 
   M._loaded_config = config
   return config
@@ -88,6 +78,28 @@ function M.get(key_path)
   end
 
   return value
+end
+
+-- Returns colorscheme with precedence: user config > preferences > default
+function M.effective_colorscheme()
+  -- Check if user config explicitly sets colorscheme
+  local user_config_path = vim.fn.expand("~/.vimoire/config.lua")
+  if vim.fn.filereadable(user_config_path) == 1 then
+    local ok, user_config = pcall(dofile, user_config_path)
+    if ok and type(user_config) == "table" and user_config.colorscheme then
+      return user_config.colorscheme
+    end
+  end
+
+  -- Check preferences (set via :VimoireTheme)
+  local preferences = require("vimoire.core.preferences")
+  local pref_colorscheme = preferences.get("colorscheme")
+  if pref_colorscheme then
+    return pref_colorscheme
+  end
+
+  -- Default
+  return M.defaults.colorscheme
 end
 
 return M
