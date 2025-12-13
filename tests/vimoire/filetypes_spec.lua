@@ -1,7 +1,9 @@
-local filetypes = require("vimoire.filetypes")
-local state = require("vimoire.state")
+local assert = require("luassert")
 
 describe("filetypes", function()
+  local filetypes = require("vimoire.filetypes")
+  local state = require("vimoire.state")
+
   describe("setup", function()
     it("registers filetypes and treesitter without error", function()
       assert.has_no.errors(function()

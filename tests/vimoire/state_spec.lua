@@ -17,8 +17,8 @@ describe("State", function()
 
   it("creates items map with entries, sections, folders, and planning items", function()
     state:load(fixture_path)
-    -- 5 folders + 8 entries + 2 sections + 8 planning items + 1 subfolder = 24
-    assert.equals(24, vim.tbl_count(state.items))
+    -- 5 folders + 9 entries + 2 sections + 8 planning items + 1 subfolder = 25
+    assert.equals(25, vim.tbl_count(state.items))
   end)
 
   it("can rebuild indexes", function()
