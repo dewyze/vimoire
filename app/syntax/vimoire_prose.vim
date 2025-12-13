@@ -51,30 +51,26 @@ syntax match vimoireItalic /\*[^*]\+\*/
 " Requires non-underscore before opening and after closing to avoid mid-word matches
 syntax match vimoireUnderline /\<_[^_]\+_\>/
 
-" Link highlight groups to standard groups
+" Default highlight links (colorschemes can override)
 highlight default link vimoireH1 Title
 highlight default link vimoireH2 Title
 highlight default link vimoireH3 Title
 highlight default link vimoireH4 Title
 highlight default link vimoireH5 Title
 highlight default link vimoireH6 Title
-
 highlight default link vimoireSceneBreak Special
 highlight default link vimoireBlockQuote Comment
 highlight default link vimoireFencedDiv Comment
-
 highlight default link vimoireMetaChapter Identifier
 highlight default link vimoireMetaMark Identifier
 highlight default link vimoireMetaTodo Todo
 highlight default link vimoireMetaTodoText Todo
-
 highlight default link vimoireBoldItalic vimoireBoldItalicStyle
 highlight default link vimoireBold vimoireBoldStyle
 highlight default link vimoireItalic vimoireItalicStyle
 highlight default link vimoireUnderline vimoireUnderlineStyle
 
-" Define actual styles for inline formatting
-" These use cterm/gui attributes rather than linking to standard groups
+" Default inline styles (attributes only, inherit fg)
 highlight default vimoireBoldItalicStyle cterm=bold,italic gui=bold,italic
 highlight default vimoireBoldStyle cterm=bold gui=bold
 highlight default vimoireItalicStyle cterm=italic gui=italic

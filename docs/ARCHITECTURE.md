@@ -186,28 +186,58 @@ This allows the core logic to remain unchanged while supporting different launch
 
 ## User Configuration
 
-**Location:** `~/.config/vimoire/config.lua`
+**Location:** `~/.vimoire/config.lua`
+
+This is intentionally separate from `~/.config/vimoire/` (where app code lives via `NVIM_APPNAME`). This separation means:
+- App code location varies (dev symlink, Homebrew install, etc.)
+- User config location is always `~/.vimoire/` regardless of install method
+- No conflicts between app code and user files
 
 **Loading strategy:**
 - App code uses `vimoire.config` module with defaults
-- On startup, explicitly loads `~/.config/vimoire/config.lua` (hardcoded path, NOT via stdpath)
+- On startup, explicitly loads `~/.vimoire/config.lua` (hardcoded path)
 - User config merged with defaults using `vim.tbl_deep_extend("force", defaults, user_config)`
 
-**Why hardcoded path:**
-- App code location varies (dev symlink, Homebrew install)
-- User config location is fixed and expected
-- Launcher script can set `XDG_CONFIG_HOME` to point Neovim at app code without affecting user config path
-
-**Example wrapper script for Homebrew:**
-```bash
-#!/bin/bash
-# /opt/homebrew/bin/vimoire
-XDG_CONFIG_HOME="/opt/homebrew/opt/vimoire/app/.." \
-NVIM_APPNAME=vimoire \
-neovide "$@"
+**Example user config:**
+```lua
+return {
+  colorscheme = "vimoire-light",
+  keymaps = {
+    finder = {
+      navigate = "<leader>ff",
+    },
+  },
+}
 ```
 
 **Development setup:**
 - Symlink: `ln -s /path/to/repo/app ~/.config/vimoire`
-- User config lives at `~/.config/vimoire/config.lua` (git-ignored)
-- App loads it explicitly from hardcoded path
+- User config at `~/.vimoire/config.lua` (create manually if needed)
+
+---
+
+## Colorschemes
+
+Vimoire uses Neovim's native colorscheme system.
+
+**Shipped colorschemes** (in `app/colors/`):
+- `vimoire-inkwell` — warm dark theme (default)
+- `vimoire-parchment` — warm light theme
+- `vimoire-vellum` — sepia/manuscript theme
+- `vimoire-umbra` — high contrast monochrome dark theme
+- `vimoire-lumen` — high contrast monochrome light theme
+
+**User override:** Set `colorscheme` in `~/.vimoire/config.lua` or use `:colorscheme` at runtime.
+
+**Custom highlight groups:**
+
+Prose syntax (defined in `syntax/vimoire_prose.vim` with `highlight default`):
+- `vimoireH1` through `vimoireH6`, `vimoireSceneBreak`, `vimoireBlockQuote`, `vimoireFencedDiv`
+- `vimoireMetaChapter`, `vimoireMetaMark`, `vimoireMetaTodo`, `vimoireMetaTodoText`
+- `vimoireBoldStyle`, `vimoireItalicStyle`, `vimoireUnderlineStyle`, `vimoireBoldItalicStyle`
+
+UI groups (fallbacks in `lua/vimoire/highlights.lua` via ColorScheme autocmd):
+- Navigator: `VimoireManuscript`, `VimoireSection`, `VimoireChapter`, `VimoirePage`, `VimoirePlanning`, `VimoirePlanningSubfolder`, `VimoirePlanningItem`
+- Start screen: `VimoireLogo`, `VimoireTagline`, `VimoireStar`, `VimoireHeader`, `VimoireProject`, `VimoireProjectSelected`, `VimoirePath`, `VimoireDate`, `VimoireAction`, `VimoireKey`
+
+**Third-party colorschemes:** Work automatically via fallback links to standard groups (Title, Comment, Function, etc.). Vimoire colorschemes override with specific colors.

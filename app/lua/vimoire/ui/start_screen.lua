@@ -19,19 +19,8 @@ local LOGO = {
 
 local TAGLINE = "a grimoire for vim"
 
-local function setup_highlights()
-  vim.api.nvim_set_hl(0, "VimoireLogo", { fg = "#7dcfff", bold = true })
-  vim.api.nvim_set_hl(0, "VimoireLogoGlow", { fg = "#3d59a1" })
-  vim.api.nvim_set_hl(0, "VimoireTagline", { fg = "#565f89", italic = true })
-  vim.api.nvim_set_hl(0, "VimoireStar", { fg = "#bb9af7" })
-  vim.api.nvim_set_hl(0, "VimoireHeader", { fg = "#7aa2f7", bold = true })
-  vim.api.nvim_set_hl(0, "VimoireProject", { fg = "#c0caf5" })
-  vim.api.nvim_set_hl(0, "VimoireProjectSelected", { fg = "#7dcfff", bold = true })
-  vim.api.nvim_set_hl(0, "VimoirePath", { fg = "#565f89" })
-  vim.api.nvim_set_hl(0, "VimoireDate", { fg = "#565f89" })
-  vim.api.nvim_set_hl(0, "VimoireAction", { fg = "#9ece6a" })
-  vim.api.nvim_set_hl(0, "VimoireKey", { fg = "#ff9e64", bold = true })
-end
+-- Highlights are defined in vimoire/highlights.lua (fallbacks)
+-- and overridden by colorschemes in colors/*.lua
 
 local function center_text(text, width)
   local padding = math.floor((width - vim.fn.strdisplaywidth(text)) / 2)
@@ -302,8 +291,6 @@ local function setup_keymaps()
 end
 
 function M.show()
-  setup_highlights()
-
   -- Create buffer
   M.buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_option(M.buf, "bufhidden", "wipe")

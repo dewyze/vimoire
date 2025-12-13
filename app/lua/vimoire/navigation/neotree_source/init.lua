@@ -122,17 +122,8 @@ function M.navigate(state_param, path, path_to_reveal, callback)
 end
 
 function M.setup(config, global_config)
-  local vimoire_config = require("vimoire.config")
-  local colors = vimoire_config.get("navigator.colors")
-
-  vim.api.nvim_set_hl(0, "VimoireManuscript", { fg = colors.manuscript, bold = true })
-  vim.api.nvim_set_hl(0, "VimoireSection", { fg = colors.section, bold = true })
-  vim.api.nvim_set_hl(0, "VimoireChapter", { fg = colors.chapter })
-  vim.api.nvim_set_hl(0, "VimoirePage", { fg = colors.page })
-  vim.api.nvim_set_hl(0, "VimoirePlanning", { fg = colors.planning, bold = true })
-  vim.api.nvim_set_hl(0, "VimoirePlanningSubfolder", { fg = colors.planning_subfolder, bold = true })
-  vim.api.nvim_set_hl(0, "VimoirePlanningItem", { fg = colors.planning_item })
-  vim.api.nvim_set_hl(0, "NeoTreeTabActive", { fg = colors.winbar, bold = true })
+  -- Highlights are defined in vimoire/highlights.lua (fallbacks)
+  -- and overridden by colorschemes in colors/*.lua
 end
 
 return M
