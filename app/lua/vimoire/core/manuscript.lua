@@ -31,7 +31,7 @@ function Manuscript.new(data)
 end
 
 -- Key order for consistent JSON output (no more random diffs)
-local keyorder = { "id", "title", "description", "created_at", "updated_at", "name", "kind", "items", "characters", "settings", "reference" }
+local keyorder = { "id", "created_at", "updated_at", "name", "kind", "items", "characters", "settings", "reference" }
 
 function Manuscript:save()
   if not self.root then

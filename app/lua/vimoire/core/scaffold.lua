@@ -51,11 +51,17 @@ function M.create(project_dir, title)
   Path:new(project_dir, "planning", research_id):mkdir()
   copy_template("planning/research", project_dir .. "/planning/" .. research_id)
 
+  -- Create book.yml
+  local book_yml = string.format([[title: "%s"
+author: "Author Name"
+description: ""
+language: en
+]], title:gsub('"', '\\"'))
+  Path:new(project_dir, "book.yml"):write(book_yml, "w")
+
   -- Create manuscript.json
   local manuscript = {
     id = manuscript_id,
-    title = title,
-    description = "",
     items = {
       { id = dedication_id, kind = "page", name = "Dedication" },
       { id = chapter_id, kind = "chapter", name = "Chapter 1" },

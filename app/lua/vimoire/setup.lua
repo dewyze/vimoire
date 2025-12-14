@@ -4,8 +4,8 @@ local recent = require("vimoire.core.recent")
 
 function setup.on_manuscript_loaded()
   local neotree_source = require("vimoire.navigation.neotree_source")
-  neotree_source.display_name = "󱓷 " .. state.manuscript.title
-  recent.add(state.manuscript.root, state.manuscript.title)
+  neotree_source.display_name = "󱓷 " .. state.book.title
+  recent.add(state.manuscript.root, state.book.title)
   vim.o.statusline = "%{get(b:, 'vimoire_display_name', expand('%:t'))}"
 
   local augroup = vim.api.nvim_create_augroup("VimoireStatusline", { clear = true })

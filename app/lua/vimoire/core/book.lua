@@ -1,0 +1,42 @@
+local Book = {}
+local Path = require("plenary.path")
+local yaml = require("vendor.tinyyaml")
+
+function Book.load(root_path)
+  local book_file = Path:new(root_path, "book.yml")
+
+  if not book_file:exists() then
+    return nil, "book.yml not found at " .. root_path
+  end
+
+  local content, err = book_file:read()
+  if not content then
+    return nil, "Failed to read book.yml: " .. err
+  end
+
+  local ok, data = pcall(yaml.parse, content)
+  if not ok then
+    return nil, "Failed to parse book.yml: " .. data
+  end
+
+  return Book.new(data, root_path)
+end
+
+function Book.new(data, root_path)
+  local self = setmetatable({}, { __index = Book })
+  self.title = data.title or "Untitled"
+  self.author = data.author or ""
+  self.description = data.description or ""
+  self.language = data.language or "en"
+  self.copyright = data.copyright
+  self.publisher = data.publisher
+  self.isbn = data.isbn
+  self.root = root_path
+  return self
+end
+
+function Book:path()
+  return Path:new(self.root, "book.yml"):absolute()
+end
+
+return Book

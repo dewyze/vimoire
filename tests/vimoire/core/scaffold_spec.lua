@@ -17,16 +17,25 @@ describe("scaffold", function()
   end)
 
   describe("create", function()
-    it("creates manuscript.json with title", function()
+    it("creates book.yml with title", function()
+      local project_dir = temp_dir .. "/my-book"
+
+      scaffold.create(project_dir, "My First Novel")
+
+      local book_path = Path:new(project_dir, "book.yml")
+      assert.is_true(book_path:exists())
+
+      local content = book_path:read()
+      assert.matches('title: "My First Novel"', content)
+    end)
+
+    it("creates manuscript.json", function()
       local project_dir = temp_dir .. "/my-book"
 
       scaffold.create(project_dir, "My First Novel")
 
       local manuscript_path = Path:new(project_dir, "manuscript.json")
       assert.is_true(manuscript_path:exists())
-
-      local content = vim.json.decode(manuscript_path:read())
-      assert.equals("My First Novel", content.title)
     end)
 
     it("creates starter entries", function()

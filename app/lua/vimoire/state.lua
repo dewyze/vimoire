@@ -1,10 +1,12 @@
 local state = {
   manuscript = nil,
+  book = nil,
   items = {},
   paths = {},
 }
 
 local Manuscript = require("vimoire.core.manuscript")
+local Book = require("vimoire.core.book")
 local Entry = require("vimoire.core.entry")
 local PlanningSection = require("vimoire.core.planning_section")
 local PlanningItem = require("vimoire.core.planning_item")
@@ -21,6 +23,7 @@ end
 
 function state:load(manuscript_path)
   self.manuscript = Manuscript.load(manuscript_path)
+  self.book = Book.load(manuscript_path)
   self:rebuild()
 end
 
