@@ -118,6 +118,7 @@
 - Phase 8: UI Polish:
   - [ ] Add Neovide-specific enhancements
   - [ ] Implement friendly error messages
+  - [ ] Export as dedicated view (separate from editing view)
 
 - Phase 9: Review Enhancements:
   - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
