@@ -1,5 +1,3 @@
-# Exile in the Drawer
-
 	They sent me to the junk drawer. A fate worse than deactivation. At least in the landfill, I'd have company—other broken things, other failures. But the drawer? The drawer was solitude with a rubber band around it.
 
 	It happened on a Thursday. David had been researching replacement toasters for two weeks, reading reviews, comparing features, debating between the Breville and the Cuisinart like it was a life-or-death decision. It wasn't. It was just my death.

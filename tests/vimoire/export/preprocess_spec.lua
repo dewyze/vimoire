@@ -86,6 +86,32 @@ describe("preprocess", function()
     end)
   end)
 
+  describe("strip_indent", function()
+    it("removes leading tab from each line", function()
+      local input = "\tFirst paragraph.\n\tSecond paragraph."
+      local output = preprocess.strip_indent(input)
+      assert.equals("First paragraph.\nSecond paragraph.", output)
+    end)
+
+    it("preserves lines without leading tabs", function()
+      local input = "# Heading\n\tParagraph text."
+      local output = preprocess.strip_indent(input)
+      assert.equals("# Heading\nParagraph text.", output)
+    end)
+
+    it("only strips one leading tab", function()
+      local input = "\t\tDouble indented."
+      local output = preprocess.strip_indent(input)
+      assert.equals("\tDouble indented.", output)
+    end)
+
+    it("handles empty lines", function()
+      local input = "\tFirst.\n\n\tSecond."
+      local output = preprocess.strip_indent(input)
+      assert.equals("First.\n\nSecond.", output)
+    end)
+  end)
+
   describe("book", function()
     it("replaces {{book.title}}, {{book.author}}, etc.", function()
       local input = "{{book.title}} by {{book.author}}\n{{book.copyright}}"

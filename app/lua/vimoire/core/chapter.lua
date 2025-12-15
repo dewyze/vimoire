@@ -1,4 +1,5 @@
 local DocumentBase = require("vimoire.core.document_base")
+local actions = require("vimoire.export.actions")
 
 local Chapter = {}
 Chapter.__index = Chapter
@@ -29,6 +30,14 @@ end
 
 function Chapter:text_path()
   return self:dir_path() .. "/" .. Chapter.TEXT_FILENAME
+end
+
+function Chapter:export_context()
+  return {
+    title = self.name,
+    num = self.chapter_index,
+    actions = { actions.inject_title },
+  }
 end
 
 return Chapter

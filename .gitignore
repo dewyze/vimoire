@@ -42,3 +42,6 @@ luac.out
 # Other
 .claude/
 lazy-lock.json
+
+# Test output
+tests/fixtures/*/exports/

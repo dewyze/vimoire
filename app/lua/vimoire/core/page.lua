@@ -31,4 +31,11 @@ function Page:text_path()
   return self:dir_path() .. "/" .. Page.TEXT_FILENAME
 end
 
+function Page:export_context()
+  return {
+    title = self.name,
+    actions = {},
+  }
+end
+
 return Page

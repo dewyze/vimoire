@@ -84,12 +84,12 @@
 
 - Phase 7: Export (see docs/EXPORT_SPEC.md):
   - 7.1: Core Pipeline:
-    - [ ] Read book.yml metadata
-    - [ ] Walk manuscript.json, collect entry prose.md paths in order
-    - [ ] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
-    - [ ] Write preprocessed files to temp directory
-    - [ ] Shell out to pandoc (EPUB first)
-    - [ ] Write to exports/builds/
+    - [x] Read book.yml metadata
+    - [x] Walk manuscript.json, collect entry prose.md paths in order
+    - [x] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
+    - [x] Write preprocessed files to temp directory
+    - [x] Shell out to pandoc (EPUB first)
+    - [x] Write to exports/builds/
   - 7.2: Export Config:
     - [ ] Define config YAML schema
     - [ ] Generate config from manuscript state
@@ -141,6 +141,7 @@
   > Health check should verify entries have prose.md files
 
 - Deferred:
+  - [ ] Chapter templates (customizable header with subtitle, epigraph fields in manuscript.json)
   - [ ] Scene markers in prose (headers or <!--@scene--> comments) with neotree navigation
   - [ ] Define vimoire.markdown filetype with role-based settings
   - [ ] Build collapsible panel system

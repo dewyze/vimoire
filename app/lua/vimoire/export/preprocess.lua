@@ -20,6 +20,10 @@ function M.strip_tags(content)
   return result
 end
 
+function M.strip_indent(content)
+  return content:gsub("^\t", ""):gsub("\n\t", "\n")
+end
+
 function M.book(content, context)
   return content:gsub("{{book%.([^}]+)}}", function(key)
     local value = context[key]
