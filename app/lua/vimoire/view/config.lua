@@ -2,6 +2,13 @@ local constants = require("vimoire.core.constants")
 local add_options = require("vimoire.core.add_options")
 
 return {
+  -- Book metadata (immutable, opens book.yml)
+  book = {
+    icon = constants.ICONS.BOOK,
+    highlight = constants.HIGHLIGHTS.BOOK,
+    immutable = true,
+  },
+
   -- Top-level folders (immutable)
   manuscript = {
     icon = constants.ICONS.MANUSCRIPT,

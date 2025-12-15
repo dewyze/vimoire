@@ -29,6 +29,7 @@ local c = {
   match = "#7a5020",
 
   -- Neotree structure (earthy accents)
+  book = "#6a4838",
   manuscript = "#5a4840",
   section = "#6a5a48",
   chapter = "#4a6050",
@@ -112,6 +113,7 @@ hl(0, "NeoTreeFloatBorder", { fg = c.fg_muted })
 hl(0, "NeoTreeFloatTitle", { fg = c.header, bold = true })
 
 -- Vimoire Navigator (earthy accent colors)
+hl(0, "VimoireBook", { fg = c.book, bold = true })
 hl(0, "VimoireManuscript", { fg = c.manuscript, bold = true })
 hl(0, "VimoireSection", { fg = c.section, bold = true })
 hl(0, "VimoireChapter", { fg = c.chapter })

@@ -6,6 +6,7 @@ local M = {
   default_config = {
     window = {},
     renderers = {
+      book = { { "indent" }, { "icon" }, { "name" } },
       manuscript = { { "indent" }, { "icon" }, { "name" } },
       planning = { { "indent" }, { "icon" }, { "name" } },
       characters = { { "indent" }, { "icon" }, { "name" } },
@@ -85,6 +86,8 @@ function M.navigate(state_param, path, path_to_reveal, callback)
   state_param.path = path or state.manuscript.root
 
   local ok, err = pcall(function()
+    local book_node = node_from_item(state.items["book"])
+
     local manuscript_node = node_from_item(state.items["manuscript"])
     local manuscript_children = build_items_nodes(state.manuscript.items or {})
     manuscript_node.children = manuscript_children
@@ -101,7 +104,7 @@ function M.navigate(state_param, path, path_to_reveal, callback)
     state_param.default_expanded_nodes = { "manuscript", "planning", "characters", "settings", "reference" }
 
     local renderer = require("neo-tree.ui.renderer")
-    renderer.show_nodes({ manuscript_node, planning_node }, state_param)
+    renderer.show_nodes({ book_node, manuscript_node, planning_node }, state_param)
 
     if path_to_reveal then
       local root = state.manuscript.root

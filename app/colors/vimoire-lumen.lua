@@ -29,6 +29,7 @@ local c = {
   match = "#3a3a3a",
 
   -- Neotree structure (hierarchy through brightness only)
+  book = "#0a0a0a",
   manuscript = "#1a1a1a",
   section = "#3a3a3a",
   chapter = "#4a4a4a",
@@ -112,6 +113,7 @@ hl(0, "NeoTreeFloatBorder", { fg = c.fg_muted })
 hl(0, "NeoTreeFloatTitle", { fg = c.header, bold = true })
 
 -- Vimoire Navigator (brightness hierarchy, no color)
+hl(0, "VimoireBook", { fg = c.book, bold = true })
 hl(0, "VimoireManuscript", { fg = c.manuscript, bold = true })
 hl(0, "VimoireSection", { fg = c.section, bold = true })
 hl(0, "VimoireChapter", { fg = c.chapter })

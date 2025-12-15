@@ -2,6 +2,9 @@ local Book = {}
 local Path = require("plenary.path")
 local yaml = require("vendor.tinyyaml")
 
+Book.KIND = "book"
+Book.ID = "book"
+
 function Book.load(root_path)
   local book_file = Path:new(root_path, "book.yml")
 
@@ -24,6 +27,8 @@ end
 
 function Book.new(data, root_path)
   local self = setmetatable({}, { __index = Book })
+  self.id = Book.ID
+  self.kind = Book.KIND
   self.title = data.title or "Untitled"
   self.author = data.author or ""
   self.description = data.description or ""
@@ -37,6 +42,14 @@ end
 
 function Book:path()
   return Path:new(self.root, "book.yml"):absolute()
+end
+
+function Book:text_path()
+  return self:path()
+end
+
+function Book:display_name()
+  return "Book Info"
 end
 
 return Book

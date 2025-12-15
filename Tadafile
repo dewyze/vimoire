@@ -19,94 +19,126 @@
   - Telescope Integration:
     - [x] Build Telescope pickers for chapters and planning
     - [x] Add filtered pickers (manuscript, characters, settings, reference)
+  - Neotree Commands (Phase 1):
+    - [x] Implement add (context-aware)
+    - [x] Implement rename
+    - [x] Implement delete
+    > Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
+    > From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help
+    > Keybindings: a=add, r=rename, d=delete, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
+    > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
+  - Scaffolding (Phase 2):
+    - [x] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
+    - [x] Custom start screen
+    - [x] Set up command dispatcher
+    > Command dispatcher is neotree itself - structural operations live in the tree
+    > Buffer commands (like :VimoireNotes) for context-aware actions from editor
+    > Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
+    > Handle lazy.nvim auto-updates gracefully (plugin reload without restart)
+  - Notes (Phase 3):
+    - [x] Implement chapter notes access (neotree n key, :VimoireNotes command)
+    > Notes.md opened via neotree or buffer command, created on first access
+    > Buffer metadata (vim.b.vimoire_item_id) tracks which item a buffer belongs to
+  - Prose Editing Experience (Phase 4):
+    - [x] Custom filetypes (vimoire_prose, vimoire_markdown)
+    - [x] Register markdown treesitter parser for custom filetypes
+    > Filetype detection via filename: prose.md → vimoire_prose, notes.md/text.md → vimoire_markdown
+    > Entries use prose.md, planning items use text.md
+    - [x] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
+    - [x] Paragraph behavior (autoindent enabled, no blank lines between paragraphs)
+    > Scene breaks use *** not --- (avoids setext heading ambiguity)
+    - [x] Syntax highlighting (visible delimiters, styled content - no concealing)
+    > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
+    > Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
+    > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
+    - [x] Spellcheck (book-local dictionary at spell/en.add)
+    - [x] Notes/planning filetype settings (standard markdown via treesitter)
+    - [x] Color themes (app-level, user-selectable)
+    > Using native Neovim colorscheme system (app/colors/*.lua)
+    > User config at ~/.vimoire/config.lua (separate from app code)
+    > Syntax file handles prose highlight defaults, highlights.lua handles UI fallbacks
+    > [x] vimoire-inkwell colorscheme (warm dark, default)
+    > [x] vimoire-parchment colorscheme (warm light)
+    > [x] vimoire-vellum colorscheme (sepia)
+    > [x] vimoire-umbra colorscheme (high contrast monochrome dark)
+    > [x] vimoire-lumen colorscheme (high contrast monochrome light)
+    > [x] :VimoireTheme command
+    - [ ] Text centering (DEFERRED - no-neck-pain model mismatch with neotree, see PROSE_SPEC.md)
+  - User Configuration (Phase 5):
+    - [x] Load user config from ~/.vimoire/config.lua
+    - [x] Centralized keybindings system (registry pattern with mode support)
+    > Keymaps defined in config.lua defaults, overridable via user config
+    > Added visual_line_navigation toggle for j/k → gj/gk
+    > Full options documented in docs/CONFIGURATION.md
 
-- Phase 1: Neotree Commands:
-  - [x] Implement add (context-aware)
-  - [x] Implement rename
-  - [x] Implement delete
-  > Allowlist approach - don't call cc._add_common_commands(), explicitly define each command
-  > From common (just assign): open_split, open_vsplit, toggle_node, close_node, close_all_nodes, expand_all_nodes, close_window, show_help
-  > Keybindings: a=add, r=rename, d=delete, J=move_down, K=move_up, s=split, v=vsplit, t=toggle, etc.
-  > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
+- Phase 6: Book Identity (see docs/BOOK_YML_SPEC.md):
+  - [x] Add book.yml for user-facing metadata (title, author, description, language)
+  - [x] Create Book module to load/parse book.yml (tinyyaml vendor)
+  - [x] Update scaffold to create book.yml on project creation
+  - [x] Update state to load book alongside manuscript
+  - [x] Update neotree to read title from state.book
+  - [x] Add book.yml node to neotree navigator (top of tree, opens for editing)
+  - [x] Add BufWritePost autocmd for book.yml refresh
+  > Separates book identity from manuscript.json structural data
+  > book.yml is user-editable, manuscript.json is internal app state
 
-- Phase 2: Scaffolding:
-  - [x] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
-  - [x] Custom start screen
-  - [x] Set up command dispatcher
-  > Command dispatcher is neotree itself - structural operations live in the tree
-  > Buffer commands (like :VimoireNotes) for context-aware actions from editor
-  - NOTE: Design bootstrap to accept manuscript path from multiple sources (see ARCHITECTURE.md) for future app packaging support
-  - NOTE: Handle lazy.nvim auto-updates gracefully (plugin reload without restart)
+- Phase 7: Export (see docs/EXPORT_SPEC.md):
+  - 7.1: Core Pipeline:
+    - [ ] Read book.yml metadata
+    - [ ] Walk manuscript.json, collect entry prose.md paths in order
+    - [ ] Implement preprocessing (newlines, {{chapter}}, strip tags)
+    - [ ] Write preprocessed files to temp directory
+    - [ ] Shell out to pandoc (EPUB first)
+    - [ ] Write to exports/builds/
+  - 7.2: Export Config:
+    - [ ] Define config YAML schema
+    - [ ] Generate config from manuscript state
+    - [ ] Parse config for export
+    - [ ] Regenerate while preserving customizations (commented entries)
+    - [ ] :VimoireExportConfig command
+  - 7.3: DOCX Format:
+    - [ ] DOCX with page breaks and reference doc
+    - [ ] Format-specific pandoc flags
+  - 7.4: Front/Back Matter:
+    - [ ] Design front/back matter system (separate discussion)
+    - [ ] Scaffold default files at project creation
+    - [ ] Include in config generation
+    - [ ] Template variable substitution
+  - 7.5: Templates & Filters:
+    - [ ] Scaffold default templates at project creation
+    - [ ] Bundle pagebreak.lua filter
+    - [ ] Default epub.css
+  - 7.6: Commands & Polish:
+    - [ ] :VimoireExport command
+    - [ ] Auto-open with opt-out
+    - [ ] Error handling and quickfix integration
 
-- Phase 3: Notes:
-  - [x] Implement chapter notes access (neotree n key, :VimoireNotes command)
-  > Notes.md opened via neotree or buffer command, created on first access
-  > Buffer metadata (vim.b.vimoire_item_id) tracks which item a buffer belongs to
-
-- Phase 4: Prose Editing Experience (see docs/PROSE_SPEC.md):
-  - [x] Custom filetypes (vimoire_prose, vimoire_markdown)
-  - [x] Register markdown treesitter parser for custom filetypes
-  > Filetype detection via filename: prose.md → vimoire_prose, notes.md/text.md → vimoire_markdown
-  > Entries use prose.md, planning items use text.md
-  - [x] Prose display settings (wrap, linebreak, breakindent, j/k remaps)
-  - [x] Paragraph behavior (autoindent enabled, no blank lines between paragraphs)
-  > Scene breaks use *** not --- (avoids setext heading ambiguity)
-  - [x] Syntax highlighting (visible delimiters, styled content - no concealing)
-  > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
-  > Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
-  > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
-  - [x] Spellcheck (book-local dictionary at spell/en.add)
-  - [x] Notes/planning filetype settings (standard markdown via treesitter)
-  - [x] Color themes (app-level, user-selectable)
-  > Using native Neovim colorscheme system (app/colors/*.lua)
-  > User config at ~/.vimoire/config.lua (separate from app code)
-  > Syntax file handles prose highlight defaults, highlights.lua handles UI fallbacks
-  > [x] vimoire-inkwell colorscheme (warm dark, default)
-  > [x] vimoire-parchment colorscheme (warm light)
-  > [x] vimoire-vellum colorscheme (sepia)
-  > [x] vimoire-umbra colorscheme (high contrast monochrome dark)
-  > [x] vimoire-lumen colorscheme (high contrast monochrome light)
-  > [x] :VimoireTheme command
-  - [ ] Text centering (DEFERRED - no-neck-pain model mismatch with neotree, see PROSE_SPEC.md)
-
-- Phase 5: User Configuration:
-  - [x] Load user config from ~/.vimoire/config.lua
-  - [x] Centralized keybindings system (registry pattern with mode support)
-  > Keymaps defined in config.lua defaults, overridable via user config
-  > Added visual_line_navigation toggle for j/k → gj/gk
-  > Full options documented in docs/CONFIGURATION.md
-
-- Phase 6: UI Polish:
+- Phase 8: UI Polish:
   - [ ] Add Neovide-specific enhancements
   - [ ] Implement friendly error messages
 
-- Phase 7: Review Enhancements:
+- Phase 9: Review Enhancements:
   - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
 
-- Phase 8: Comments:
+- Phase 10: Comments:
   - [ ] Build comments panel with extmark anchors
 
-- Phase 9: Planning & Plotting:
-  - 9.1: Planning Docs:
+- Phase 11: Planning & Plotting:
+  - 11.1: Planning Docs:
     - [ ] Discover and index planning documents
     - [ ] Allow pinning planning docs as panels
-  - 9.2: Plotting Foundation:
+  - 11.2: Plotting Foundation:
     - [ ] Build plot data model (JSON structure)
-  - 9.3: Plotting Views:
+  - 11.3: Plotting Views:
     - [ ] Build book-level grid view
     - [ ] Build chapter-level kanban view
-  - 9.4: Plotting Interactions:
+  - 11.4: Plotting Interactions:
     - [ ] Implement card operations (create/move/delete)
 
-- Phase 10: Export:
-  - [ ] Assemble manuscript from ordered chapters
-  - [ ] Set up Pandoc export pipeline
-  > Preprocess prose: convert single \n to \n\n before pandoc (prose files have no blank lines between paragraphs)
-
-- Phase 11: Healthcheck:
+- Phase 12: Healthcheck:
   - [ ] Track ephemeral state and cache
   - [ ] Build healthcheck for data integrity
-  > Health check should verify entries have text.md files
+  > Health check should verify entries have prose.md files
 
 - Deferred:
   - [ ] Scene markers in prose (headers or <!--@scene--> comments) with neotree navigation

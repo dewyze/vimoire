@@ -54,6 +54,12 @@ function state:rebuild()
   local root = self.manuscript.root
   local chapter_count = 0
 
+  -- Book metadata node
+  if self.book then
+    self.items[self.book.id] = self.book
+    apply_view(self.book)
+  end
+
   -- Folders (synthetic UI containers)
   self.items["manuscript"] = Folder.new("manuscript", "Manuscript", "manuscript", self.manuscript.items)
   self.items["planning"] = Folder.new("planning", "Planning", "planning", {

@@ -5,6 +5,7 @@ local function icon(hex)
 end
 
 M.ICONS = {
+  BOOK = icon("0xf02d"),
   MANUSCRIPT = icon("0xf15d6"),
   SECTION = icon("0xe6ad"),
   CHAPTER = icon("0xf0bc2"),
@@ -18,6 +19,7 @@ M.ICONS = {
 }
 
 M.HIGHLIGHTS = {
+  BOOK = "VimoireBook",
   MANUSCRIPT = "VimoireManuscript",
   SECTION = "VimoireSection",
   CHAPTER = "VimoireChapter",
