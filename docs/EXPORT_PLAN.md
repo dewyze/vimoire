@@ -56,10 +56,10 @@ Replace `{{chapter.num}}` with the running chapter count (passed in as context).
 
 ### 2.3 Strip marks and todos
 ```
-Input:  "He walked {{mark}}slowly{{/mark}} to the {{todo:fix pacing}}door."
+Input:  "He walked {{mark}}slowly to the {{todo:fix pacing}}door."
 Output: "He walked slowly to the door."
 ```
-Remove `{{mark}}`, `{{/mark}}`, `{{todo}}`, `{{todo:...}}`.
+Remove `{{mark}}`, `{{mark:...}}`, `{{todo}}`, `{{todo:...}}`. Strips optional trailing newline.
 
 ### 2.4 Variable substitution (front/back matter)
 ```

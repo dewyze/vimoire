@@ -183,9 +183,8 @@ Missing files: warn and skip. Invalid entry IDs: warn and skip.
 |-----------|-------|--------|
 | Paragraph breaks | `\n` | `\n\n` |
 | Chapter number | `{{chapter.num}}` | Running count (chapters only, pages don't increment) |
-| Marks | `{{mark}}` | Stripped |
-| Todos | `{{todo}}` | Stripped |
-| Todos with text | `{{todo:description}}` | Stripped |
+| Marks | `{{mark}}`, `{{mark:text}}` | Stripped |
+| Todos | `{{todo}}`, `{{todo:text}}` | Stripped |
 
 Chapter numbering example: Page, Chapter, Chapter, Page, Chapter → chapters numbered 1, 2, 3.
 
