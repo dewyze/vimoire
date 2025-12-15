@@ -45,7 +45,7 @@ language: en
 book.yml appears at the top of the navigator, above Manuscript:
 
 ```
-📖 Book Info          ← book.yml (shows title from file)
+📖 Book Info          ← book.yml node
 📚 Manuscript
    └── Part 1
        └── Chapter 1...
@@ -55,24 +55,30 @@ book.yml appears at the top of the navigator, above Manuscript:
 ```
 
 **Node behavior:**
-- Display: Shows book title (read from book.yml)
+- Display: Shows "Book Info" (static label)
 - Action: Opens book.yml for editing
-- Icon: Book or info icon to distinguish from manuscript content
+- Icon: Book icon to distinguish from manuscript content
+- Highlight: `VimoireBook` (links to `Identifier` as fallback)
 
 ---
 
 ## Refresh on Save
 
-When book.yml is saved, refresh the neotree node to reflect any title change:
+When book.yml is saved, reload and refresh neotree:
 
 ```lua
 vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = "book.yml",
+  group = augroup,
+  pattern = "*/book.yml",
   callback = function()
-    -- Refresh neotree book node (implementation TBD based on neotree source)
+    state.book = Book.load(state.manuscript.root)
+    state:rebuild()
+    refresh_neotree()
   end,
 })
 ```
+
+This reloads book.yml from disk, rebuilds state.items, and refreshes the neotree tree.
 
 ---
 
@@ -135,15 +141,11 @@ Add book.yml node to the navigator tree, above the manuscript root.
 
 ## Implementation Steps
 
-1. [ ] Add book.yml to scaffold template
-2. [ ] Create `vimoire.book` module to read/parse book.yml
-3. [ ] Update manuscript.json handling to remove title/description
-4. [ ] Add book node to neotree source (top of tree)
-5. [ ] Add BufWritePost autocmd for book.yml refresh
-6. [ ] Update any code reading title/description from manuscript.json
+1. [x] Add book.yml to scaffold template
+2. [x] Create `vimoire.book` module to read/parse book.yml (uses tinyyaml vendor)
+3. [x] Update manuscript.json handling to remove title/description
+4. [x] Add book node to neotree source (top of tree)
+5. [x] Add BufWritePost autocmd for book.yml refresh
+6. [x] Update any code reading title/description from manuscript.json
 
----
-
-## Open Questions
-
-None currently.
+**Status: Complete** (Phase 6)

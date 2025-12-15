@@ -2,11 +2,11 @@
 
 A Neovim/Neovide writing environment for long-form fiction.
 
-See `ARCHITECTURE.md` for book.yml structure, project filesystem layout, and plugin module architecture.
+See `ARCHITECTURE.md` for file structures, project layout, and plugin module architecture.
 
 ## Core Concept
 
-**Filesystem** stores content (markdown, JSON). **manuscript.json** indexes structure and metadata. Healthcheck detects inconsistencies.
+**Filesystem** stores content (markdown, JSON). **book.yml** holds user-facing identity (title, author). **manuscript.json** holds internal structure (ordering, IDs). Healthcheck detects inconsistencies.
 
 ## Features
 

@@ -2,21 +2,33 @@
 
 ### Sections
 
-**manuscript.json**: JSON file per project defines sections, chapters, order, titles, and metadata.
+**book.yml**: User-facing book identity file (title, author, description, publishing metadata).
+**manuscript.json**: Internal app state (structure, ordering, IDs). Not user-edited.
 **Book project structure**: A single project uses a specific UUID and domain based file structure.
 **Plugin architecture**: Suggested example architecture for the lua plugin we are writing.
 
 ---
 
+## book.yml
+
+User-facing identity file. See `BOOK_YML_SPEC.md` for full specification.
+
+```yaml
+title: "The Unreliable Memoirs of Gerald the Sentient Toaster"
+description: "A toaster gains sentience and has feelings about bread."
+author: "Author Name"
+language: en
+```
+
+---
+
 ## manuscript.json
 
-Nested structure: `items` array contains entries (chapters, pages) and sections. Sections have their own nested `items` array. This makes tree operations (K/J reordering, moving between sections) natural—just array manipulations.
+Internal structural state. Nested `items` array contains entries (chapters, pages) and sections. Sections have their own nested `items` array. This makes tree operations (K/J reordering, moving between sections) natural—just array manipulations.
 
 ```json
 {
   "id": "bk2xqr",
-  "title": "The Unreliable Memoirs of Gerald the Sentient Toaster",
-  "description": "",
   "items": [
     {
       "id": "sec001",
@@ -58,8 +70,6 @@ Nested structure: `items` array contains entries (chapters, pages) and sections.
 }
 ```
 
-Note: The manuscript `title` is the book title. Items use `name` for their display label.
-
 **Entry kinds:**
 - `chapter` — numbered, has prose.md and notes.md
 - `page` — unnumbered (title pages, interludes, appendices), has prose.md and notes.md
@@ -85,7 +95,8 @@ Note: The manuscript `title` is the book title. Items use `name` for their displ
 
 ```
 book_root/
-  manuscript.json
+  book.yml              # user-facing book identity
+  manuscript.json       # internal structural state
 
   entries/
     <uuid>/              # chapters and pages
@@ -237,7 +248,7 @@ Prose syntax (defined in `syntax/vimoire_prose.vim` with `highlight default`):
 - `vimoireBoldStyle`, `vimoireItalicStyle`, `vimoireUnderlineStyle`, `vimoireBoldItalicStyle`
 
 UI groups (fallbacks in `lua/vimoire/highlights.lua` via ColorScheme autocmd):
-- Navigator: `VimoireManuscript`, `VimoireSection`, `VimoireChapter`, `VimoirePage`, `VimoirePlanning`, `VimoirePlanningSubfolder`, `VimoirePlanningItem`
+- Navigator: `VimoireBook`, `VimoireManuscript`, `VimoireSection`, `VimoireChapter`, `VimoirePage`, `VimoirePlanning`, `VimoirePlanningSubfolder`, `VimoirePlanningItem`
 - Start screen: `VimoireLogo`, `VimoireTagline`, `VimoireStar`, `VimoireHeader`, `VimoireProject`, `VimoireProjectSelected`, `VimoirePath`, `VimoireDate`, `VimoireAction`, `VimoireKey`
 
 **Third-party colorschemes:** Work automatically via fallback links to standard groups (Title, Comment, Function, etc.). Vimoire colorschemes override with specific colors.
