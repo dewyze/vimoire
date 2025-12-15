@@ -17,6 +17,9 @@ local M = {
       page = { { "indent" }, { "icon" }, { "name" } },
       planning_item = { { "indent" }, { "icon" }, { "name" } },
       subfolder = { { "indent" }, { "icon" }, { "name" } },
+      export = { { "indent" }, { "icon" }, { "name" } },
+      export_folder = { { "indent" }, { "icon" }, { "name" } },
+      export_file = { { "indent" }, { "icon" }, { "name" } },
     },
   },
 }
@@ -100,11 +103,17 @@ function M.navigate(state_param, path, path_to_reveal, callback)
     planning_node.loaded = true
     planning_node.expanded = true
 
+    local export_node = node_from_item(state.items["export"])
+    local export_children = build_items_nodes(state.items["export"].items)
+    export_node.children = export_children
+    export_node.loaded = true
+    export_node.expanded = true
+
     -- Set default expanded nodes before rendering (neo-tree uses this, not per-node expanded)
-    state_param.default_expanded_nodes = { "manuscript", "planning", "characters", "settings", "reference" }
+    state_param.default_expanded_nodes = { "manuscript", "planning", "characters", "settings", "reference", "export" }
 
     local renderer = require("neo-tree.ui.renderer")
-    renderer.show_nodes({ book_node, manuscript_node, planning_node }, state_param)
+    renderer.show_nodes({ book_node, manuscript_node, planning_node, export_node }, state_param)
 
     if path_to_reveal then
       local root = state.manuscript.root

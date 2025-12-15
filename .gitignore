@@ -43,5 +43,5 @@ luac.out
 .claude/
 lazy-lock.json
 
-# Test output
-tests/fixtures/*/exports/
+# Test output (keep templates and configs, ignore generated output)
+tests/fixtures/*/exports/output/

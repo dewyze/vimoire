@@ -68,4 +68,21 @@ return {
     highlight = constants.HIGHLIGHTS.PLANNING_ITEM,
     add_options = { add_options.PLANNING_ITEM, add_options.CANCEL },
   },
+
+  -- Export section
+  export = {
+    icon = constants.ICONS.EXPORT,
+    highlight = constants.HIGHLIGHTS.EXPORT,
+    immutable = true,
+  },
+  export_folder = {
+    icon = constants.ICONS.EXPORT_FOLDER,
+    highlight = constants.HIGHLIGHTS.EXPORT_FOLDER,
+    immutable = true,
+  },
+  export_file = {
+    icon = constants.ICONS.EXPORT_FILE,
+    highlight = constants.HIGHLIGHTS.EXPORT_FILE,
+    immutable = true,
+  },
 }

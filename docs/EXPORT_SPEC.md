@@ -29,15 +29,15 @@ Scaffolding creates these export-related files/folders:
 book.yml                    # book identity (see BOOK_YML_SPEC.md)
 front_matter/               # assembled before manuscript (TBD: see Front/Back Matter)
 back_matter/                # assembled after manuscript (TBD: see Front/Back Matter)
-templates/                  # export styling
-  chapter.md                # chapter opening template (see Chapter Frontmatter)
-  epub.css
-  reference.docx
-  pagebreak.lua             # pandoc filter for DOCX page breaks
-exports/                    # export configs and output (gitignored)
+exports/                    # export configs, templates, and output (gitignored)
+  templates/                # export styling
+    chapter.md              # chapter opening template (see Chapter Frontmatter)
+    epub.css
+    reference.docx
+    pagebreak.lua           # pandoc filter for DOCX page breaks
   configs/
     default.yml             # generated on first export
-  builds/
+  output/
     MyNovel.epub
     MyNovel.docx
     export.log
@@ -105,7 +105,7 @@ Running `:VimoireExportConfig` on an existing config:
 1. Run `:VimoireExportConfig` — generates `exports/configs/default.yml` and opens it
 2. Review the config — see format, front/back matter, all entries in order
 3. Edit if needed — change format, comment out entries to exclude, etc.
-4. Run `:VimoireExport` — executes the default config, outputs to `exports/builds/`
+4. Run `:VimoireExport` — executes the default config, outputs to `exports/output/`
 
 **Named configs for different purposes:**
 
@@ -179,7 +179,7 @@ title: Chapter Name
 
 **Chapter Template:**
 
-The chapter opening format is controlled by `templates/chapter.md`. Default:
+The chapter opening format is controlled by `exports/templates/chapter.md`. Default:
 
 ```markdown
 # Chapter {{num}}: {{title}}
@@ -248,17 +248,17 @@ EPUB:
 ```bash
 pandoc input_files... \
   --split-level=1 \
-  --css=templates/epub.css \
+  --css=exports/templates/epub.css \
   --metadata title="..." --metadata author="..." --metadata lang="..." \
-  -o exports/builds/Title.epub
+  -o exports/output/Title.epub
 ```
 
 DOCX:
 ```bash
 pandoc input_files... \
-  --reference-doc=templates/reference.docx \
-  --lua-filter=templates/pagebreak.lua \
-  -o exports/builds/Title.docx
+  --reference-doc=exports/templates/reference.docx \
+  --lua-filter=exports/templates/pagebreak.lua \
+  -o exports/output/Title.docx
 ```
 
 ---
@@ -281,9 +281,9 @@ pandoc input_files... \
 
 ## Output
 
-- **Location:** `exports/builds/`
+- **Location:** `exports/output/`
 - **Filename:** `{output}` from config, or `{title}.{format}` (title from book.yml, sanitized for filesystem)
-- **Log:** `exports/builds/export.log` (pandoc stderr)
+- **Log:** `exports/output/export.log` (pandoc stderr)
 - **Auto-open:** After successful export, opens result (macOS `open`, Linux `xdg-open`). Disable with `:VimoireExport --no-open` or config setting.
 
 ---
@@ -298,7 +298,7 @@ pandoc input_files... \
 | Missing entry file | Warn and skip (partial export continues) |
 | Entry ID not in manuscript.json | Warn and skip |
 | Missing front/back matter file | Warn and skip |
-| Pandoc errors | Capture stderr to `exports/builds/export.log`, show summary in Neovim |
+| Pandoc errors | Capture stderr to `exports/output/export.log`, show summary in Neovim |
 
 Errors surface via `vim.notify`. Detailed logs in `export.log`.
 
@@ -312,7 +312,7 @@ Errors surface via `vim.notify`. Detailed logs in `export.log`.
 - [ ] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
 - [ ] Write preprocessed files to temp directory
 - [ ] Shell out to pandoc (EPUB first)
-- [ ] Write to exports/builds/
+- [ ] Write to exports/output/
 
 ### Phase 2: Export Config
 - [ ] Define config YAML schema

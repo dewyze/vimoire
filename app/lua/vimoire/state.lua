@@ -11,6 +11,7 @@ local Entry = require("vimoire.core.entry")
 local PlanningSection = require("vimoire.core.planning_section")
 local PlanningItem = require("vimoire.core.planning_item")
 local Folder = require("vimoire.core.folder")
+local ExportFile = require("vimoire.core.export_file")
 local view_config = require("vimoire.view.config")
 
 local function apply_view(item)
@@ -71,8 +72,47 @@ function state:rebuild()
   self.items["settings"] = Folder.new("settings", "Settings", "settings", self.manuscript.settings or {})
   self.items["reference"] = Folder.new("reference", "Reference", "reference", self.manuscript.reference or {})
 
+  -- Export section (filesystem-backed)
+  local function scan_export_dir(folder_id, dir_path)
+    local items = {}
+    local handle = vim.loop.fs_scandir(dir_path)
+    if handle then
+      while true do
+        local name, type = vim.loop.fs_scandir_next(handle)
+        if not name then
+          break
+        end
+        if type == "file" then
+          local file_id = folder_id .. ":" .. name
+          local file_path = dir_path .. "/" .. name
+          local file = ExportFile.new(file_id, name, file_path)
+          apply_view(file)
+          self.items[file_id] = file
+          table.insert(items, { id = file_id })
+        end
+      end
+    end
+    table.sort(items, function(a, b)
+      return a.id < b.id
+    end)
+    return items
+  end
+
+  local templates_items = scan_export_dir("export_templates", root .. "/exports/templates")
+  local configs_items = scan_export_dir("export_configs", root .. "/exports/configs")
+  local output_items = scan_export_dir("export_output", root .. "/exports/output")
+
+  self.items["export"] = Folder.new("export", "Export", "export", {
+    { id = "export_templates" },
+    { id = "export_configs" },
+    { id = "export_output" },
+  })
+  self.items["export_templates"] = Folder.new("export_templates", "Templates", "export_folder", templates_items)
+  self.items["export_configs"] = Folder.new("export_configs", "Configs", "export_folder", configs_items)
+  self.items["export_output"] = Folder.new("export_output", "Output", "export_folder", output_items)
+
   -- Apply view config to folders
-  for _, id in ipairs({ "manuscript", "planning", "characters", "settings", "reference" }) do
+  for _, id in ipairs({ "manuscript", "planning", "characters", "settings", "reference", "export", "export_templates", "export_configs", "export_output" }) do
     apply_view(self.items[id])
   end
 

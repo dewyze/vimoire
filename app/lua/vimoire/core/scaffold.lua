@@ -43,10 +43,12 @@ function M.create(project_dir, title)
   Path:new(project_dir, "planning", "settings"):mkdir({ parents = true })
   Path:new(project_dir, "planning", "reference"):mkdir({ parents = true })
   Path:new(project_dir, "spell"):mkdir()
-  Path:new(project_dir, "templates"):mkdir()
+  Path:new(project_dir, "exports", "templates"):mkdir({ parents = true })
+  Path:new(project_dir, "exports", "configs"):mkdir()
+  Path:new(project_dir, "exports", "output"):mkdir()
 
   -- Copy export templates
-  copy_template_file("export/chapter.md", project_dir .. "/templates/chapter.md")
+  copy_template_file("export/chapter.md", project_dir .. "/exports/templates/chapter.md")
 
   -- Copy starter entries
   Path:new(project_dir, "entries", dedication_id):mkdir()

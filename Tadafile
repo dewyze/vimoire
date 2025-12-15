@@ -106,8 +106,8 @@
     - [ ] Template variable substitution
   - 7.5: Templates & Filters:
     - [x] Scaffold chapter.md template at project creation
-    - [ ] Make templates/ visible in neotree navigator
-    - [ ] Make templates/ searchable in telescope
+    - [x] Make exports/ visible in neotree navigator (Templates, Configs, Output)
+    - [ ] Make exports/ searchable in telescope
     - [ ] Bundle pagebreak.lua filter
     - [ ] Default epub.css
   - 7.6: Commands & Polish:

@@ -16,6 +16,9 @@ M.ICONS = {
   REFERENCE = icon("0xe678"),
   PLANNING_SECTION = icon("0xf07c"),
   PLANNING_ITEM = icon("0xf15c"),
+  EXPORT = icon("0xf56e"),
+  EXPORT_FOLDER = icon("0xf07c"),
+  EXPORT_FILE = icon("0xf15c"),
 }
 
 M.HIGHLIGHTS = {
@@ -27,6 +30,9 @@ M.HIGHLIGHTS = {
   PLANNING = "VimoirePlanning",
   PLANNING_SUBFOLDER = "VimoirePlanningSubfolder",
   PLANNING_ITEM = "VimoirePlanningItem",
+  EXPORT = "VimoireExport",
+  EXPORT_FOLDER = "VimoireExportFolder",
+  EXPORT_FILE = "VimoireExportFile",
 }
 
 return M

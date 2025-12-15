@@ -112,7 +112,7 @@ describe("export", function()
   end)
 
   describe("run", function()
-    it("creates epub in exports/builds", function()
+    it("creates epub in exports/output", function()
       -- Skip if pandoc not available
       if vim.fn.executable("pandoc") ~= 1 then
         return

@@ -8,7 +8,7 @@ local M = {}
 
 -- Load chapter template from project or fall back to default
 local function load_chapter_template(root)
-  local project_template = root .. "/templates/chapter.md"
+  local project_template = root .. "/exports/templates/chapter.md"
   local loaded = template.load(project_template)
   if loaded then
     return loaded
@@ -126,7 +126,7 @@ function M.run(state, opts)
   local temp_dir, input_files = M.write_temp_files(files)
 
   -- Output path
-  local output_dir = state.manuscript.root .. "/exports/builds"
+  local output_dir = state.manuscript.root .. "/exports/output"
   vim.fn.mkdir(output_dir, "p")
 
   local filename = sanitize_filename(state.book.title) .. "." .. format
