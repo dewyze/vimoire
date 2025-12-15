@@ -244,7 +244,7 @@ Vimoire uses Neovim's native colorscheme system.
 
 Prose syntax (defined in `syntax/vimoire_prose.vim` with `highlight default`):
 - `vimoireH1` through `vimoireH6`, `vimoireSceneBreak`, `vimoireBlockQuote`, `vimoireFencedDiv`
-- `vimoireMetaChapter`, `vimoireMetaMark`, `vimoireMetaTodo`, `vimoireMetaTodoText`
+- `vimoireMetaChapter`, `vimoireMetaMark`, `vimoireMetaMarkText`, `vimoireMetaTodo`, `vimoireMetaTodoText`
 - `vimoireBoldStyle`, `vimoireItalicStyle`, `vimoireUnderlineStyle`, `vimoireBoldItalicStyle`
 
 UI groups (fallbacks in `lua/vimoire/highlights.lua` via ColorScheme autocmd):

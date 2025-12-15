@@ -28,9 +28,10 @@ syntax match vimoireBlockQuote /^>.*$/
 " Fenced divs: ::: name or ::: on its own
 syntax match vimoireFencedDiv /^:::.*$/
 
-" Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
-syntax match vimoireMetaChapter /{{chapter}}/
+" Metadata tags: {{chapter.num}}, {{mark}}, {{mark:text}}, {{todo}}, {{todo:text}}
+syntax match vimoireMetaChapter /{{chapter\.num}}/
 syntax match vimoireMetaMark /{{mark}}/
+syntax match vimoireMetaMarkText /{{mark:[^}]*}}/
 syntax match vimoireMetaTodo /{{todo}}/
 syntax match vimoireMetaTodoText /{{todo:[^}]*}}/
 
@@ -63,6 +64,7 @@ highlight default link vimoireBlockQuote Comment
 highlight default link vimoireFencedDiv Comment
 highlight default link vimoireMetaChapter Identifier
 highlight default link vimoireMetaMark Identifier
+highlight default link vimoireMetaMarkText Identifier
 highlight default link vimoireMetaTodo Todo
 highlight default link vimoireMetaTodoText Todo
 highlight default link vimoireBoldItalic vimoireBoldItalicStyle

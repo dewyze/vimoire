@@ -148,6 +148,7 @@ hl(0, "vimoireBlockQuote", { fg = c.fg_dim, italic = true })
 hl(0, "vimoireFencedDiv", { fg = c.fg_muted })
 hl(0, "vimoireMetaChapter", { fg = c.metadata })
 hl(0, "vimoireMetaMark", { fg = c.metadata })
+hl(0, "vimoireMetaMarkText", { fg = c.metadata })
 hl(0, "vimoireMetaTodo", { fg = c.bg, bg = c.todo })
 hl(0, "vimoireMetaTodoText", { fg = c.bg, bg = c.todo })
 

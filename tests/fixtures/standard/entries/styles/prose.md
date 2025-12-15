@@ -29,7 +29,7 @@ The Committee
 :::
 
 	Here are some metadata tags:
-	Chapter {{chapter}}: The Beginning
+	Chapter {{chapter.num}}: The Beginning
 	{{mark}}
 	This paragraph needs work {{todo}}
 	She pulled out {{todo:what does she pull out?}} from her pocket.

@@ -49,7 +49,7 @@
     > Scene breaks use *** not --- (avoids setext heading ambiguity)
     - [x] Syntax highlighting (visible delimiters, styled content - no concealing)
     > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
-    > Metadata tags: {{chapter}}, {{mark}}, {{todo}}, {{todo:text}}
+    > Metadata tags: {{chapter.num}}, {{mark}}, {{mark:text}}, {{todo}}, {{todo:text}}
     > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
     - [x] Spellcheck (book-local dictionary at spell/en.add)
     - [x] Notes/planning filetype settings (standard markdown via treesitter)
@@ -86,7 +86,7 @@
   - 7.1: Core Pipeline:
     - [ ] Read book.yml metadata
     - [ ] Walk manuscript.json, collect entry prose.md paths in order
-    - [ ] Implement preprocessing (newlines, {{chapter}}, strip tags)
+    - [ ] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
     - [ ] Write preprocessed files to temp directory
     - [ ] Shell out to pandoc (EPUB first)
     - [ ] Write to exports/builds/

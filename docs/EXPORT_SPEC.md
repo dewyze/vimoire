@@ -182,7 +182,7 @@ Missing files: warn and skip. Invalid entry IDs: warn and skip.
 | Transform | Input | Output |
 |-----------|-------|--------|
 | Paragraph breaks | `\n` | `\n\n` |
-| Chapter number | `{{chapter}}` | Running count (chapters only, pages don't increment) |
+| Chapter number | `{{chapter.num}}` | Running count (chapters only, pages don't increment) |
 | Marks | `{{mark}}` | Stripped |
 | Todos | `{{todo}}` | Stripped |
 | Todos with text | `{{todo:description}}` | Stripped |
@@ -190,7 +190,7 @@ Missing files: warn and skip. Invalid entry IDs: warn and skip.
 Chapter numbering example: Page, Chapter, Chapter, Page, Chapter → chapters numbered 1, 2, 3.
 
 **For front/back matter:**
-- Substitute `{{title}}`, `{{author}}`, `{{copyright}}` from book.yml
+- Substitute `{{book.title}}`, `{{book.author}}`, `{{book.copyright}}` etc. from book.yml
 
 ### Step 4: Format-Specific Processing
 
@@ -268,7 +268,7 @@ Errors surface via `vim.notify`. Detailed logs in `export.log`.
 ### Phase 1: Core Pipeline
 - [ ] Read book.yml metadata
 - [ ] Walk manuscript.json, collect entry prose.md paths in order
-- [ ] Implement preprocessing (newlines, {{chapter}}, strip tags)
+- [ ] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
 - [ ] Write preprocessed files to temp directory
 - [ ] Shell out to pandoc (EPUB first)
 - [ ] Write to exports/builds/
