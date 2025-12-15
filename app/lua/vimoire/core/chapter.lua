@@ -1,5 +1,4 @@
 local DocumentBase = require("vimoire.core.document_base")
-local actions = require("vimoire.export.actions")
 
 local Chapter = {}
 Chapter.__index = Chapter
@@ -36,7 +35,6 @@ function Chapter:export_context()
   return {
     title = self.name,
     num = self.chapter_index,
-    actions = { actions.inject_title },
   }
 end
 

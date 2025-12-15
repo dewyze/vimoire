@@ -32,22 +32,6 @@ describe("collector", function()
       assert.truthy(entries[1].path:match("/entries/part1tp/prose.md$"))
     end)
 
-    it("chapters have inject_title action", function()
-      local entries = collector.collect_entries(state)
-
-      -- chap1a is a chapter (second entry after part1tp page)
-      local chapter_entry = entries[2]
-      assert.equals(1, #chapter_entry.context.actions)
-    end)
-
-    it("pages have no actions", function()
-      local entries = collector.collect_entries(state)
-
-      -- part1tp is a page (first entry)
-      local page_entry = entries[1]
-      assert.equals(0, #page_entry.context.actions)
-    end)
-
     it("chapters have num from chapter_index", function()
       local entries = collector.collect_entries(state)
 

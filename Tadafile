@@ -105,7 +105,9 @@
     - [ ] Include in config generation
     - [ ] Template variable substitution
   - 7.5: Templates & Filters:
-    - [ ] Scaffold default templates at project creation
+    - [x] Scaffold chapter.md template at project creation
+    - [ ] Make templates/ visible in neotree navigator
+    - [ ] Make templates/ searchable in telescope
     - [ ] Bundle pagebreak.lua filter
     - [ ] Default epub.css
   - 7.6: Commands & Polish:
@@ -141,7 +143,7 @@
   > Health check should verify entries have prose.md files
 
 - Deferred:
-  - [ ] Chapter templates (customizable header with subtitle, epigraph fields in manuscript.json)
+  - [x] Chapter templates (frontmatter-based title override, customizable templates/chapter.md)
   - [ ] Scene markers in prose (headers or <!--@scene--> comments) with neotree navigation
   - [ ] Define vimoire.markdown filetype with role-based settings
   - [ ] Build collapsible panel system

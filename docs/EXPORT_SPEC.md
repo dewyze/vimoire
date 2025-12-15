@@ -30,6 +30,7 @@ book.yml                    # book identity (see BOOK_YML_SPEC.md)
 front_matter/               # assembled before manuscript (TBD: see Front/Back Matter)
 back_matter/                # assembled after manuscript (TBD: see Front/Back Matter)
 templates/                  # export styling
+  chapter.md                # chapter opening template (see Chapter Frontmatter)
   epub.css
   reference.docx
   pagebreak.lua             # pandoc filter for DOCX page breaks
@@ -155,6 +156,47 @@ Scaffolded with working defaults — first export should look decent without cus
 - Pre-built so pandoc applies styles correctly
 
 User customization: edit these files directly. No separate "user override" location — book templates are the source of truth.
+
+---
+
+## Chapter Frontmatter
+
+Chapters use YAML frontmatter to control their appearance in export. When creating a new chapter, prose.md is scaffolded with:
+
+```yaml
+---
+title: Chapter Name
+# subtitle:
+# epigraph:
+---
+```
+
+**Fields:**
+
+- `title` — Display title for export. Overrides the name in manuscript.json (which is the "working title" for navigation).
+- `subtitle` — Optional. Shown below the title in chapter openings.
+- `epigraph` — Optional. A quote or motto to open the chapter.
+
+**Chapter Template:**
+
+The chapter opening format is controlled by `templates/chapter.md`. Default:
+
+```markdown
+# Chapter {{num}}: {{title}}
+
+```
+
+Customize this to change how chapter headings render. Available placeholders:
+
+- `{{num}}` — Chapter number (1, 2, 3...)
+- `{{title}}` — From frontmatter.title (falls back to manuscript.json name)
+
+**Name vs Title:**
+
+- **Name** (manuscript.json) — Working title for the navigator. "climax battle", "ch7 draft", etc.
+- **Title** (frontmatter) — Display title for readers. "Chapter Seven: The Last Stand"
+
+These can be the same or different. Renaming in the navigator changes the name; editing frontmatter changes the title.
 
 ---
 
@@ -303,9 +345,7 @@ Errors surface via `vim.notify`. Detailed logs in `export.log`.
 
 ## Open Questions
 
-1. **Chapter titles in output:** Pull from first H1 in prose, or from entry name in manuscript.json? (Leaning toward entry name — structure is source of truth.)
-
-2. **Front/back matter design:** Needs dedicated discussion. See Front/Back Matter section.
+1. **Front/back matter design:** Needs dedicated discussion. See Front/Back Matter section.
 
 ---
 

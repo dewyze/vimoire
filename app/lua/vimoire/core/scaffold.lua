@@ -15,6 +15,13 @@ local function copy_template(template_name, dest_dir)
   end
 end
 
+local function copy_template_file(template_name, dest_path)
+  local src = get_template_path(template_name)
+  if src then
+    vim.fn.system({ "cp", src, dest_path })
+  end
+end
+
 function M.create(project_dir, title)
 
   -- Generate IDs
@@ -36,6 +43,10 @@ function M.create(project_dir, title)
   Path:new(project_dir, "planning", "settings"):mkdir({ parents = true })
   Path:new(project_dir, "planning", "reference"):mkdir({ parents = true })
   Path:new(project_dir, "spell"):mkdir()
+  Path:new(project_dir, "templates"):mkdir()
+
+  -- Copy export templates
+  copy_template_file("export/chapter.md", project_dir .. "/templates/chapter.md")
 
   -- Copy starter entries
   Path:new(project_dir, "entries", dedication_id):mkdir()

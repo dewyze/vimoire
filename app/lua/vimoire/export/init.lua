@@ -1,11 +1,35 @@
 local collector = require("vimoire.export.collector")
 local pipeline = require("vimoire.export.pipeline")
+local frontmatter = require("vimoire.export.frontmatter")
+local template = require("vimoire.export.template")
 local Path = require("plenary.path")
 
 local M = {}
 
+-- Load chapter template from project or fall back to default
+local function load_chapter_template(root)
+  local project_template = root .. "/templates/chapter.md"
+  local loaded = template.load(project_template)
+  if loaded then
+    return loaded
+  end
+
+  -- Fall back to app default
+  local app_root = debug.getinfo(1, "S").source:sub(2):match("(.*/app/)")
+  if app_root then
+    local default_template = app_root .. "templates/export/chapter.md"
+    loaded = template.load(default_template)
+    if loaded then
+      return loaded
+    end
+  end
+
+  return template.DEFAULT_CHAPTER
+end
+
 function M.prepare_files(state)
   local entries = collector.collect_entries(state)
+  local chapter_template = load_chapter_template(state.manuscript.root)
   local files = {}
 
   for _, entry in ipairs(entries) do
@@ -16,7 +40,13 @@ function M.prepare_files(state)
       content = prose_path:read() or ""
     end
 
-    local processed = pipeline.process_entry(content, entry.context)
+    -- Parse frontmatter from content
+    local fm, body = frontmatter.parse(content)
+
+    local processed = pipeline.process_entry(body, entry.context, {
+      frontmatter = fm,
+      chapter_template = chapter_template,
+    })
 
     table.insert(files, {
       id = entry.id,

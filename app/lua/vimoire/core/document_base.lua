@@ -67,11 +67,12 @@ function DocumentBase.create_document(class, state, name, parent_items, at_index
     kind = class.KIND,
   }
 
-  -- Create directory and text file
+  -- Create directory and text file with frontmatter
   local doc_dir = Path:new(state.manuscript.root, class.BASE, new_id)
   doc_dir:mkdir({ parents = true })
   local text_file = Path:new(doc_dir:absolute(), class.TEXT_FILENAME)
-  text_file:write("", "w")
+  local frontmatter = string.format("---\ntitle: %s\n# subtitle: \n# epigraph: \n---\n\n", name)
+  text_file:write(frontmatter, "w")
 
   table.insert(parent_items, at_index, data)
   state:save()
