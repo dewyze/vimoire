@@ -17,78 +17,75 @@ describe("delete_options", function()
     helpers.reset_state()
   end)
 
-  describe("options_for", function()
+  describe("for_item", function()
     it("returns nil for immutable items", function()
       local manuscript = state.items["manuscript"]
 
-      local options = delete_options.options_for(manuscript)
+      local result = delete_options.for_item(manuscript)
 
-      assert.is_nil(options)
+      assert.is_nil(result)
     end)
 
-    it("returns KEEP_CONTENTS, DELETE_WITH_CONTENTS, CANCEL for sections with children", function()
+    it("returns choose for sections with children", function()
       local section = state.items["p1x3q8"]
       assert.is_true(#section.items > 0)
 
-      local options = delete_options.options_for(section)
+      local result = delete_options.for_item(section)
 
-      assert.equals(3, #options)
-      assert.equals(delete_options.KEEP_CONTENTS, options[1])
-      assert.equals(delete_options.DELETE_WITH_CONTENTS, options[2])
-      assert.equals(delete_options.CANCEL, options[3])
+      assert.is_nil(result.confirm)
+      assert.equals(2, #result.choose)
+      assert.equals(delete_options.KEEP_CONTENTS, result.choose[1])
+      assert.equals(delete_options.DELETE_WITH_CONTENTS, result.choose[2])
     end)
 
-    it("returns DELETE, CANCEL for items without children", function()
+    it("returns confirm for items without children", function()
       local chapter = state.items["chap1a"]
 
-      local options = delete_options.options_for(chapter)
+      local result = delete_options.for_item(chapter)
 
-      assert.equals(2, #options)
-      assert.equals(delete_options.DELETE, options[1])
-      assert.equals(delete_options.CANCEL, options[2])
+      assert.is_nil(result.choose)
+      assert.equals(delete_options.DELETE, result.confirm)
     end)
 
-    it("returns DELETE, CANCEL for empty sections", function()
+    it("returns confirm for empty sections", function()
       local ManuscriptSection = require("vimoire.core.manuscript_section")
       local section = ManuscriptSection.create(state, "Empty Section", state.manuscript.items, #state.manuscript.items + 1)
 
-      local options = delete_options.options_for(section)
+      local result = delete_options.for_item(section)
 
-      assert.equals(2, #options)
-      assert.equals(delete_options.DELETE, options[1])
-      assert.equals(delete_options.CANCEL, options[2])
+      assert.is_nil(result.choose)
+      assert.equals(delete_options.DELETE, result.confirm)
     end)
   end)
 
   describe("labels", function()
     it("returns array of label strings", function()
       local section = state.items["p1x3q8"]
-      local options = delete_options.options_for(section)
+      local result = delete_options.for_item(section)
 
-      local labels = delete_options.labels(options, section)
+      local labels = delete_options.labels(result.choose, section)
 
-      assert.equals(3, #labels)
+      assert.equals(2, #labels)
       assert.equals("Delete 'Part 1', keep contents", labels[1])
       assert.equals("Delete 'Part 1' and contents", labels[2])
-      assert.equals("Cancel", labels[3])
     end)
   end)
 
   describe("find_by_label", function()
     it("finds option by its label", function()
       local section = state.items["p1x3q8"]
-      local options = delete_options.options_for(section)
+      local result = delete_options.for_item(section)
 
-      local found = delete_options.find_by_label(options, "Cancel", section)
+      local found = delete_options.find_by_label(result.choose, "Delete 'Part 1', keep contents", section)
 
-      assert.equals(delete_options.CANCEL, found)
+      assert.equals(delete_options.KEEP_CONTENTS, found)
     end)
 
     it("returns nil for unknown label", function()
       local section = state.items["p1x3q8"]
-      local options = delete_options.options_for(section)
+      local result = delete_options.for_item(section)
 
-      local found = delete_options.find_by_label(options, "Unknown", section)
+      local found = delete_options.find_by_label(result.choose, "Unknown", section)
 
       assert.is_nil(found)
     end)
@@ -146,14 +143,4 @@ describe("delete_options", function()
     end)
   end)
 
-  describe("CANCEL", function()
-    it("returns false and does nothing", function()
-      local chapter = state.items["chap1a"]
-
-      local result = delete_options.CANCEL.execute(chapter, state)
-
-      assert.is_false(result)
-      assert.is_not_nil(state.items["chap1a"])
-    end)
-  end)
 end)

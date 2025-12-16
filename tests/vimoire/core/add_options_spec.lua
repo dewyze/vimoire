@@ -18,90 +18,82 @@ describe("add_options", function()
   end)
 
   describe("item.add_options", function()
-    it("returns SECTION, CHAPTER, PAGE, CANCEL for manuscript", function()
+    it("returns SECTION, CHAPTER, PAGE for manuscript", function()
       local manuscript = state.items["manuscript"]
 
       local options = manuscript.add_options
 
-      assert.equals(4, #options)
+      assert.equals(3, #options)
       assert.equals(add_options.SECTION, options[1])
       assert.equals(add_options.CHAPTER, options[2])
       assert.equals(add_options.PAGE, options[3])
-      assert.equals(add_options.CANCEL, options[4])
     end)
 
-    it("returns CHAPTER, PAGE, CANCEL for section", function()
+    it("returns CHAPTER, PAGE for section", function()
       local section = state.items["p1x3q8"]
 
       local options = section.add_options
 
-      assert.equals(3, #options)
+      assert.equals(2, #options)
       assert.equals(add_options.CHAPTER, options[1])
       assert.equals(add_options.PAGE, options[2])
-      assert.equals(add_options.CANCEL, options[3])
     end)
 
-    it("returns CHAPTER, PAGE, CANCEL for chapter (sibling)", function()
+    it("returns CHAPTER, PAGE for chapter (sibling)", function()
       local chapter = state.items["chap1a"]
 
       local options = chapter.add_options
 
-      assert.equals(3, #options)
+      assert.equals(2, #options)
       assert.equals(add_options.CHAPTER, options[1])
       assert.equals(add_options.PAGE, options[2])
-      assert.equals(add_options.CANCEL, options[3])
     end)
 
-    it("returns CHAPTER, PAGE, CANCEL for page (sibling)", function()
+    it("returns CHAPTER, PAGE for page (sibling)", function()
       local page = state.items["intrlud"]
 
       local options = page.add_options
 
-      assert.equals(3, #options)
+      assert.equals(2, #options)
       assert.equals(add_options.CHAPTER, options[1])
       assert.equals(add_options.PAGE, options[2])
-      assert.equals(add_options.CANCEL, options[3])
     end)
 
-    it("returns PLANNING_ITEM, CANCEL for characters folder", function()
+    it("returns PLANNING_ITEM for characters folder", function()
       local characters = state.items["characters"]
 
       local options = characters.add_options
 
-      assert.equals(2, #options)
+      assert.equals(1, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
-      assert.equals(add_options.CANCEL, options[2])
     end)
 
-    it("returns PLANNING_ITEM, CANCEL for settings folder", function()
+    it("returns PLANNING_ITEM for settings folder", function()
       local settings = state.items["settings"]
 
       local options = settings.add_options
 
-      assert.equals(2, #options)
+      assert.equals(1, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
-      assert.equals(add_options.CANCEL, options[2])
     end)
 
-    it("returns PLANNING_ITEM, SUBFOLDER, CANCEL for reference folder", function()
+    it("returns PLANNING_ITEM, SUBFOLDER for reference folder", function()
       local reference = state.items["reference"]
 
       local options = reference.add_options
 
-      assert.equals(3, #options)
+      assert.equals(2, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
       assert.equals(add_options.SUBFOLDER, options[2])
-      assert.equals(add_options.CANCEL, options[3])
     end)
 
-    it("returns PLANNING_ITEM, CANCEL for planning item (sibling)", function()
+    it("returns PLANNING_ITEM for planning item (sibling)", function()
       local item = state.items["char1"]
 
       local options = item.add_options
 
-      assert.equals(2, #options)
+      assert.equals(1, #options)
       assert.equals(add_options.PLANNING_ITEM, options[1])
-      assert.equals(add_options.CANCEL, options[2])
     end)
 
     it("returns nil for planning folder", function()
@@ -196,11 +188,10 @@ describe("add_options", function()
 
       local labels = add_options.labels(options)
 
-      assert.equals(4, #labels)
+      assert.equals(3, #labels)
       assert.equals("Section", labels[1])
       assert.equals("Chapter", labels[2])
       assert.equals("Page", labels[3])
-      assert.equals("Cancel", labels[4])
     end)
   end)
 

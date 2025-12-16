@@ -28,6 +28,7 @@ local THEMES = {
 vim.api.nvim_create_user_command("VimoireTheme", function()
   vim.ui.select(THEMES, {
     prompt = "Select theme:",
+    snacks = { layout = { hidden = { "input" }, preview = false } },
   }, function(choice)
     if not choice then return end
 

@@ -41,13 +41,6 @@ M.SUBFOLDER = {
   end,
 }
 
-M.CANCEL = {
-  label = "Cancel",
-  execute = function()
-    return nil
-  end,
-}
-
 function M.labels(options)
   return vim.tbl_map(function(o) return o.label end, options)
 end

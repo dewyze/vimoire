@@ -67,9 +67,11 @@ M.add = function(state)
 
   vim.ui.select(labels, {
     prompt = "Add:",
+    snacks = { layout = { hidden = { "input" }, preview = false } },
   }, function(choice)
+    if not choice then return end
     local opt = add_options.find_by_label(options, choice)
-    if not opt or opt == add_options.CANCEL then return end
+    if not opt then return end
 
     vim.ui.input({
       prompt = "Name: ",
@@ -113,19 +115,26 @@ M.delete = function(state)
   local item = vimoire_state.items[node.id]
   if not item then return end
 
-  local options = delete_options.options_for(item)
-  if not options then return end
+  local result = delete_options.for_item(item)
+  if not result then return end
 
-  local labels = delete_options.labels(options, item)
-
-  vim.ui.select(labels, {
-    prompt = "Delete " .. item:display_name() .. "?",
-  }, function(choice)
-    local opt = delete_options.find_by_label(options, choice, item)
-    if opt and opt.execute(item, vimoire_state) then
+  if result.confirm then
+    local choice = vim.fn.confirm("Delete " .. item:display_name() .. "?", "&Yes\n&No", 2)
+    if choice == 1 and result.confirm.execute(item, vimoire_state) then
       M.refresh(state)
     end
-  end)
+  elseif result.choose then
+    local labels = delete_options.labels(result.choose, item)
+    vim.ui.select(labels, {
+      prompt = "Delete " .. item:display_name() .. "?",
+      snacks = { layout = { hidden = { "input" }, preview = false } },
+    }, function(choice)
+      local opt = delete_options.find_by_label(result.choose, choice, item)
+      if opt and opt.execute(item, vimoire_state) then
+        M.refresh(state)
+      end
+    end)
+  end
 end
 
 -- Custom: move to different section

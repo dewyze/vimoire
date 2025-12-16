@@ -23,22 +23,15 @@ M.DELETE_WITH_CONTENTS = {
   end,
 }
 
-M.CANCEL = {
-  label = function(_item) return "Cancel" end,
-  execute = function()
-    return false
-  end,
-}
-
-function M.options_for(item)
+function M.for_item(item)
   if item.immutable then
     vim.notify("Cannot delete " .. item.name, vim.log.levels.WARN)
     return nil
   end
   if item.items and #item.items > 0 then
-    return { M.KEEP_CONTENTS, M.DELETE_WITH_CONTENTS, M.CANCEL }
+    return { choose = { M.KEEP_CONTENTS, M.DELETE_WITH_CONTENTS } }
   end
-  return { M.DELETE, M.CANCEL }
+  return { confirm = M.DELETE }
 end
 
 function M.labels(options, item)

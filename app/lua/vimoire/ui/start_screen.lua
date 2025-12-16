@@ -193,18 +193,13 @@ local function open_selected()
 end
 
 local function create_project_at(parent_path)
-  vim.ui.input({ prompt = "Project folder name: " }, function(folder_name)
-    if not folder_name or folder_name == "" then
+  vim.ui.input({ prompt = "Project name: " }, function(name)
+    if not name or name == "" then
       return
     end
-    vim.ui.input({ prompt = "Book title: " }, function(title)
-      if not title or title == "" then
-        return
-      end
-      local project_path = parent_path .. "/" .. folder_name
-      scaffold.create(project_path, title)
-      open_project(project_path)
-    end)
+    local project_path = parent_path .. "/" .. name
+    scaffold.create(project_path, name)
+    open_project(project_path)
   end)
 end
 
