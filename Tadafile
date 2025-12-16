@@ -91,11 +91,12 @@
     - [x] Shell out to pandoc (EPUB first)
     - [x] Write to exports/builds/
   - 7.2: Export Config:
-    - [ ] Define config YAML schema
-    - [ ] Generate config from manuscript state
-    - [ ] Parse config for export
-    - [ ] Regenerate while preserving customizations (commented entries)
-    - [ ] :VimoireExportConfig command
+    - [x] Define config YAML schema
+    - [x] Generate config from manuscript state
+    - [x] Parse config for export
+    - [x] Regenerate while preserving customizations (commented entries)
+    - [x] :VimoireExportConfig command
+    - [x] :VimoireExport command
   - 7.3: DOCX Format:
     - [ ] DOCX with page breaks and reference doc
     - [ ] Format-specific pandoc flags
@@ -153,3 +154,4 @@
   - [ ] Store last edited file per project in recents.json, auto-open on project load
   - [ ] Help/docs system (prose syntax, keybindings, commands — :VimoireHelp + markdown in repo)
   - [ ] Image management (assets folder, insertion workflow, reference tracking)
+  - [ ] Neotree UX improvements: pseudo-buttons (action items), contextual add commands, run export from config node
