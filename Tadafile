@@ -111,14 +111,22 @@
     - [x] Default epub.css
     > reference.docx not scaffolded — optional, pandoc uses built-in defaults (see EXPORT_SPEC.md)
   - 7.6: Commands & Polish:
-    - [ ] :VimoireExport command
+    - [x] :VimoireExport command
     - [ ] Auto-open with opt-out
     - [ ] Error handling and quickfix integration
 
 - Phase 8: UI Polish:
-  - [ ] Add Neovide-specific enhancements
-  - [ ] Implement friendly error messages
-  - [ ] Export as dedicated view (separate from editing view)
+  - 8.1: Snacks Integration (see docs/SNACKS.md):
+    - [x] Add snacks.nvim dependency
+    - [x] Replace vim.ui.input with snacks floating input
+    - [x] Replace vim.ui.select with snacks picker (hidden input for short lists)
+    - [x] Refactor delete_options to confirm/choose pattern
+    - [x] Remove Cancel options (Esc handles cancellation)
+    - [ ] Evaluate snacks dashboard for start screen
+  - 8.2: Other Polish:
+    - [ ] Add Neovide-specific enhancements
+    - [ ] Implement friendly error messages
+    - [ ] Export as dedicated view (separate from editing view)
 
 - Phase 9: Review Enhancements:
   - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
