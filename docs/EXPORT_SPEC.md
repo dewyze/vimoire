@@ -6,7 +6,7 @@ Export pipeline for assembling and converting manuscripts to publishable formats
 
 ## Overview
 
-Export uses a config-file-based workflow. Generate a YAML config that lists everything going into the export — format, front/back matter, entries. Edit the config to customize, then run the export. Save named configs for different purposes (submission, ebook, beta readers).
+Export uses a config-file-based workflow. Generate a YAML config that lists everything going into the export — format and entries. Edit the config to customize, then run the export. Save named configs for different purposes (submission, ebook, beta readers).
 
 ---
 
@@ -27,8 +27,6 @@ Scaffolding creates these export-related files/folders:
 
 ```
 book.yml                    # book identity (see BOOK_YML_SPEC.md)
-front_matter/               # assembled before manuscript (TBD: see Front/Back Matter)
-back_matter/                # assembled after manuscript (TBD: see Front/Back Matter)
 exports/                    # export configs, templates, and output (gitignored)
   templates/                # export styling
     chapter.md              # chapter opening template (see Chapter Frontmatter)
@@ -62,12 +60,9 @@ format: epub  # epub | docx
 
 # output: MyNovel.epub  # default: {title}.{format}
 
-front_matter:
-  - title.md
-  - copyright.md
-  - dedication.md
-
 entries:
+  - titlep     # Title Page (page)
+  - copyrtp    # Copyright (page)
   - part1tp    # Part One (page)
   - chap1a     # The Day I Became Sentient (chapter 1)
   - chap1b     # Bread: A Love Story (chapter 2)
@@ -75,10 +70,7 @@ entries:
   - chap2a     # Exile in the Drawer (chapter 3)
   - chap2b     # The Crumb Rebellion (chapter 4)
   - epilog1    # Epilogue (page)
-
-back_matter:
-  - acknowledgments.md
-  - about_author.md
+  - acknwlg    # Acknowledgments (page)
 ```
 
 **Key points:**
@@ -94,7 +86,6 @@ Running `:VimoireExportConfig` on an existing config:
 - Preserves `format` and `output` settings
 - Regenerates `entries` list from current manuscript.json order
 - Keeps previously commented-out entries commented (matched by ID)
-- Front/back matter handling: TBD (see Front/Back Matter section)
 
 ---
 
@@ -103,7 +94,7 @@ Running `:VimoireExportConfig` on an existing config:
 **First export:**
 
 1. Run `:VimoireExportConfig` — generates `exports/configs/default.yml` and opens it
-2. Review the config — see format, front/back matter, all entries in order
+2. Review the config — see format and all entries in order
 3. Edit if needed — change format, comment out entries to exclude, etc.
 4. Run `:VimoireExport` — executes the default config, outputs to `exports/output/`
 
@@ -115,7 +106,7 @@ Running `:VimoireExportConfig` on an existing config:
 ```
 
 Use cases:
-- `submission.yml` — DOCX, first three chapters only, no back matter
+- `submission.yml` — DOCX, first three chapters only
 - `beta-readers.yml` — EPUB, full manuscript
 - `sample.yml` — EPUB, chapters 1-5 for preview
 
@@ -123,18 +114,19 @@ Use cases:
 
 ## Front/Back Matter
 
-**TBD: Needs separate design discussion.**
+No special front/back matter system. Users create Pages (via neotree) for title pages, copyright, dedication, acknowledgments, etc. These appear in the manuscript and export config like any other entry.
 
-Questions to resolve:
-- What files are scaffolded by default?
-- Where does the canonical list live (book.yml, directory scan, hardcoded)?
-- How does config regeneration handle front/back matter?
-- Template variable substitution (`{{title}}`, `{{author}}`, etc.)
+Use template variables in any Page:
+- `{{book.title}}` — book title from book.yml
+- `{{book.author}}` — author name
+- `{{book.language}}` — language code
 
-For now, assume:
-- `front_matter/` and `back_matter/` directories exist
-- Files are markdown, user-editable
-- Listed explicitly in export configs
+Example title page (create as a Page, move to top of manuscript):
+```markdown
+# {{book.title}}
+
+by {{book.author}}
+```
 
 ---
 
@@ -210,28 +202,21 @@ Parse the export config YAML. Validate format, resolve entry IDs to file paths.
 
 ### Step 2: Collect Files
 
-Build ordered file list from config:
-1. front_matter files (in config order, from `front_matter/` directory)
-2. entries (entry IDs resolve to `entries/{id}/prose.md` on disk)
-3. back_matter files (in config order, from `back_matter/` directory)
+Build ordered file list from config. Entry IDs resolve to `entries/{id}/prose.md` on disk.
 
 Missing files: warn and skip. Invalid entry IDs: warn and skip.
 
 ### Step 3: Preprocess Each File
 
-**For prose files (entries):**
-
 | Transform | Input | Output |
 |-----------|-------|--------|
 | Paragraph breaks | `\n` | `\n\n` |
 | Chapter number | `{{chapter.num}}` | Running count (chapters only, pages don't increment) |
+| Book variables | `{{book.title}}`, `{{book.author}}` | Values from book.yml |
 | Marks | `{{mark}}`, `{{mark:text}}` | Stripped |
 | Todos | `{{todo}}`, `{{todo:text}}` | Stripped |
 
 Chapter numbering example: Page, Chapter, Chapter, Page, Chapter → chapters numbered 1, 2, 3.
-
-**For front/back matter:**
-- Substitute `{{book.title}}`, `{{book.author}}`, `{{book.copyright}}` etc. from book.yml
 
 ### Step 4: Format-Specific Processing
 
@@ -297,7 +282,6 @@ pandoc input_files... \
 | Invalid config YAML | Validation errors in quickfix |
 | Missing entry file | Warn and skip (partial export continues) |
 | Entry ID not in manuscript.json | Warn and skip |
-| Missing front/back matter file | Warn and skip |
 | Pandoc errors | Capture stderr to `exports/output/export.log`, show summary in Neovim |
 
 Errors surface via `vim.notify`. Detailed logs in `export.log`.
@@ -307,45 +291,34 @@ Errors surface via `vim.notify`. Detailed logs in `export.log`.
 ## Implementation Phases
 
 ### Phase 1: Core Pipeline
-- [ ] Read book.yml metadata
-- [ ] Walk manuscript.json, collect entry prose.md paths in order
-- [ ] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
-- [ ] Write preprocessed files to temp directory
-- [ ] Shell out to pandoc (EPUB first)
-- [ ] Write to exports/output/
+- [x] Read book.yml metadata
+- [x] Walk manuscript.json, collect entry prose.md paths in order
+- [x] Implement preprocessing (newlines, {{chapter.num}}, strip tags)
+- [x] Write preprocessed files to temp directory
+- [x] Shell out to pandoc (EPUB first)
+- [x] Write to exports/output/
 
 ### Phase 2: Export Config
-- [ ] Define config YAML schema
-- [ ] Generate config from manuscript state
-- [ ] Parse config for export
-- [ ] Regenerate while preserving customizations (commented entries)
-- [ ] :VimoireExportConfig command
+- [x] Define config YAML schema
+- [x] Generate config from manuscript state
+- [x] Parse config for export
+- [x] Regenerate while preserving customizations (commented entries)
+- [x] :VimoireExportConfig command
 
 ### Phase 3: DOCX Format
-- [ ] DOCX with page breaks and reference doc
-- [ ] Format-specific pandoc flags
+- [x] DOCX with page breaks
+- [x] Format-specific pandoc flags (via format objects)
 
-### Phase 4: Front/Back Matter
-- [ ] Design front/back matter system (separate discussion)
-- [ ] Scaffold default files at project creation
-- [ ] Include in config generation
-- [ ] Template variable substitution
-
-### Phase 5: Templates & Filters
-- [ ] Scaffold default templates at project creation
-- [ ] Bundle pagebreak.lua filter
+### Phase 4: Templates & Filters
+- [x] Scaffold default templates at project creation
+- [x] Bundle pagebreak.lua filter
 - [ ] Default epub.css
+- [ ] Default reference.docx
 
-### Phase 6: Commands & Polish
-- [ ] :VimoireExport command
+### Phase 5: Commands & Polish
+- [x] :VimoireExport command
 - [ ] Auto-open with opt-out
 - [ ] Error handling and quickfix integration
-
----
-
-## Open Questions
-
-1. **Front/back matter design:** Needs dedicated discussion. See Front/Back Matter section.
 
 ---
 

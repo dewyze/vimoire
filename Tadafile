@@ -101,10 +101,8 @@
     - [x] DOCX with page breaks
     - [x] Format-specific pandoc flags (via format objects with pandoc_args)
   - 7.4: Front/Back Matter:
-    - [ ] Design front/back matter system (separate discussion)
-    - [ ] Scaffold default files at project creation
-    - [ ] Include in config generation
-    - [ ] Template variable substitution
+    > SKIPPED: Users can create Pages for title/copyright/dedication/etc.
+    > No special handling needed — just use {{book.title}} etc. in any Page.
   - 7.5: Templates & Filters:
     - [x] Scaffold chapter.md template at project creation
     - [x] Make exports/ visible in neotree navigator (Templates, Configs, Output)
