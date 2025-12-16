@@ -135,6 +135,7 @@ local function render()
   local actions = {
     { key = "n", desc = "New project" },
     { key = "b", desc = "Browse for project" },
+    { key = "c", desc = "Config" },
     { key = "q", desc = "Quit" },
   }
 
@@ -203,63 +204,129 @@ local function create_project_at(parent_path)
   end)
 end
 
+local function shorten_home(path)
+  return path:gsub("^" .. vim.pesc(vim.fn.expand("~")), "~")
+end
+
+local function is_vimoire_project(path)
+  return vim.fn.filereadable(path .. "/manuscript.json") == 1
+end
+
+local function get_subdirs(path)
+  local dirs = {}
+  local entries = vim.fn.glob(path .. "/*", false, true)
+  for _, entry in ipairs(entries) do
+    if vim.fn.isdirectory(entry) == 1 then
+      local name = vim.fn.fnamemodify(entry, ":t")
+      if not name:match("^%.") then -- skip hidden
+        table.insert(dirs, entry)
+      end
+    end
+  end
+  table.sort(dirs)
+  return dirs
+end
+
 local function default_browse_path()
   if #M.projects > 0 then
     return vim.fn.fnamemodify(M.projects[1].path, ":h")
   end
+  local docs = vim.fn.expand("~/Documents")
+  if vim.fn.isdirectory(docs) == 1 then
+    return docs
+  end
   return vim.fn.expand("~")
 end
 
-local function new_project()
-  local telescope = require("telescope")
-  local actions = require("telescope.actions")
-  local action_state = require("telescope.actions.state")
+-- Generic folder browser with contextual action
+-- opts.action_label: function(path) -> string or nil (nil = no action available)
+-- opts.on_action: function(path) -> called when action is selected
+local function browse_folders(start_path, opts)
+  local function show_picker(path)
+    path = vim.fn.fnamemodify(path, ":p"):gsub("/$", "")
+    local items = {}
 
-  telescope.extensions.file_browser.file_browser({
-    prompt_title = "Select parent folder",
-    path = default_browse_path(),
-    hidden = false,
-    respect_gitignore = false,
-    files = false,
-    sorting_strategy = "ascending",
-    attach_mappings = function(prompt_bufnr)
-      actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        if selection then
-          local parent_path = selection.path or selection[1]
-          create_project_at(parent_path)
-        end
-      end)
-      return true
+    -- Contextual action (if available for this path)
+    local action_label = opts.action_label(path)
+    if action_label then
+      table.insert(items, { type = "action", path = path, display = action_label })
+    end
+
+    -- Parent directory
+    local parent = vim.fn.fnamemodify(path, ":h")
+    if parent ~= path then
+      table.insert(items, { type = "nav", path = parent, display = ".." })
+    end
+
+    -- Subdirectories
+    for _, dir in ipairs(get_subdirs(path)) do
+      local name = vim.fn.fnamemodify(dir, ":t")
+      local marker = ""
+      if is_vimoire_project(dir) then
+        marker = " ★"
+      end
+      table.insert(items, { type = "nav", path = dir, display = name .. "/" .. marker })
+    end
+
+    vim.ui.select(items, {
+      prompt = shorten_home(path),
+      format_item = function(item)
+        return item.display
+      end,
+    }, function(choice)
+      if not choice then
+        return
+      end
+      if choice.type == "action" then
+        opts.on_action(choice.path)
+      else
+        show_picker(choice.path)
+      end
+    end)
+  end
+
+  show_picker(start_path)
+end
+
+local function new_project()
+  browse_folders(default_browse_path(), {
+    action_label = function(_)
+      return "[Create project here]"
+    end,
+    on_action = function(path)
+      create_project_at(path)
     end,
   })
 end
 
 local function browse_project()
-  local telescope = require("telescope")
-  local actions = require("telescope.actions")
-  local action_state = require("telescope.actions.state")
-
-  telescope.extensions.file_browser.file_browser({
-    prompt_title = "Select project folder",
-    path = default_browse_path(),
-    hidden = false,
-    respect_gitignore = false,
-    files = false,
-    sorting_strategy = "ascending",
-    attach_mappings = function(prompt_bufnr)
-      actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        if selection then
-          local path = selection.path or selection[1]
-          open_project(path)
-        end
-      end)
-      return true
+  browse_folders(default_browse_path(), {
+    action_label = function(path)
+      if is_vimoire_project(path) then
+        return "[Open this project]"
+      end
+      return nil
+    end,
+    on_action = function(path)
+      open_project(path)
     end,
   })
+end
+
+local function open_config()
+  local config_path = vim.fn.expand("~/.vimoire/config.lua")
+  local config_dir = vim.fn.expand("~/.vimoire")
+
+  -- Create directory and file if they don't exist
+  if vim.fn.isdirectory(config_dir) == 0 then
+    vim.fn.mkdir(config_dir, "p")
+  end
+  if vim.fn.filereadable(config_path) == 0 then
+    vim.fn.writefile({ "-- Vimoire user configuration", "-- See docs/CONFIGURATION.md for options", "", "return {}", "" }, config_path)
+  end
+
+  M.hide()
+  vim.cmd("edit " .. config_path)
 end
 
 local function setup_keymaps()
@@ -280,6 +347,7 @@ local function setup_keymaps()
   vim.keymap.set("n", "<CR>", open_selected, opts)
   vim.keymap.set("n", "n", new_project, opts)
   vim.keymap.set("n", "b", browse_project, opts)
+  vim.keymap.set("n", "c", open_config, opts)
   vim.keymap.set("n", "q", function()
     vim.cmd("quit")
   end, opts)
