@@ -53,14 +53,12 @@ end
 
 function setup.load_manuscript()
   vim.schedule(function()
-    local start_screen = require("vimoire.ui.start_screen")
-    start_screen.show()
+    require("vimoire.ui.dashboard").show()
   end)
 end
 
-function setup.show_start_screen()
-  local start_screen = require("vimoire.ui.start_screen")
-  start_screen.show()
+function setup.show_dashboard()
+  require("vimoire.ui.dashboard").show()
 end
 
 return setup

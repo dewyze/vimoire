@@ -156,7 +156,7 @@ local function render()
   vim.api.nvim_buf_set_option(M.buf, "modifiable", false)
 
   -- Apply highlights
-  local ns = vim.api.nvim_create_namespace("vimoire_start_screen")
+  local ns = vim.api.nvim_create_namespace("vimoire_dashboard")
   vim.api.nvim_buf_clear_namespace(M.buf, ns, 0, -1)
   for _, hl in ipairs(highlights) do
     vim.api.nvim_buf_add_highlight(M.buf, ns, hl.hl, hl.line, 0, -1)
@@ -180,7 +180,7 @@ local function open_project(path)
   M.hide()
   local state = require("vimoire.state")
   state:load(path)
-  require("vimoire.setup").on_manuscript_loaded()
+  vim.api.nvim_exec_autocmds("User", { pattern = "VimoireProjectLoaded" })
 end
 
 local function open_selected()
@@ -359,7 +359,7 @@ function M.show()
   vim.api.nvim_buf_set_option(M.buf, "bufhidden", "wipe")
   vim.api.nvim_buf_set_option(M.buf, "buftype", "nofile")
   vim.api.nvim_buf_set_option(M.buf, "swapfile", false)
-  vim.api.nvim_buf_set_name(M.buf, "vimoire://start")
+  vim.api.nvim_buf_set_name(M.buf, "vimoire://dashboard")
 
   -- Use current window
   M.win = vim.api.nvim_get_current_win()

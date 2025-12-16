@@ -14,4 +14,12 @@ if vim.g.neovide then
 end
 
 require("vimoire.filetypes").setup()
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VimoireProjectLoaded",
+  callback = function()
+    require("vimoire.setup").on_manuscript_loaded()
+  end,
+})
+
 require("vimoire.setup").load_manuscript()

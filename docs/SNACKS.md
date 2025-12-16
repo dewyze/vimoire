@@ -13,7 +13,7 @@ Snacks is a "Swiss army knife" plugin from Folke (lazy.nvim author) that bundles
 | **High** | zen | NEW - distraction-free writing, solves text centering problem |
 | **High** | picker | Telescope - 50+ sources, custom finders, ui_select |
 | **High** | input | vim.ui.input - floating prompts |
-| **Medium** | dashboard | start_screen.lua - maybe, needs testing |
+| **Medium** | dashboard | dashboard.lua - maybe, needs testing |
 | **Medium** | notifier | NEW - pretty notifications |
 | **Medium** | image | NEW - inline images (terminal-dependent) |
 | **Low** | scroll | NEW - smooth scrolling |
@@ -124,7 +124,7 @@ Snacks.setup({
 
 Snacks dashboard is declarative with sections for headers, recent files, custom actions.
 
-**Current start_screen.lua has:**
+**Current dashboard.lua has:**
 - Custom ASCII logo with stars
 - Recent projects with dates and paths
 - j/k navigation with visual selection
@@ -141,7 +141,7 @@ Snacks dashboard is declarative with sections for headers, recent files, custom 
 - Can it replicate the j/k selection with visual highlighting?
 - How much custom lua is needed vs declarative config?
 
-**Verdict:** Needs prototyping. Current start_screen.lua is 350 lines but well-understood. Dashboard might be simpler OR might require fighting the abstraction.
+**Verdict:** Needs prototyping. Current dashboard.lua is 350 lines but well-understood. Snacks dashboard might be simpler OR might require fighting the abstraction.
 
 ---
 
@@ -285,7 +285,7 @@ Snacks doesn't have a snippets feature that matches Vimoire's needs. The snippet
 ### Phase 2: Dashboard Evaluation
 1. Prototype start screen in snacks dashboard
 2. Compare: is it simpler or fighting the abstraction?
-3. Decide: migrate or keep custom start_screen.lua
+3. Decide: migrate or keep custom dashboard.lua
 
 ### Phase 3: Evaluate Picker Migration
 1. Prototype one picker (manuscript) in snacks

@@ -15,6 +15,9 @@ M.defaults = {
       toggle = "<LocalLeader>nt",
       reveal = "<LocalLeader>nf",
     },
+    views = {
+      home = "gvh",
+    },
   },
   ui = {
     mouse_mode = "single_click", -- "single_click" | "double_click"

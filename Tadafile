@@ -29,7 +29,7 @@
     > Node data stored: entry nodes get entry_id, section nodes get section_id, planning items get item_id/subfolder
   - Scaffolding (Phase 2):
     - [x] Bootstrap plugin initialization (accept path from arg/env/cwd/prompt)
-    - [x] Custom start screen
+    - [x] Custom dashboard
     - [x] Set up command dispatcher
     > Command dispatcher is neotree itself - structural operations live in the tree
     > Buffer commands (like :VimoireNotes) for context-aware actions from editor
@@ -123,7 +123,7 @@
     - [x] Refactor delete_options to confirm/choose pattern
     - [x] Remove Cancel options (Esc handles cancellation)
     - [x] Enable snacks notifier for floating notifications
-    - [ ] Evaluate snacks dashboard for start screen
+    - [ ] Evaluate snacks dashboard
   - 8.2: Other Polish:
     - [ ] Add Neovide-specific enhancements
     - [ ] Implement friendly error messages

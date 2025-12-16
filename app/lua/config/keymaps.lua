@@ -16,3 +16,8 @@ end
 if keymaps.navigator.reveal then
   vim.keymap.set("n", keymaps.navigator.reveal, ":Neotree reveal source=vimoire<CR>", { desc = "Vimoire: find in navigator" })
 end
+
+-- Views keymaps
+if keymaps.views and keymaps.views.home then
+  vim.keymap.set("n", keymaps.views.home, ":VimoireHome<CR>", { desc = "Vimoire: home" })
+end
