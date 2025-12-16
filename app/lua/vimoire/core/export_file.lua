@@ -6,7 +6,6 @@ function ExportFile.new(id, name, path)
   self.name = name
   self.kind = "export_file"
   self.path = path
-  self.immutable = true
   return self
 end
 
@@ -20,6 +19,26 @@ end
 
 function ExportFile:notes_path()
   return nil
+end
+
+function ExportFile:destroy(state)
+  -- Remove from parent folder's items
+  if self.parent_items then
+    for i, item in ipairs(self.parent_items) do
+      if item.id == self.id then
+        table.remove(self.parent_items, i)
+        break
+      end
+    end
+  end
+
+  -- Delete file
+  vim.fn.delete(self.path)
+
+  -- Remove from state
+  state.items[self.id] = nil
+
+  return true
 end
 
 return ExportFile

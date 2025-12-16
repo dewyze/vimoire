@@ -1,0 +1,14 @@
+format: docx
+
+# output: The_Unreliable_Memoirs_of_Gerald_the_Sentient_Toaster.epub
+
+entries:
+  - part1tp  # Part One (page)
+  - chap1a  # The Day I Became Sentient (chapter 1)
+  - chap1b  # Bread: A Love Story (chapter 2)
+  - chap1c  # The Kitchen Uprising (chapter 3)
+  - intrlud  # Interlude: A Brief History of Crumbs (page)
+  - chap2a  # Exile in the Drawer (chapter 4)
+  - chap2b  # Redemption (or Toast) (chapter 5)
+  - styles  # Style Samples (chapter 6)
+  - appndxa  # Appendix A: Toaster Safety Guidelines (page)

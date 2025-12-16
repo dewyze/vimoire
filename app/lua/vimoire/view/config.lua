@@ -83,6 +83,5 @@ return {
   export_file = {
     icon = constants.ICONS.EXPORT_FILE,
     highlight = constants.HIGHLIGHTS.EXPORT_FILE,
-    immutable = true,
   },
 }

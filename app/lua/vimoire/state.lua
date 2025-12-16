@@ -86,6 +86,7 @@ function state:rebuild()
           local file_id = folder_id .. ":" .. name
           local file_path = dir_path .. "/" .. name
           local file = ExportFile.new(file_id, name, file_path)
+          file.parent_items = items
           apply_view(file)
           self.items[file_id] = file
           table.insert(items, { id = file_id })

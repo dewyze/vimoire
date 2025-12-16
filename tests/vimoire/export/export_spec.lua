@@ -125,4 +125,74 @@ describe("export", function()
       assert.truthy(Path:new(result.output_path):exists())
     end)
   end)
+
+  describe("run_with_config", function()
+    it("exports only entries listed in config", function()
+      -- Skip if pandoc not available
+      if vim.fn.executable("pandoc") ~= 1 then
+        return
+      end
+
+      -- Create a config with only 2 entries
+      local config_content = [[
+format: epub
+
+entries:
+  - chap1a
+  - chap1b
+]]
+      local config_path = temp_dir .. "/exports/configs/test.yml"
+      vim.fn.mkdir(temp_dir .. "/exports/configs", "p")
+      helpers.write_file(config_path, config_content)
+
+      local result = export.run_with_config(state, config_path)
+
+      assert.is_true(result.success)
+      assert.truthy(result.output_path:match("%.epub$"))
+    end)
+
+    it("uses format from config", function()
+      if vim.fn.executable("pandoc") ~= 1 then
+        return
+      end
+
+      local config_content = [[
+format: docx
+
+entries:
+  - chap1a
+]]
+      local config_path = temp_dir .. "/exports/configs/test.yml"
+      vim.fn.mkdir(temp_dir .. "/exports/configs", "p")
+      helpers.write_file(config_path, config_content)
+
+      local result = export.run_with_config(state, config_path)
+
+      assert.is_true(result.success)
+      assert.truthy(result.output_path:match("%.docx$"))
+    end)
+
+    it("returns error when config file not found", function()
+      local result = export.run_with_config(state, temp_dir .. "/nonexistent.yml")
+
+      assert.is_false(result.success)
+      assert.truthy(result.error:match("Could not open"))
+    end)
+
+    it("returns error when entries list is empty", function()
+      local config_content = [[
+format: epub
+
+entries:
+]]
+      local config_path = temp_dir .. "/exports/configs/empty.yml"
+      vim.fn.mkdir(temp_dir .. "/exports/configs", "p")
+      helpers.write_file(config_path, config_content)
+
+      local result = export.run_with_config(state, config_path)
+
+      assert.is_false(result.success)
+      assert.truthy(result.error:match("Nothing to export"))
+    end)
+  end)
 end)

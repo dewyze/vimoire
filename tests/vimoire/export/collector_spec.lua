@@ -53,4 +53,37 @@ describe("collector", function()
       assert.equals("The Day I Became Sentient", entries[2].context.title)
     end)
   end)
+
+  describe("collect_by_ids", function()
+    it("returns entries matching given IDs", function()
+      local entries = collector.collect_by_ids(state, { "chap1a", "chap1b" })
+
+      assert.equals(2, #entries)
+      assert.equals("chap1a", entries[1].id)
+      assert.equals("chap1b", entries[2].id)
+    end)
+
+    it("preserves order of IDs provided", function()
+      local entries = collector.collect_by_ids(state, { "chap1b", "chap1a" })
+
+      assert.equals("chap1b", entries[1].id)
+      assert.equals("chap1a", entries[2].id)
+    end)
+
+    it("skips IDs not in manuscript", function()
+      local entries = collector.collect_by_ids(state, { "chap1a", "nonexistent", "chap1b" })
+
+      assert.equals(2, #entries)
+      assert.equals("chap1a", entries[1].id)
+      assert.equals("chap1b", entries[2].id)
+    end)
+
+    it("returns entries with path and context", function()
+      local entries = collector.collect_by_ids(state, { "chap1a" })
+
+      assert.truthy(entries[1].path:match("/entries/chap1a/prose.md$"))
+      assert.equals("The Day I Became Sentient", entries[1].context.title)
+      assert.equals(1, entries[1].context.num)
+    end)
+  end)
 end)
