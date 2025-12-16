@@ -71,4 +71,5 @@ describe("pipeline", function()
       assert.equals("# My Novel\n\nby Jane Doe", result)
     end)
   end)
+
 end)

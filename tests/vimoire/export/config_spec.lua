@@ -197,4 +197,48 @@ entries:
       assert.is_true(chap1a_pos < intrlud_pos)
     end)
   end)
+
+  describe("assemble", function()
+    it("adds page breaks between entries for docx", function()
+      local cfg = config.parse("format: docx\n\nentries:\n  - ch1\n")
+      local files = {
+        { id = "ch1", content = "Chapter one content." },
+        { id = "ch2", content = "Chapter two content." },
+        { id = "ch3", content = "Chapter three content." },
+      }
+
+      local result = cfg:assemble(files)
+
+      assert.equals(3, #result)
+      assert.truthy(result[1].content:match("\\newpage%s*$"))
+      assert.truthy(result[2].content:match("\\newpage%s*$"))
+      assert.falsy(result[3].content:match("\\newpage"))
+    end)
+
+    it("preserves entry ids", function()
+      local cfg = config.parse("format: docx\n\nentries:\n  - ch1\n")
+      local files = {
+        { id = "ch1", content = "Content." },
+        { id = "ch2", content = "More." },
+      }
+
+      local result = cfg:assemble(files)
+
+      assert.equals("ch1", result[1].id)
+      assert.equals("ch2", result[2].id)
+    end)
+
+    it("passes through unchanged for epub", function()
+      local cfg = config.parse("format: epub\n\nentries:\n  - ch1\n")
+      local files = {
+        { id = "ch1", content = "Chapter one." },
+        { id = "ch2", content = "Chapter two." },
+      }
+
+      local result = cfg:assemble(files)
+
+      assert.equals("Chapter one.", result[1].content)
+      assert.equals("Chapter two.", result[2].content)
+    end)
+  end)
 end)

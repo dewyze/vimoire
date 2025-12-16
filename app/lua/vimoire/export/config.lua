@@ -3,6 +3,16 @@ local tinyyaml = require("vendor.tinyyaml")
 
 local M = {}
 
+local formats = {
+  epub = require("vimoire.export.format.epub"),
+  docx = require("vimoire.export.format.docx"),
+}
+
+function M.for_format(format_name)
+  local Format = formats[format_name] or formats.epub
+  return Format.new({ entries = {} })
+end
+
 function M.generate(state)
   local entries = collector.collect_entries(state)
   local lines = {
@@ -36,20 +46,20 @@ end
 
 function M.parse(yaml_string)
   local parsed = tinyyaml.parse(yaml_string) or {}
+  local format_name = parsed.format or "epub"
+  local Format = formats[format_name] or formats.epub
 
-  local result = {
-    format = parsed.format or "epub",
-    output = parsed.output,
-    entries = {},
-  }
-
+  local entries = {}
   if parsed.entries then
     for _, entry_id in ipairs(parsed.entries) do
-      table.insert(result.entries, entry_id)
+      table.insert(entries, entry_id)
     end
   end
 
-  return result
+  return Format.new({
+    output = parsed.output,
+    entries = entries,
+  })
 end
 
 function M.load(config_path)

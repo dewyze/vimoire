@@ -73,7 +73,7 @@ function M.write_temp_files(files)
   return temp_dir, file_list
 end
 
-function M.build_pandoc_args(opts)
+function M.build_pandoc_args(opts, cfg)
   local args = {}
 
   -- Input files
@@ -94,16 +94,9 @@ function M.build_pandoc_args(opts)
   table.insert(args, "lang=" .. opts.language)
 
   -- Format-specific options
-  if opts.format == "epub" then
-    -- Split on H1 so each chapter becomes a separate XHTML file
-    table.insert(args, "--split-level=1")
-    if opts.css_path then
-      table.insert(args, "--css=" .. opts.css_path)
-    end
-  elseif opts.format == "docx" then
-    if opts.reference_doc then
-      table.insert(args, "--reference-doc=" .. opts.reference_doc)
-    end
+  local format_args = cfg:pandoc_args(opts)
+  for _, arg in ipairs(format_args) do
+    table.insert(args, arg)
   end
 
   return args
@@ -116,14 +109,16 @@ end
 function M.run(state, opts)
   opts = opts or {}
   local format = opts.format or "epub"
+  local cfg = config.for_format(format)
 
   -- Check pandoc
   if vim.fn.executable("pandoc") ~= 1 then
     return { success = false, error = "pandoc not found" }
   end
 
-  -- Prepare files
+  -- Prepare and assemble files
   local files = M.prepare_files(state)
+  files = cfg:assemble(files)
   local temp_dir, input_files = M.write_temp_files(files)
 
   -- Output path
@@ -135,13 +130,12 @@ function M.run(state, opts)
 
   -- Build and run pandoc
   local args = M.build_pandoc_args({
-    format = format,
     input_files = input_files,
     output_path = output_path,
     title = state.book.title,
     author = state.book.author,
     language = state.book.language,
-  })
+  }, cfg)
 
   local cmd = { "pandoc" }
   for _, arg in ipairs(args) do
@@ -183,27 +177,26 @@ function M.run_with_config(state, config_path)
     return { success = false, error = "Nothing to export" }
   end
 
-  -- Prepare files
+  -- Prepare and assemble files
   local files = M.prepare_files(state, entries)
+  files = cfg:assemble(files)
   local temp_dir, input_files = M.write_temp_files(files)
 
   -- Output path
   local output_dir = state.manuscript.root .. "/exports/output"
   vim.fn.mkdir(output_dir, "p")
 
-  local format = cfg.format or "epub"
-  local filename = cfg.output or (sanitize_filename(state.book.title) .. "." .. format)
+  local filename = cfg.output or (sanitize_filename(state.book.title) .. "." .. cfg.format)
   local output_path = output_dir .. "/" .. filename
 
   -- Build and run pandoc
   local args = M.build_pandoc_args({
-    format = format,
     input_files = input_files,
     output_path = output_path,
     title = state.book.title,
     author = state.book.author,
     language = state.book.language,
-  })
+  }, cfg)
 
   local cmd = { "pandoc" }
   for _, arg in ipairs(args) do

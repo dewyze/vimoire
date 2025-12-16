@@ -76,16 +76,18 @@ describe("export", function()
   end)
 
   describe("build_pandoc_args", function()
+    local config = require("vimoire.export.config")
+
     it("builds epub args with metadata", function()
+      local cfg = config.for_format("epub")
       local args = export.build_pandoc_args({
-        format = "epub",
         input_files = { "/tmp/001.md", "/tmp/002.md" },
         output_path = "/output/book.epub",
         title = "My Book",
         author = "Jane Doe",
         language = "en",
         css_path = "/templates/epub.css",
-      })
+      }, cfg)
 
       assert.truthy(vim.tbl_contains(args, "/tmp/001.md"))
       assert.truthy(vim.tbl_contains(args, "/tmp/002.md"))
@@ -96,15 +98,15 @@ describe("export", function()
     end)
 
     it("builds docx args with reference doc", function()
+      local cfg = config.for_format("docx")
       local args = export.build_pandoc_args({
-        format = "docx",
         input_files = { "/tmp/001.md" },
         output_path = "/output/book.docx",
         title = "My Book",
         author = "Jane Doe",
         language = "en",
         reference_doc = "/templates/reference.docx",
-      })
+      }, cfg)
 
       assert.truthy(vim.tbl_contains(args, "--reference-doc=/templates/reference.docx"))
       assert.falsy(vim.tbl_contains(args, "--split-level=1"))
