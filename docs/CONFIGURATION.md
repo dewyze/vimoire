@@ -87,6 +87,14 @@ Settings applied to prose and markdown buffers.
 |-----|---------|-------------|
 | `preview` | `true` | Show file preview in Telescope |
 
+### export
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `auto_open` | `true` | Open exported file after successful export |
+
+Use `--no-open` flag to skip auto-open for a single export: `:VimoireExport --no-open`
+
 ### neovide
 
 Settings for Neovide (ignored in terminal Neovim).

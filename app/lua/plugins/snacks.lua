@@ -5,5 +5,6 @@ return {
   opts = {
     input = { enabled = true },
     picker = { ui_select = true },
+    notifier = { enabled = true },
   },
 }

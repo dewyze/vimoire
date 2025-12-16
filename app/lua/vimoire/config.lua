@@ -31,6 +31,9 @@ M.defaults = {
   finder = {
     preview = true,
   },
+  export = {
+    auto_open = true,
+  },
   neovide = {
     font = "Iosevka Term Slab:h16",
     linespace = 8,

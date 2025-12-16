@@ -129,6 +129,12 @@ local function sanitize_filename(name)
   return name:gsub("[^%w%s%-_]", ""):gsub("%s+", "_")
 end
 
+local function write_log(output_dir, content)
+  if not content or content == "" then return end
+  local log_path = output_dir .. "/export.log"
+  Path:new(log_path):write(content, "w")
+end
+
 function M.run(state, opts)
   opts = opts or {}
   local format = opts.format or "epub"
@@ -136,7 +142,10 @@ function M.run(state, opts)
 
   -- Check pandoc
   if vim.fn.executable("pandoc") ~= 1 then
-    return { success = false, error = "pandoc not found" }
+    return {
+      success = false,
+      error = "pandoc not found. Install it with: brew install pandoc (macOS) or apt install pandoc (Linux)",
+    }
   end
 
   -- Prepare and assemble files
@@ -174,33 +183,41 @@ function M.run(state, opts)
   -- Cleanup temp files
   vim.fn.delete(temp_dir, "rf")
 
+  -- Write log on failure
+  if not success then
+    write_log(output_dir, result)
+  end
+
   if success then
     return { success = true, output_path = output_path }
   else
-    return { success = false, error = result }
+    return { success = false, error = result, log_path = output_dir .. "/export.log" }
   end
 end
 
 function M.run_with_config(state, config_path)
   local cfg, err = config.load(config_path)
   if not cfg then
-    return { success = false, error = err }
+    return { success = false, error = "Invalid config: " .. (err or "unknown error") }
   end
 
   if not cfg.entries or #cfg.entries == 0 then
-    return { success = false, error = "Nothing to export" }
+    return { success = false, error = "No entries in config. Add entries or run :VimoireExportConfig to regenerate." }
   end
 
   -- Check pandoc
   if vim.fn.executable("pandoc") ~= 1 then
-    return { success = false, error = "pandoc not found" }
+    return {
+      success = false,
+      error = "pandoc not found. Install it with: brew install pandoc (macOS) or apt install pandoc (Linux)",
+    }
   end
 
   -- Collect only the entries specified in config
   local entries = collector.collect_by_ids(state, cfg.entries)
 
   if #entries == 0 then
-    return { success = false, error = "Nothing to export" }
+    return { success = false, error = "No valid entries found. Check that entry IDs in config match your manuscript." }
   end
 
   -- Prepare and assemble files
@@ -238,10 +255,15 @@ function M.run_with_config(state, config_path)
   -- Cleanup temp files
   vim.fn.delete(temp_dir, "rf")
 
+  -- Write log on failure
+  if not success then
+    write_log(output_dir, result)
+  end
+
   if success then
     return { success = true, output_path = output_path }
   else
-    return { success = false, error = result }
+    return { success = false, error = result, log_path = output_dir .. "/export.log" }
   end
 end
 

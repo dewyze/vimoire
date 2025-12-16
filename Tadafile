@@ -112,8 +112,8 @@
     > reference.docx not scaffolded — optional, pandoc uses built-in defaults (see EXPORT_SPEC.md)
   - 7.6: Commands & Polish:
     - [x] :VimoireExport command
-    - [ ] Auto-open with opt-out
-    - [ ] Error handling and quickfix integration
+    - [x] Auto-open with opt-out (config option + --no-open flag)
+    - [x] Error handling (export.log, improved messages)
 
 - Phase 8: UI Polish:
   - 8.1: Snacks Integration (see docs/SNACKS.md):
@@ -122,6 +122,7 @@
     - [x] Replace vim.ui.select with snacks picker (hidden input for short lists)
     - [x] Refactor delete_options to confirm/choose pattern
     - [x] Remove Cancel options (Esc handles cancellation)
+    - [x] Enable snacks notifier for floating notifications
     - [ ] Evaluate snacks dashboard for start screen
   - 8.2: Other Polish:
     - [ ] Add Neovide-specific enhancements

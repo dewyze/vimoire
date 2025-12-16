@@ -194,7 +194,7 @@ entries:
       local result = export.run_with_config(state, config_path)
 
       assert.is_false(result.success)
-      assert.truthy(result.error:match("Nothing to export"))
+      assert.truthy(result.error:match("No entries in config"))
     end)
   end)
 end)

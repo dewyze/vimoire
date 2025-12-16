@@ -279,13 +279,12 @@ pandoc input_files... \
 | Condition | Behavior |
 |-----------|----------|
 | Missing pandoc | Error with install instructions |
-| Missing book.yml | Error with scaffold instructions |
-| Invalid config YAML | Validation errors in quickfix |
-| Missing entry file | Warn and skip (partial export continues) |
-| Entry ID not in manuscript.json | Warn and skip |
-| Pandoc errors | Capture stderr to `exports/output/export.log`, show summary in Neovim |
+| Invalid config YAML | Error with parse details |
+| No entries in config | Error suggesting regeneration |
+| Entry IDs not found | Error to check manuscript |
+| Pandoc errors | Capture stderr to `exports/output/export.log`, show summary |
 
-Errors surface via `vim.notify`. Detailed logs in `export.log`.
+Errors surface via `vim.notify`. Detailed pandoc logs in `export.log`.
 
 ---
 
@@ -319,8 +318,8 @@ Errors surface via `vim.notify`. Detailed logs in `export.log`.
 
 ### Phase 5: Commands & Polish
 - [x] :VimoireExport command
-- [ ] Auto-open with opt-out
-- [ ] Error handling and quickfix integration
+- [x] Auto-open with opt-out
+- [x] Error handling (log file, improved messages)
 
 ---
 
