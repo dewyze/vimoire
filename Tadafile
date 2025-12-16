@@ -107,9 +107,9 @@
     - [x] Scaffold chapter.md template at project creation
     - [x] Make exports/ visible in neotree navigator (Templates, Configs, Output)
     - [x] Bundle pagebreak.lua filter
-    - [ ] Make exports/ searchable in telescope
-    - [ ] Default epub.css
-    - [ ] Scaffold default reference.docx
+    - [x] Make exports/ searchable in telescope
+    - [x] Default epub.css
+    > reference.docx not scaffolded — optional, pandoc uses built-in defaults (see EXPORT_SPEC.md)
   - 7.6: Commands & Polish:
     - [ ] :VimoireExport command
     - [ ] Auto-open with opt-out

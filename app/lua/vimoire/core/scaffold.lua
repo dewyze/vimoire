@@ -49,6 +49,8 @@ function M.create(project_dir, title)
 
   -- Copy export templates
   copy_template_file("export/chapter.md", project_dir .. "/exports/templates/chapter.md")
+  copy_template_file("export/epub.css", project_dir .. "/exports/templates/epub.css")
+  copy_template_file("export/pagebreak.lua", project_dir .. "/exports/templates/pagebreak.lua")
 
   -- Copy starter entries
   Path:new(project_dir, "entries", dedication_id):mkdir()

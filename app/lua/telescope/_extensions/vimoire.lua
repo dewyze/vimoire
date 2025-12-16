@@ -172,6 +172,63 @@ local function reference(opts)
   create_picker("Reference", build_planning_entries("reference"), opts)
 end
 
+local function build_exports_entries()
+  local entries = {}
+  local exports_dir = state.manuscript.root .. "/exports"
+  local scan = require("plenary.scandir")
+
+  local files = scan.scan_dir(exports_dir, {
+    hidden = false,
+    depth = 3,
+    add_dirs = false,
+  })
+
+  for _, file_path in ipairs(files) do
+    local relative = file_path:sub(#exports_dir + 2)
+    table.insert(entries, {
+      name = relative,
+      path = file_path,
+    })
+  end
+
+  return entries
+end
+
+local function exports(opts)
+  opts = opts or {}
+
+  local entries = build_exports_entries()
+  local preview_enabled = vimoire_config.get("finder.preview")
+  local previewer = preview_enabled and conf.file_previewer(opts) or false
+
+  pickers.new(opts, {
+    prompt_title = "Exports",
+    finder = finders.new_table({
+      results = entries,
+      entry_maker = function(entry)
+        return {
+          value = entry,
+          display = entry.name,
+          ordinal = entry.name,
+          path = entry.path,
+        }
+      end,
+    }),
+    sorter = conf.generic_sorter(opts),
+    previewer = previewer,
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        if selection and selection.path then
+          open.open_file(selection.path)
+        end
+      end)
+      return true
+    end,
+  }):find()
+end
+
 return telescope.register_extension({
   exports = {
     navigate = navigate,
@@ -179,5 +236,6 @@ return telescope.register_extension({
     characters = characters,
     settings = settings,
     reference = reference,
+    exports = exports,
   },
 })

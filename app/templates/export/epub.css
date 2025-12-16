@@ -1,0 +1,101 @@
+/* Vimoire EPUB Stylesheet */
+
+body {
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.6;
+  margin: 1em;
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Chapter headings */
+h1 {
+  font-size: 1.8em;
+  font-weight: normal;
+  text-align: center;
+  margin-top: 2em;
+  margin-bottom: 1.5em;
+  page-break-before: always;
+}
+
+h1:first-of-type {
+  page-break-before: avoid;
+}
+
+h2 {
+  font-size: 1.4em;
+  font-weight: normal;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+}
+
+h3 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 1.2em;
+  margin-bottom: 0.8em;
+}
+
+/* Paragraphs */
+p {
+  margin: 0;
+  text-indent: 1.5em;
+}
+
+/* First paragraph after heading - no indent */
+h1 + p, h2 + p, h3 + p,
+hr + p, .scene-break + p {
+  text-indent: 0;
+}
+
+/* Scene breaks */
+hr {
+  border: none;
+  text-align: center;
+  margin: 1.5em 0;
+}
+
+hr::before {
+  content: "* * *";
+  letter-spacing: 0.5em;
+}
+
+/* Fenced divs */
+.letter {
+  font-family: "Courier New", monospace;
+  margin: 1.5em 2em;
+  padding: 1em;
+  border: 1px solid #ccc;
+}
+
+.epigraph {
+  font-style: italic;
+  margin: 1.5em 2em;
+  text-align: right;
+}
+
+.epigraph .attribution {
+  font-style: normal;
+  margin-top: 0.5em;
+}
+
+/* Block quotes */
+blockquote {
+  margin: 1em 2em;
+  font-style: italic;
+}
+
+/* Emphasis */
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: bold;
+}
+
+/* Links */
+a {
+  color: inherit;
+  text-decoration: underline;
+}

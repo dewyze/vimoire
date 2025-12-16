@@ -7,6 +7,29 @@ local Path = require("plenary.path")
 
 local M = {}
 
+local function get_app_template_root()
+  local app_root = debug.getinfo(1, "S").source:sub(2):match("(.*/app/)")
+  return app_root and (app_root .. "templates/export/") or nil
+end
+
+-- Find a template file, checking project first then app defaults
+local function find_template(root, filename)
+  local project_path = root .. "/exports/templates/" .. filename
+  if Path:new(project_path):exists() then
+    return project_path
+  end
+
+  local app_root = get_app_template_root()
+  if app_root then
+    local app_path = app_root .. filename
+    if Path:new(app_path):exists() then
+      return app_path
+    end
+  end
+
+  return nil
+end
+
 -- Load chapter template from project or fall back to default
 local function load_chapter_template(root)
   local project_template = root .. "/exports/templates/chapter.md"
@@ -16,9 +39,9 @@ local function load_chapter_template(root)
   end
 
   -- Fall back to app default
-  local app_root = debug.getinfo(1, "S").source:sub(2):match("(.*/app/)")
+  local app_root = get_app_template_root()
   if app_root then
-    local default_template = app_root .. "templates/export/chapter.md"
+    local default_template = app_root .. "chapter.md"
     loaded = template.load(default_template)
     if loaded then
       return loaded
@@ -129,12 +152,15 @@ function M.run(state, opts)
   local output_path = output_dir .. "/" .. filename
 
   -- Build and run pandoc
+  local root = state.manuscript.root
   local args = M.build_pandoc_args({
     input_files = input_files,
     output_path = output_path,
     title = state.book.title,
     author = state.book.author,
     language = state.book.language,
+    css_path = find_template(root, "epub.css"),
+    reference_doc = find_template(root, "reference.docx"),
   }, cfg)
 
   local cmd = { "pandoc" }
@@ -190,12 +216,15 @@ function M.run_with_config(state, config_path)
   local output_path = output_dir .. "/" .. filename
 
   -- Build and run pandoc
+  local root = state.manuscript.root
   local args = M.build_pandoc_args({
     input_files = input_files,
     output_path = output_path,
     title = state.book.title,
     author = state.book.author,
     language = state.book.language,
+    css_path = find_template(root, "epub.css"),
+    reference_doc = find_template(root, "reference.docx"),
   }, cfg)
 
   local cmd = { "pandoc" }

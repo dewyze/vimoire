@@ -141,11 +141,12 @@ Scaffolded with working defaults — first export should look decent without cus
 - Scene breaks (hr or styled ***)
 - Block styling for fenced divs (letter, epigraph, etc.)
 
-**reference.docx:**
-- Paragraph styles: Normal, Heading 1-3
-- Character styles for emphasis
-- Scene break style
-- Pre-built so pandoc applies styles correctly
+**reference.docx (optional):**
+- Not scaffolded by default — pandoc uses sensible built-in styles
+- To customize DOCX styling, create `exports/templates/reference.docx`
+- Generate a starter with: `pandoc -o reference.docx --print-default-data-file reference.docx`
+- Edit in Word to set paragraph styles (Normal, Heading 1-3), fonts, margins, line spacing
+- Vimoire will automatically use it if present
 
 User customization: edit these files directly. No separate "user override" location — book templates are the source of truth.
 
@@ -312,8 +313,9 @@ Errors surface via `vim.notify`. Detailed logs in `export.log`.
 ### Phase 4: Templates & Filters
 - [x] Scaffold default templates at project creation
 - [x] Bundle pagebreak.lua filter
-- [ ] Default epub.css
-- [ ] Default reference.docx
+- [x] Default epub.css
+- [x] Exports searchable in telescope
+> reference.docx not scaffolded — optional, pandoc uses built-in defaults
 
 ### Phase 5: Commands & Polish
 - [x] :VimoireExport command

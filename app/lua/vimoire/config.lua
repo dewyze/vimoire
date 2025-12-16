@@ -9,6 +9,7 @@ M.defaults = {
       characters = "<leader>fc",
       settings = "<leader>fs",
       reference = "<leader>fr",
+      exports = "<leader>fe",
     },
     navigator = {
       toggle = "<LocalLeader>nt",
