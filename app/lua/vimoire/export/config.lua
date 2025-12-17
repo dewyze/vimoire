@@ -16,6 +16,7 @@ end
 function M.generate(state)
   local entries = collector.collect_entries(state)
   local lines = {
+    "# Supported formats: epub, docx",
     "format: epub",
     "",
     "# output: " .. M._sanitize_filename(state.book.title) .. ".epub",

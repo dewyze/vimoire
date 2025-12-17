@@ -20,7 +20,8 @@ describe("export.config", function()
     it("returns YAML string with format and entries", function()
       local yaml = config.generate(state)
 
-      assert.truthy(yaml:match("^format: epub"))
+      assert.truthy(yaml:match("# Supported formats:"))
+      assert.truthy(yaml:match("format: epub"))
       assert.truthy(yaml:match("entries:"))
     end)
 

@@ -168,4 +168,5 @@
   - [ ] Store last edited file per project in recents.json, auto-open on project load
   - [ ] Help/docs system (prose syntax, keybindings, commands — :VimoireHelp + markdown in repo)
   - [ ] Image management (assets folder, insertion workflow, reference tracking)
-  - [ ] Neotree UX improvements: pseudo-buttons (action items), contextual add commands, run export from config node
+  - [x] Neotree UX improvements: action nodes in export source (Generate Config, Run Export...)
+  - [ ] Neotree UX improvements: contextual add commands, run export from config node

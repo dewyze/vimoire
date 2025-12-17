@@ -29,10 +29,10 @@ end
 
 function M.open(state)
   local node = state.tree:get_node()
-  local item = vimoire_state.items[node.id]
-  if not item or not item:action() then
-    cc.toggle_node(state)
+  if node.extra and node.extra.action and node.extra.action() then
+    return
   end
+  cc.toggle_node(state)
 end
 
 function M.notes(state)

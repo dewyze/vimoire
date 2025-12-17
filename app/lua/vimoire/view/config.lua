@@ -84,4 +84,11 @@ return {
     icon = constants.ICONS.EXPORT_FILE,
     highlight = constants.HIGHLIGHTS.EXPORT_FILE,
   },
+
+  -- Action buttons (UI-only, execute commands)
+  action = {
+    icon = constants.ICONS.ACTION,
+    highlight = constants.HIGHLIGHTS.ACTION,
+    immutable = true,
+  },
 }

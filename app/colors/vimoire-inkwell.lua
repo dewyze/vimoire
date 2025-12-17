@@ -127,6 +127,7 @@ hl(0, "VimoirePlanningItem", { fg = c.planning_item })
 hl(0, "VimoireExport", { fg = c.export, bold = true })
 hl(0, "VimoireExportFolder", { fg = c.export_folder, bold = true })
 hl(0, "VimoireExportFile", { fg = c.export_file })
+hl(0, "VimoireActionButton", { fg = c.bg_darker, bg = c.export, bold = true })
 hl(0, "VimoireWinbar", { fg = c.fg, bold = true })
 
 -- Vimoire Start Screen

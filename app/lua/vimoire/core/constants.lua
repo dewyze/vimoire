@@ -19,6 +19,7 @@ M.ICONS = {
   EXPORT = icon("0xf56e"),
   EXPORT_FOLDER = icon("0xf07c"),
   EXPORT_FILE = icon("0xf15c"),
+  ACTION = icon("0xf0da"),  -- caret-right, like a "run" indicator
 }
 
 M.HIGHLIGHTS = {
@@ -33,6 +34,7 @@ M.HIGHLIGHTS = {
   EXPORT = "VimoireExport",
   EXPORT_FOLDER = "VimoireExportFolder",
   EXPORT_FILE = "VimoireExportFile",
+  ACTION = "VimoireActionButton",
 }
 
 return M
