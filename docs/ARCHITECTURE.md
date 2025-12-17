@@ -106,7 +106,7 @@ book_root/
       snippets.json
 
   planning/
-    <uuid>/              # planning items (characters, settings, reference)
+    <uuid>/              # planning items (characters, settings, reference, orphaned_notes)
       text.md
 
   notes.md

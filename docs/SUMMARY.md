@@ -14,9 +14,9 @@ See `ARCHITECTURE.md` for file structures, project layout, and plugin module arc
 
 **Authoring** — Custom filetype `vimoire.markdown` with role-based settings. Panels for notes, snippets, comments tied to each chapter.
 
-**Notes & Snippets** — Chapter `notes.md` (spellcheck off), and global `snippets.json` for extracted text (cut from selection, insert anywhere).
+**Notes & Snippets** — Chapter `notes.md` (spellcheck off), and global `snippets.json` for extracted text (cut from selection, insert anywhere). Deleting a chapter preserves its notes in `planning/orphaned_notes/`.
 
-**Planning** — Reference docs in `planning/characters|settings|research/`. Can pin any planning doc as a side panel.
+**Planning** — Reference docs in `planning/characters|settings|reference|orphaned_notes/`. Can pin any planning doc as a side panel.
 
 **Plotting** — JSON-backed grid (chapters × plotlines) and chapter-level kanban. UI-only editing, syncs to JSON.
 
