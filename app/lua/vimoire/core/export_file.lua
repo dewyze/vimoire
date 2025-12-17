@@ -1,5 +1,7 @@
 local ExportFile = {}
 
+local open_util = require("vimoire.util.open")
+
 function ExportFile.new(id, name, path)
   local self = setmetatable({}, { __index = ExportFile })
   self.id = id
@@ -7,6 +9,11 @@ function ExportFile.new(id, name, path)
   self.kind = "export_file"
   self.path = path
   return self
+end
+
+function ExportFile:action()
+  open_util.open_file(self.path)
+  return true
 end
 
 function ExportFile:display_name()

@@ -39,6 +39,10 @@ function SectionBase.create_section(class, state, name, parent_items, at_index)
   return state.items[new_id]
 end
 
+function SectionBase:action()
+  return false
+end
+
 function SectionBase:text_path()
   return nil
 end

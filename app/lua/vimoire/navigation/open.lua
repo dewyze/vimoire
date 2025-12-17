@@ -1,20 +1,9 @@
 local M = {}
 
-local external_extensions = { epub = true, docx = true, pdf = true, mobi = true }
+local open_util = require("vimoire.util.open")
 
-function M.open_external(path)
-  local cmd = vim.fn.has("mac") == 1 and "open" or "xdg-open"
-  vim.fn.jobstart({ cmd, path }, { detach = true })
-end
-
-function M.open_file(path)
-  local ext = path:match("%.([^.]+)$")
-  if ext and external_extensions[ext] then
-    M.open_external(path)
-  else
-    vim.cmd.edit(path)
-  end
-end
+M.open_external = open_util.open_external
+M.open_file = open_util.open_file
 
 function M.open_item(item)
   local path = item:text_path()

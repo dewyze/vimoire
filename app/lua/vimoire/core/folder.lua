@@ -10,6 +10,10 @@ function Folder.new(id, name, kind, items)
   return self
 end
 
+function Folder:action()
+  return false
+end
+
 function Folder:display_name()
   return self.name
 end

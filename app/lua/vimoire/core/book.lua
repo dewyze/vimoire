@@ -40,6 +40,11 @@ function Book.new(data, root_path)
   return self
 end
 
+function Book:action()
+  vim.cmd.edit(self:text_path())
+  return true
+end
+
 function Book:path()
   return Path:new(self.root, "book.yml"):absolute()
 end

@@ -43,6 +43,11 @@ function DocumentBase:display_name()
   return self.name
 end
 
+function DocumentBase:action()
+  vim.cmd.edit(self:text_path())
+  return true
+end
+
 function DocumentBase:display_name_for_path(filepath)
   local filename = filepath:match("([^/]+)$")
   local suffix = FILE_DISPLAY_SUFFIXES[filename] or ""
