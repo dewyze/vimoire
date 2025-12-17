@@ -29,3 +29,13 @@ end
 if keymaps.views and keymaps.views.home then
   vim.keymap.set("n", keymaps.views.home, ":VimoireHome<CR>", { desc = "Vimoire: home" })
 end
+
+-- Snippets keymaps
+if keymaps.snippets then
+  if keymaps.snippets.browse then
+    vim.keymap.set("n", keymaps.snippets.browse, ":VimoireSnippets<CR>", { desc = "Vimoire: browse snippets" })
+  end
+  if keymaps.snippets.extract then
+    vim.keymap.set("v", keymaps.snippets.extract, ":VimoireSnippetExtract<CR>", { desc = "Vimoire: extract snippet" })
+  end
+end

@@ -133,9 +133,19 @@
     - [x] Export as dedicated view (separate from editing view)
     > Multi-source refactor: manuscript and export are separate neo-tree sources
     > Keymaps: gvm (manuscript), gve (export)
+  - 8.3: Snippets:
+    - [x] Create vimoire.snippets module (load/save/add/remove)
+    - [x] :VimoireSnippets command (Snacks picker with preview, insert, delete)
+    - [x] :VimoireSnippetExtract command (visual mode, cuts selection)
+    - [x] Keymaps: <leader>fs (browse), <leader>xs (extract)
+    > Global snippets.json at book root (not per-chapter)
+    > Stores source_id and source_name for provenance
+    > No titles - display truncated first line + source, preview shows full text
+    > <C-d> in picker to delete snippet
+    > Snippets are "good writing without a home" - usable from any chapter
 
 - Phase 9: Review Enhancements:
-  - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
+  - [ ] On chapter delete, warn/option to preserve notes.md (move to orphan folder or another chapter)
 
 - Phase 10: Comments:
   - [ ] Build comments panel with extmark anchors

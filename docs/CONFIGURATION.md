@@ -47,8 +47,9 @@ Telescope pickers for navigating your manuscript.
 | `navigate` | `<leader>ff` | All items |
 | `manuscript` | `<leader>fm` | Manuscript entries only |
 | `characters` | `<leader>fc` | Characters folder |
-| `settings` | `<leader>fs` | Settings folder |
+| `settings` | `<leader>fp` | Settings folder |
 | `reference` | `<leader>fr` | Reference folder |
+| `exports` | `<leader>fe` | Export output files |
 
 Set any key to `false` to disable it.
 
@@ -60,6 +61,23 @@ Neo-tree sidebar controls.
 |-----|---------|-------------|
 | `toggle` | `<LocalLeader>nt` | Toggle tree visibility |
 | `reveal` | `<LocalLeader>nf` | Reveal current file in tree |
+| `manuscript` | `gvm` | Switch to manuscript view |
+| `export` | `gve` | Switch to export view |
+
+#### keymaps.views
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `home` | `gvh` | Show dashboard |
+
+#### keymaps.snippets
+
+Snippet management for the current chapter/page.
+
+| Key | Default | Mode | Description |
+|-----|---------|------|-------------|
+| `browse` | `<leader>fs` | normal | Browse and insert snippets |
+| `extract` | `<leader>xs` | visual | Cut selection to snippet |
 
 ### editor
 

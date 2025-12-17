@@ -7,7 +7,7 @@ M.defaults = {
       navigate = "<leader>ff",
       manuscript = "<leader>fm",
       characters = "<leader>fc",
-      settings = "<leader>fs",
+      settings = "<leader>fp",
       reference = "<leader>fr",
       exports = "<leader>fe",
     },
@@ -19,6 +19,10 @@ M.defaults = {
     },
     views = {
       home = "gvh",
+    },
+    snippets = {
+      browse = "<leader>fs",
+      extract = "<leader>xs",
     },
   },
   ui = {
