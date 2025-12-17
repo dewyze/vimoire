@@ -151,36 +151,63 @@
   > Notes become planning items at planning/<id>/text.md
   > Named by source chapter's display_name (e.g., "1: The Beginning")
 
-- Phase 10: Comments:
-  - [ ] Build comments panel with extmark anchors
+- Phase 10: Quick Wins:
+  - [ ] Last edited file — store on buffer open, restore on project load
+  - [x] Filetype refinement — done via vimoire_prose and vimoire_markdown
+  - [x] Chapter templates (frontmatter-based title override, customizable templates/chapter.md)
+  - [x] Neotree UX: action nodes in export source (Generate Config, Run Export...)
+  - [ ] Neotree UX: add section from anywhere (top-level only, no nesting)
 
-- Phase 11: Planning & Plotting:
-  - 11.1: Planning Docs:
-    - [ ] Discover and index planning documents
-    - [ ] Allow pinning planning docs as panels
-  - 11.2: Plotting Foundation:
-    - [ ] Build plot data model (JSON structure)
-  - 11.3: Plotting Views:
-    - [ ] Build book-level grid view
-    - [ ] Build chapter-level kanban view
-  - 11.4: Plotting Interactions:
-    - [ ] Implement card operations (create/move/delete)
+- Phase 11: Statusline:
+  - [ ] Book title display
+  - [ ] Chapter info / breadcrumbs (e.g., "Part 1 > Chapter 3")
+  - [ ] Word count (buffer and/or manuscript total)
+  - [ ] Writing mode indicator (prose vs notes)
+  - [ ] Modified/spell status
 
-- Phase 12: Healthcheck:
+- Phase 12: Marks Browser:
+  - [ ] Index {{mark}} and {{mark:text}} across manuscript
+  - [ ] Neotree source or Telescope picker for marks
+  - [ ] Jump to mark location
+
+- Phase 13: Healthcheck:
   - [ ] Track ephemeral state and cache
   - [ ] Build healthcheck for data integrity
-  > Health check should verify entries have prose.md files
+  > Verify entries have prose.md files, manuscript.json consistency
 
-- Deferred:
-  - [ ] Enhanced statusline (book title, word count, chapter info)
-  - [x] Chapter templates (frontmatter-based title override, customizable templates/chapter.md)
-  - [ ] Scene markers in prose (headers or <!--@scene--> comments) with neotree navigation
-  - [ ] Define vimoire.markdown filetype with role-based settings
-  - [ ] Build collapsible panel system
-  - [ ] Implement navigation to different surfaces (text/notes/snippets/comments)
-  - [ ] Move command (direct section picker, J/K covers incremental movement)
-  - [ ] Store last edited file per project in recents.json, auto-open on project load
-  - [ ] Help/docs system (prose syntax, keybindings, commands — :VimoireHelp + markdown in repo)
-  - [ ] Image management (assets folder, insertion workflow, reference tracking)
-  - [x] Neotree UX improvements: action nodes in export source (Generate Config, Run Export...)
-  - [ ] Neotree UX improvements: contextual add commands, run export from config node
+- Phase 14: Help System:
+  - [ ] :VimoireHelp command
+  - [ ] Prose syntax reference
+  - [ ] Keybindings reference
+  - [ ] Commands reference
+  - [ ] Workflow tips
+
+- Phase 15: Image Management:
+  - [ ] Assets folder structure
+  - [ ] Image insertion workflow
+  - [ ] Reference tracking (what's used where)
+
+- Phase 16: Focus Mode:
+  - [ ] Zen mode integration (Snacks)
+  - [ ] Padded/centered buffers
+  - [ ] UI hiding options
+
+- Phase 17: Goals:
+  - [ ] Word count targets (daily/chapter/manuscript)
+  - [ ] Progress tracking
+  - [ ] Stats display
+
+- Phase 18: Planning & Plotting:
+  - 18.1: Planning Docs:
+    - [ ] Discover and index planning documents
+    - [ ] Allow pinning planning docs as panels
+  - 18.2: Plotting Foundation:
+    - [ ] Build plot data model (JSON structure)
+  - 18.3: Plotting Views:
+    - [ ] Build book-level grid view
+    - [ ] Build chapter-level kanban view
+  - 18.4: Plotting Interactions:
+    - [ ] Implement card operations (create/move/delete)
+
+- Phase 19: Comments:
+  - [ ] Build comments panel with extmark anchors
