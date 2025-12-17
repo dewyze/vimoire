@@ -4,56 +4,43 @@
 - [x] Add `action()` interface to all item types
 - [x] Extract `util/open.lua` for shared file opening logic
 - [x] Update `commands.lua` to use `action()` interface
+- [x] Reorganize into self-contained sources (`sources/manuscript/`, `sources/export/`)
+- [x] Remove export from manuscript source
+- [x] Add switching keymaps (`gvm`, `gve`)
+- [x] Update neotree registration for both sources
+- [x] Delete old `neotree_source/` directory
 
-## Next Steps
-
-### 1. Extract Shared Base
-Move shared node-building and commands to `neotree_base.lua`:
-- `node_from_item(item)` — builds neo-tree node from item
-- `build_items_nodes(items)` — recursive node builder
-- `build_planning_items(items)` — planning-specific recursion
-- Shared commands: `refresh`, `open`, `toggle_node`, `close_node`, etc.
-
-### 2. Reorganize File Structure
+## Current Structure
 ```
 navigation/
-  open.lua                    # unchanged
-  neotree_base.lua            # new: shared bits
+  open.lua                    # used by telescope
   sources/
     manuscript/
-      init.lua                # current source, minus export
-      commands.lua            # add, rename, delete, move, notes
+      init.lua                # self-contained source
+      commands.lua            # setmetatable fallback to cc
+      components.lua          # rendering
     export/
-      init.lua                # new source
-      commands.lua            # export-specific commands
-  neotree_source/             # delete after migration
+      init.lua                # self-contained source
+      commands.lua            # setmetatable fallback to cc
+      components.lua          # rendering
 ```
 
-### 3. Create Export Source
-- Build tree with action nodes: "Generate Config", "Run Export..."
-- Templates, Configs, Output folders with files
-- Register as neo-tree source `export`
+## Future Enhancements
 
-### 4. Add Action Node Support
-Action nodes have an `action` function instead of `text_path()`. The shared `open` command already handles this via `item:action()`.
+### Action Nodes in Export Source
+Add action nodes like "Generate Config", "Run Export..." to the export tree.
+Action nodes have an `action` function instead of `text_path()`. The `open` command already handles this via `item:action()`.
 
-For export source, create action items in state or build them directly in the source's navigate function.
+Build action items directly in the export source's `navigate()` function — they're UI-only, no persistence needed.
 
-### 5. Remove Export from Manuscript Source
-Once export source is working, remove the Export folder from manuscript's tree.
-
-### 6. Add Switching Commands/Keymaps
-- `gvm` → `:Neotree source=manuscript`
-- `gve` → `:Neotree source=export`
-- Commands: `:VimoireTree`, `:VimoireExportView`
-
-### 7. Update Neotree Registration
-Ensure both sources are registered in the neo-tree setup.
+### Commands
+- `:VimoireTree` — open manuscript source
+- `:VimoireExportView` — open export source
 
 ## Design Decisions
 
-**Action nodes:** Built directly in export source's `navigate()`, not in state. They're UI-only, no persistence needed.
+**Self-contained sources:** Each source has its own node building and commands. Small duplication (~30 lines) preferred over abstraction layers.
 
-**Shared components:** `components.lua` stays shared — icon/name rendering works for both sources.
+**Explicit cc assignments:** Neo-tree validates mappings at setup time, so commands must be explicitly assigned (not via metatable).
 
-**No source selector tab bar:** Use keymaps instead. Simpler, and we dynamically set display_name for book title.
+**Source selector tabs:** Winbar shows "Manuscript" and "Export" tabs. Book title appears in window titlestring instead.

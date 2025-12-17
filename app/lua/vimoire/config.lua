@@ -14,6 +14,8 @@ M.defaults = {
     navigator = {
       toggle = "<LocalLeader>nt",
       reveal = "<LocalLeader>nf",
+      manuscript = "gvm",
+      export = "gve",
     },
     views = {
       home = "gvh",

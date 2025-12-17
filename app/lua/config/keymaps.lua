@@ -10,11 +10,19 @@ end
 
 -- Navigator keymaps
 if keymaps.navigator.toggle then
-  vim.keymap.set("n", keymaps.navigator.toggle, ":Neotree toggle source=vimoire<CR>", { desc = "Vimoire: toggle navigator" })
+  vim.keymap.set("n", keymaps.navigator.toggle, ":Neotree toggle source=manuscript<CR>", { desc = "Vimoire: toggle navigator" })
 end
 
 if keymaps.navigator.reveal then
-  vim.keymap.set("n", keymaps.navigator.reveal, ":Neotree reveal source=vimoire<CR>", { desc = "Vimoire: find in navigator" })
+  vim.keymap.set("n", keymaps.navigator.reveal, ":Neotree reveal source=manuscript<CR>", { desc = "Vimoire: find in navigator" })
+end
+
+if keymaps.navigator.manuscript then
+  vim.keymap.set("n", keymaps.navigator.manuscript, ":Neotree source=manuscript<CR>", { desc = "Vimoire: manuscript view" })
+end
+
+if keymaps.navigator.export then
+  vim.keymap.set("n", keymaps.navigator.export, ":Neotree source=export<CR>", { desc = "Vimoire: export view" })
 end
 
 -- Views keymaps

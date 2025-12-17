@@ -130,7 +130,9 @@
   - 8.2: Other Polish:
     - [ ] Add Neovide-specific enhancements
     - [ ] Implement friendly error messages
-    - [ ] Export as dedicated view (separate from editing view)
+    - [x] Export as dedicated view (separate from editing view)
+    > Multi-source refactor: manuscript and export are separate neo-tree sources
+    > Keymaps: gvm (manuscript), gve (export)
 
 - Phase 9: Review Enhancements:
   - [ ] On chapter delete, warn/option to preserve notes.md and snippets.json (move to orphan folder or another chapter)
@@ -156,6 +158,7 @@
   > Health check should verify entries have prose.md files
 
 - Deferred:
+  - [ ] Enhanced statusline (book title, word count, chapter info)
   - [x] Chapter templates (frontmatter-based title override, customizable templates/chapter.md)
   - [ ] Scene markers in prose (headers or <!--@scene--> comments) with neotree navigation
   - [ ] Define vimoire.markdown filetype with role-based settings

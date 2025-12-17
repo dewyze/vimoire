@@ -21,12 +21,14 @@ return {
     require("neo-tree").setup({
       use_default_mappings = false,
       sources = {
-        "vimoire.navigation.neotree_source",
+        "vimoire.navigation.sources.manuscript",
+        "vimoire.navigation.sources.export",
       },
       source_selector = {
         winbar = true,
         sources = {
-          { source = "vimoire" },
+          { source = "manuscript", display_name = "󱓷 Manuscript" },
+          { source = "export", display_name = "󰈙 Export" },
         },
       },
       window = {
@@ -38,7 +40,7 @@ return {
         },
         mappings = mouse_mappings,
       },
-      vimoire = {
+      manuscript = {
         window = {
           mappings = {
             ["<cr>"] = "open",
@@ -59,6 +61,24 @@ return {
             ["m"] = "move",
             ["J"] = "move_down",
             ["K"] = "move_up",
+          },
+        },
+      },
+      export = {
+        window = {
+          mappings = {
+            ["<cr>"] = "open",
+            ["o"] = "open",
+            ["s"] = "open_split",
+            ["v"] = "open_vsplit",
+            ["t"] = "toggle_node",
+            ["C"] = "close_node",
+            ["z"] = "close_all_nodes",
+            ["e"] = "expand_all_nodes",
+            ["q"] = "close_window",
+            ["?"] = "show_help",
+            ["R"] = "refresh",
+            ["d"] = "delete",
           },
         },
       },

@@ -1,4 +1,3 @@
-local M = {}
 local cc = require("neo-tree.sources.common.commands")
 local vimoire_state = require("vimoire.state")
 local movement = require("vimoire.core.movement")
@@ -6,8 +5,19 @@ local delete_options = require("vimoire.core.delete_options")
 local add_options = require("vimoire.core.add_options")
 local rename = require("vimoire.core.rename")
 
--- Custom: refresh tree
-M.refresh = function(state, focus_id)
+local M = {}
+
+-- Explicit assignments for neo-tree validation
+M.open_split = cc.open_split
+M.open_vsplit = cc.open_vsplit
+M.toggle_node = cc.toggle_node
+M.close_node = cc.close_node
+M.close_all_nodes = cc.close_all_nodes
+M.expand_all_nodes = cc.expand_all_nodes
+M.close_window = cc.close_window
+M.show_help = cc.show_help
+
+function M.refresh(state, focus_id)
   local manager = require("neo-tree.sources.manager")
   manager.refresh(state.name, function()
     if focus_id then
@@ -17,8 +27,7 @@ M.refresh = function(state, focus_id)
   end)
 end
 
--- Custom: open file or toggle folder
-M.open = function(state)
+function M.open(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
   if not item or not item:action() then
@@ -26,8 +35,7 @@ M.open = function(state)
   end
 end
 
--- Custom: open notes
-M.notes = function(state)
+function M.notes(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
   if not item then return end
@@ -39,20 +47,7 @@ M.notes = function(state)
   vim.b.vimoire_item_id = item.id
 end
 
--- From common: navigation
-M.open_split = cc.open_split
-M.open_vsplit = cc.open_vsplit
-M.toggle_node = cc.toggle_node
-M.close_node = cc.close_node
-M.close_all_nodes = cc.close_all_nodes
-M.expand_all_nodes = cc.expand_all_nodes
-
--- From common: window
-M.close_window = cc.close_window
-M.show_help = cc.show_help
-
--- Custom: add (context-aware)
-M.add = function(state)
+function M.add(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
   if not item then return end
@@ -85,8 +80,7 @@ M.add = function(state)
   end)
 end
 
--- Custom: rename
-M.rename = function(state)
+function M.rename(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
   if not item then return end
@@ -95,7 +89,7 @@ M.rename = function(state)
     prompt = "Rename: ",
     default = item.name,
   }, function(new_name)
-    if not new_name then return end -- cancelled
+    if not new_name then return end
 
     local ok, err = rename.execute(item, vimoire_state, new_name)
     if ok then
@@ -106,8 +100,7 @@ M.rename = function(state)
   end)
 end
 
--- Custom: delete
-M.delete = function(state)
+function M.delete(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
   if not item then return end
@@ -134,27 +127,21 @@ M.delete = function(state)
   end
 end
 
--- Custom: move to different section
-M.move = function(state)
-  -- TODO: implement
+function M.move(state)
   vim.notify("Move not yet implemented", vim.log.levels.INFO)
 end
 
-local function get_id(node)
-  return node.id
-end
-
--- Custom: reorder up (K)
-M.move_up = function(state)
-  local id = get_id(state.tree:get_node())
+function M.move_up(state)
+  local node = state.tree:get_node()
+  local id = node.id
   if id and movement.move_up(vimoire_state, id) then
     M.refresh(state, id)
   end
 end
 
--- Custom: reorder down (J)
-M.move_down = function(state)
-  local id = get_id(state.tree:get_node())
+function M.move_down(state)
+  local node = state.tree:get_node()
+  local id = node.id
   if id and movement.move_down(vimoire_state, id) then
     M.refresh(state, id)
   end

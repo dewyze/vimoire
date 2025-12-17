@@ -36,6 +36,9 @@ local c = {
   page = "#5a7a4a",
   planning = "#8a5a4a",
   planning_item = "#6a4a3a",
+  export = "#5a5a78",
+  export_folder = "#4a4a68",
+  export_file = "#6a6a88",
 
   -- Feedback
   error = "#a04040",
@@ -121,6 +124,9 @@ hl(0, "VimoirePage", { fg = c.page })
 hl(0, "VimoirePlanning", { fg = c.planning, bold = true })
 hl(0, "VimoirePlanningSubfolder", { fg = c.planning, bold = true })
 hl(0, "VimoirePlanningItem", { fg = c.planning_item })
+hl(0, "VimoireExport", { fg = c.export, bold = true })
+hl(0, "VimoireExportFolder", { fg = c.export_folder, bold = true })
+hl(0, "VimoireExportFile", { fg = c.export_file })
 hl(0, "VimoireWinbar", { fg = c.fg, bold = true })
 
 -- Vimoire Start Screen

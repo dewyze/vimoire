@@ -18,6 +18,9 @@ local function apply_defaults()
   default_link("VimoirePlanning", "Directory")
   default_link("VimoirePlanningSubfolder", "Directory")
   default_link("VimoirePlanningItem", "Normal")
+  default_link("VimoireExport", "Special")
+  default_link("VimoireExportFolder", "Directory")
+  default_link("VimoireExportFile", "Normal")
   default_link("VimoireWinbar", "Title")
 
   -- Start screen groups
