@@ -12,6 +12,7 @@ local M = {
       characters = { { "indent" }, { "icon" }, { "name" } },
       settings = { { "indent" }, { "icon" }, { "name" } },
       reference = { { "indent" }, { "icon" }, { "name" } },
+      orphaned_notes = { { "indent" }, { "icon" }, { "name" } },
       section = { { "indent" }, { "icon" }, { "name" } },
       chapter = { { "indent" }, { "icon" }, { "name" } },
       page = { { "indent" }, { "icon" }, { "name" } },

@@ -39,3 +39,10 @@ if keymaps.snippets then
     vim.keymap.set("v", keymaps.snippets.extract, ":VimoireSnippetExtract<CR>", { desc = "Vimoire: extract snippet" })
   end
 end
+
+-- Buffer keymaps
+if keymaps.buffer then
+  if keymaps.buffer.notes then
+    vim.keymap.set("n", keymaps.buffer.notes, ":VimoireNotes<CR>", { desc = "Vimoire: open notes" })
+  end
+end

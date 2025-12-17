@@ -79,6 +79,14 @@ Snippet management for the current chapter/page.
 | `browse` | `<leader>fs` | normal | Browse and insert snippets |
 | `extract` | `<leader>xs` | visual | Cut selection to snippet |
 
+#### keymaps.buffer
+
+Buffer-level actions for the current file.
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `notes` | `<leader>N` | Open notes for current chapter/page |
+
 ### editor
 
 Settings applied to prose and markdown buffers.

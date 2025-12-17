@@ -10,7 +10,6 @@ vim.o.mouse = "a"
 vim.o.number = false
 vim.o.scrolloff = editor.scrolloff
 vim.o.shiftwidth = editor.shiftwidth
-vim.o.showbreak = "↳ "
 vim.o.smartcase = true
 vim.o.tabstop = editor.tabstop
 vim.o.textwidth = editor.textwidth

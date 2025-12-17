@@ -14,7 +14,7 @@ See `ARCHITECTURE.md` for file structures, project layout, and plugin module arc
 
 **Authoring** — Custom filetype `vimoire.markdown` with role-based settings. Panels for notes, snippets, comments tied to each chapter.
 
-**Notes & Snippets** — Chapter `notes.md` (spellcheck off), and text snippet cards in `snippets.json` (extractable from selection).
+**Notes & Snippets** — Chapter `notes.md` (spellcheck off), and global `snippets.json` for extracted text (cut from selection, insert anywhere).
 
 **Planning** — Reference docs in `planning/characters|settings|research/`. Can pin any planning doc as a side panel.
 
@@ -24,7 +24,7 @@ See `ARCHITECTURE.md` for file structures, project layout, and plugin module arc
 
 **Spellcheck** — Book-local dictionary (`spell/en.add`). Spellcheck only in chapter prose.
 
-**Export** — Pandoc-based (HTML/EPUB/PDF/DOCX). Assembles ordered chapters into manuscript. Outputs to `build/`.
+**Export** — Pandoc-based (EPUB/DOCX). Assembles ordered chapters into manuscript. Outputs to `exports/builds/`.
 
 **Neovide Polish** — Optional variable-width fonts, line spacing, smooth animations for a manuscript feel on Neovide.
 

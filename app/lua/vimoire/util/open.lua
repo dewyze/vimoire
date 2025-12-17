@@ -7,12 +7,24 @@ function M.open_external(path)
   vim.fn.jobstart({ cmd, path }, { detach = true })
 end
 
+function M.focus_or_edit(path)
+  local bufnr = vim.fn.bufnr(path)
+  if bufnr ~= -1 then
+    local win_id = vim.fn.bufwinid(bufnr)
+    if win_id ~= -1 then
+      vim.api.nvim_set_current_win(win_id)
+      return
+    end
+  end
+  vim.cmd.edit(path)
+end
+
 function M.open_file(path)
   local ext = path:match("%.([^.]+)$")
   if ext and external_extensions[ext] then
     M.open_external(path)
   else
-    vim.cmd.edit(path)
+    M.focus_or_edit(path)
   end
 end
 

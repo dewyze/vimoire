@@ -67,10 +67,12 @@ function state:rebuild()
     { id = "characters" },
     { id = "settings" },
     { id = "reference" },
+    { id = "orphaned_notes" },
   })
   self.items["characters"] = Folder.new("characters", "Characters", "characters", self.manuscript.characters or {})
   self.items["settings"] = Folder.new("settings", "Settings", "settings", self.manuscript.settings or {})
   self.items["reference"] = Folder.new("reference", "Reference", "reference", self.manuscript.reference or {})
+  self.items["orphaned_notes"] = Folder.new("orphaned_notes", "Orphaned Notes", "orphaned_notes", self.manuscript.orphaned_notes or {})
 
   -- Export section (filesystem-backed)
   local function scan_export_dir(folder_id, dir_path)
@@ -113,7 +115,7 @@ function state:rebuild()
   self.items["export_output"] = Folder.new("export_output", "Output", "export_folder", output_items)
 
   -- Apply view config to folders
-  for _, id in ipairs({ "manuscript", "planning", "characters", "settings", "reference", "export", "export_templates", "export_configs", "export_output" }) do
+  for _, id in ipairs({ "manuscript", "planning", "characters", "settings", "reference", "orphaned_notes", "export", "export_templates", "export_configs", "export_output" }) do
     apply_view(self.items[id])
   end
 
@@ -161,6 +163,9 @@ function state:rebuild()
   process_planning(self.manuscript.characters, self.manuscript.characters)
   process_planning(self.manuscript.settings, self.manuscript.settings)
   process_planning(self.manuscript.reference, self.manuscript.reference)
+  if self.manuscript.orphaned_notes then
+    process_planning(self.manuscript.orphaned_notes, self.manuscript.orphaned_notes)
+  end
 end
 
 return state

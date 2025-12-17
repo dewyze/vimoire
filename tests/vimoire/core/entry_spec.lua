@@ -138,6 +138,37 @@ describe("Entry", function()
         state:load(temp_dir)
         assert.is_nil(state.items["chap1a"])
       end)
+
+      it("moves notes.md to planning/orphaned_notes/ on delete", function()
+        local entry = state.items["chap1a"]
+        entry.chapter_index = 1
+        local notes_path = Path:new(entry:notes_path())
+        notes_path:write("My important notes", "w")
+
+        entry:destroy(state)
+
+        -- Reload state to get new planning item
+        state:load(temp_dir)
+
+        -- Should have created orphaned_notes with a planning item
+        assert.is_not_nil(state.manuscript.orphaned_notes)
+        assert.equals(1, #state.manuscript.orphaned_notes)
+        assert.equals("1: The Day I Became Sentient", state.manuscript.orphaned_notes[1].name)
+
+        -- Planning item should have the notes content
+        local orphaned_item = state.items[state.manuscript.orphaned_notes[1].id]
+        local content = Path:new(orphaned_item:text_path()):read()
+        assert.equals("My important notes", content)
+      end)
+
+      it("does not create orphaned_notes if no notes exist", function()
+        local entry = state.items["chap1a"]
+
+        entry:destroy(state)
+
+        local orphaned_dir = Path:new(temp_dir, "planning", "orphaned_notes")
+        assert.is_false(orphaned_dir:exists())
+      end)
     end)
   end)
 end)

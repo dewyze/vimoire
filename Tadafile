@@ -128,8 +128,8 @@
     > Vimoire needs domain-specific project recents (manuscript.json validation, book titles)
     > Custom dashboard is purpose-built, preferences.json handles persistence simply
   - 8.2: Other Polish:
-    - [ ] Add Neovide-specific enhancements
-    - [ ] Implement friendly error messages
+    - [x] Add Neovide-specific enhancements
+    - [x] Implement friendly error messages
     - [x] Export as dedicated view (separate from editing view)
     > Multi-source refactor: manuscript and export are separate neo-tree sources
     > Keymaps: gvm (manuscript), gve (export)
@@ -144,8 +144,12 @@
     > <C-d> in picker to delete snippet
     > Snippets are "good writing without a home" - usable from any chapter
 
-- Phase 9: Review Enhancements:
-  - [ ] On chapter delete, warn/option to preserve notes.md (move to orphan folder or another chapter)
+- Phase 9: Notes Preservation:
+  - [x] On chapter/page delete, auto-move notes.md to planning/orphaned_notes/
+  - [x] Add <leader>N keymap for :VimoireNotes from buffer
+  > orphaned_notes is a proper planning folder (visible in neotree)
+  > Notes become planning items at planning/<id>/text.md
+  > Named by source chapter's display_name (e.g., "1: The Beginning")
 
 - Phase 10: Comments:
   - [ ] Build comments panel with extmark anchors

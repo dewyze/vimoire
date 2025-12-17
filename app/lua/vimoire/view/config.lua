@@ -39,6 +39,11 @@ return {
     add_options = { add_options.PLANNING_ITEM, add_options.SUBFOLDER },
     immutable = true,
   },
+  orphaned_notes = {
+    icon = constants.ICONS.PLANNING_SECTION,
+    highlight = constants.HIGHLIGHTS.PLANNING_SUBFOLDER,
+    immutable = true,
+  },
 
   -- Manuscript entries
   section = {

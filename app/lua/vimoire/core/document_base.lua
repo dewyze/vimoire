@@ -104,7 +104,30 @@ function DocumentBase:destroy_children(_state)
   -- Documents have no children
 end
 
+function DocumentBase:preserve_notes(state)
+  if not self:extras() then return end
+
+  local notes = Path:new(self:notes_path())
+  if not notes:exists() then return end
+
+  local content = notes:read()
+
+  -- Ensure orphaned_notes array exists
+  if not state.manuscript.orphaned_notes then
+    state.manuscript.orphaned_notes = {}
+  end
+
+  -- Create planning item for the orphaned note
+  local PlanningItem = require("vimoire.core.planning_item")
+  local item = PlanningItem.create(state, self:display_name(), state.manuscript.orphaned_notes, 1)
+
+  -- Write notes content to the new item
+  Path:new(item:text_path()):write(content, "w")
+end
+
 function DocumentBase:destroy(state)
+  self:preserve_notes(state)
+
   -- Find and remove from parent_items
   for i, item in ipairs(self.parent_items) do
     if item.id == self.id then

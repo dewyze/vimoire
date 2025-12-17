@@ -17,9 +17,9 @@ describe("State", function()
 
   it("creates items map with entries, sections, folders, and planning items", function()
     state:load(fixture_path)
-    -- 1 book + 5 folders + 9 entries + 2 sections + 8 planning items + 1 subfolder = 26
-    -- + 4 export folders + 5 export files = 35
-    assert.equals(35, vim.tbl_count(state.items))
+    -- 1 book + 6 folders + 9 entries + 2 sections + 8 planning items + 1 subfolder = 27
+    -- + 4 export folders + 5 export files = 36
+    assert.equals(36, vim.tbl_count(state.items))
   end)
 
   it("can rebuild indexes", function()
@@ -56,9 +56,9 @@ describe("State", function()
 
   it("loads flat manuscripts correctly", function()
     state:load("tests/fixtures/flat")
-    -- 5 folders + 3 entries + 0 sections + 0 planning = 8
-    -- + 4 export folders = 12
-    assert.equals(12, vim.tbl_count(state.items))
+    -- 6 folders + 3 entries + 0 sections + 0 planning = 9
+    -- + 4 export folders = 13
+    assert.equals(13, vim.tbl_count(state.items))
 
     local entry = state.items["ch002"]
     assert.equals(2, entry.chapter_index)

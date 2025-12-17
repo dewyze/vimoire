@@ -24,6 +24,9 @@ M.defaults = {
       browse = "<leader>fs",
       extract = "<leader>xs",
     },
+    buffer = {
+      notes = "<leader>N",
+    },
   },
   ui = {
     mouse_mode = "single_click", -- "single_click" | "double_click"
