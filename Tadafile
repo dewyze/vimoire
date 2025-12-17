@@ -123,7 +123,10 @@
     - [x] Refactor delete_options to confirm/choose pattern
     - [x] Remove Cancel options (Esc handles cancellation)
     - [x] Enable snacks notifier for floating notifications
-    - [ ] Evaluate snacks dashboard
+    - [x] Evaluate snacks dashboard
+    > Snacks dashboard doesn't fit: recent_files=vim oldfiles, projects=git roots
+    > Vimoire needs domain-specific project recents (manuscript.json validation, book titles)
+    > Custom dashboard is purpose-built, preferences.json handles persistence simply
   - 8.2: Other Polish:
     - [ ] Add Neovide-specific enhancements
     - [ ] Implement friendly error messages
