@@ -56,9 +56,9 @@ describe("State", function()
 
   it("loads flat manuscripts correctly", function()
     state:load("tests/fixtures/flat")
-    -- 6 folders + 3 entries + 0 sections + 0 planning = 9
-    -- + 4 export folders = 13
-    assert.equals(13, vim.tbl_count(state.items))
+    -- 1 book + 6 folders + 3 entries + 0 sections + 0 planning = 10
+    -- + 4 export folders = 14
+    assert.equals(14, vim.tbl_count(state.items))
 
     local entry = state.items["ch002"]
     assert.equals(2, entry.chapter_index)

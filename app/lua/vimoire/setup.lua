@@ -1,6 +1,7 @@
 local setup = {}
 local state = require("vimoire.state")
 local recent = require("vimoire.core.recent")
+local preferences = require("vimoire.core.preferences")
 
 local function refresh_neotree()
   local manager = require("neo-tree.sources.manager")
@@ -42,6 +43,11 @@ function setup.on_manuscript_loaded()
       if item then
         vim.b.vimoire_item_id = item.id
         vim.b.vimoire_display_name = item:display_name_for_path(args.file)
+
+        -- Store as last edited for this manuscript
+        local last_edited = preferences.get("last_edited") or {}
+        last_edited[state.manuscript.id] = item.id
+        preferences.set("last_edited", last_edited)
       end
     end
   })
@@ -56,6 +62,17 @@ function setup.on_manuscript_loaded()
 
   vim.schedule(function()
     require("neo-tree.command").execute({ source = "manuscript" })
+
+    -- Restore last edited file for this manuscript
+    local last_edited = preferences.get("last_edited") or {}
+    local item_id = last_edited[state.manuscript.id]
+    if item_id then
+      local item = state.items[item_id]
+      if item and item.text_path then
+        local open = require("vimoire.navigation.open")
+        open.open_item(item)
+      end
+    end
   end)
 end
 

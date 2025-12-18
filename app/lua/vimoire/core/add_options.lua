@@ -5,11 +5,28 @@ local PlanningSection = require("vimoire.core.planning_section")
 local Chapter = require("vimoire.core.chapter")
 local Page = require("vimoire.core.page")
 local PlanningItem = require("vimoire.core.planning_item")
+local items_util = require("vimoire.util.items")
 
 M.SECTION = {
   label = "Section",
   execute = function(state, name, parent_items, at_index)
     return ManuscriptSection.create(state, name, parent_items, at_index)
+  end,
+  -- Sections always insert at manuscript root level
+  target = function(state, item)
+    local ms_items = state.manuscript.items
+    if item.parent_section then
+      -- Item is inside a section: insert after that section
+      local section_index = items_util.find_index(ms_items, item.parent_section.id)
+      return ms_items, (section_index or #ms_items) + 1
+    elseif item.parent_items == ms_items then
+      -- Item is at manuscript root: insert after it
+      local item_index = items_util.find_index(ms_items, item.id)
+      return ms_items, (item_index or #ms_items) + 1
+    else
+      -- Fallback: end of manuscript
+      return ms_items, #ms_items + 1
+    end
   end,
 }
 

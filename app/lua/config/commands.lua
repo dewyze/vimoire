@@ -1,4 +1,5 @@
 vim.api.nvim_create_user_command("VimoireHome", function()
+  require("neo-tree.command").execute({ action = "close" })
   require("vimoire.setup").show_dashboard()
 end, { desc = "Show Vimoire dashboard" })
 

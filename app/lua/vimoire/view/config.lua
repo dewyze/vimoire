@@ -49,17 +49,17 @@ return {
   section = {
     icon = constants.ICONS.SECTION,
     highlight = constants.HIGHLIGHTS.SECTION,
-    add_options = { add_options.CHAPTER, add_options.PAGE },
+    add_options = { add_options.CHAPTER, add_options.PAGE, add_options.SECTION },
   },
   chapter = {
     icon = constants.ICONS.CHAPTER,
     highlight = constants.HIGHLIGHTS.CHAPTER,
-    add_options = { add_options.CHAPTER, add_options.PAGE },
+    add_options = { add_options.CHAPTER, add_options.PAGE, add_options.SECTION },
   },
   page = {
     icon = constants.ICONS.PAGE,
     highlight = constants.HIGHLIGHTS.PAGE,
-    add_options = { add_options.CHAPTER, add_options.PAGE },
+    add_options = { add_options.CHAPTER, add_options.PAGE, add_options.SECTION },
   },
 
   -- Planning entries

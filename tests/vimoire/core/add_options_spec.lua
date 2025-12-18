@@ -29,34 +29,37 @@ describe("add_options", function()
       assert.equals(add_options.PAGE, options[3])
     end)
 
-    it("returns CHAPTER, PAGE for section", function()
+    it("returns CHAPTER, PAGE, SECTION for section", function()
       local section = state.items["p1x3q8"]
 
       local options = section.add_options
 
-      assert.equals(2, #options)
+      assert.equals(3, #options)
       assert.equals(add_options.CHAPTER, options[1])
       assert.equals(add_options.PAGE, options[2])
+      assert.equals(add_options.SECTION, options[3])
     end)
 
-    it("returns CHAPTER, PAGE for chapter (sibling)", function()
+    it("returns CHAPTER, PAGE, SECTION for chapter (sibling)", function()
       local chapter = state.items["chap1a"]
 
       local options = chapter.add_options
 
-      assert.equals(2, #options)
+      assert.equals(3, #options)
       assert.equals(add_options.CHAPTER, options[1])
       assert.equals(add_options.PAGE, options[2])
+      assert.equals(add_options.SECTION, options[3])
     end)
 
-    it("returns CHAPTER, PAGE for page (sibling)", function()
+    it("returns CHAPTER, PAGE, SECTION for page (sibling)", function()
       local page = state.items["intrlud"]
 
       local options = page.add_options
 
-      assert.equals(2, #options)
+      assert.equals(3, #options)
       assert.equals(add_options.CHAPTER, options[1])
       assert.equals(add_options.PAGE, options[2])
+      assert.equals(add_options.SECTION, options[3])
     end)
 
     it("returns PLANNING_ITEM for characters folder", function()
@@ -212,6 +215,38 @@ describe("add_options", function()
       local found = add_options.find_by_label(options, "Unknown")
 
       assert.is_nil(found)
+    end)
+  end)
+
+  describe("SECTION.target", function()
+    it("inserts after section when item is inside a section", function()
+      -- chap1a is inside p1x3q8 (Part 1), which is at index 1 in manuscript.items
+      local chapter = state.items["chap1a"]
+
+      local parent_items, at_index = add_options.SECTION.target(state, chapter)
+
+      assert.equals(state.manuscript.items, parent_items)
+      assert.equals(2, at_index) -- after Part 1 (index 1)
+    end)
+
+    it("inserts after item when item is at manuscript root", function()
+      -- intrlud is at manuscript root, at index 2
+      local page = state.items["intrlud"]
+
+      local parent_items, at_index = add_options.SECTION.target(state, page)
+
+      assert.equals(state.manuscript.items, parent_items)
+      assert.equals(3, at_index) -- after intrlud (index 2)
+    end)
+
+    it("inserts after section when item is a section", function()
+      -- p1x3q8 (Part 1) is at index 1 in manuscript.items
+      local section = state.items["p1x3q8"]
+
+      local parent_items, at_index = add_options.SECTION.target(state, section)
+
+      assert.equals(state.manuscript.items, parent_items)
+      assert.equals(2, at_index) -- after Part 1 (index 1)
     end)
   end)
 end)

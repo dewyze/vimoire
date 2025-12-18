@@ -79,8 +79,14 @@ function M.add(state)
     }, function(name)
       if not name or name:match("^%s*$") then return end
 
-      local parent_items = item:add_parent_items()
-      local at_index = item:add_index()
+      local parent_items, at_index
+      if opt.target then
+        parent_items, at_index = opt.target(vimoire_state, item)
+      else
+        parent_items = item:add_parent_items()
+        at_index = item:add_index()
+      end
+
       local new_item = opt.execute(vimoire_state, name, parent_items, at_index)
       if new_item then
         M.refresh(state, new_item.id)
