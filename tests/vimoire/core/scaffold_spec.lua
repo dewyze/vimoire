@@ -126,6 +126,15 @@ describe("scaffold", function()
       assert.is_true(Path:new(project_dir, "spell"):exists())
     end)
 
+    it("creates assets/images directory with .gitkeep", function()
+      local project_dir = temp_dir .. "/my-book"
+
+      scaffold.create(project_dir, "Test Book")
+
+      assert.is_true(Path:new(project_dir, "assets", "images"):exists())
+      assert.is_true(Path:new(project_dir, "assets", "images", ".gitkeep"):exists())
+    end)
+
     it("returns the project path", function()
       local project_dir = temp_dir .. "/my-book"
 

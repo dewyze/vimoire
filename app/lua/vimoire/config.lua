@@ -29,6 +29,10 @@ M.defaults = {
       marks = "<leader>M",
       toggle_kind = "<leader>T",
     },
+    images = {
+      import = "<leader>ii",
+      browse = "<leader>fi",
+    },
   },
   ui = {
     mouse_mode = "single_click", -- "single_click" | "double_click"

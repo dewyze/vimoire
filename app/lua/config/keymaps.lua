@@ -52,3 +52,13 @@ if keymaps.buffer then
     vim.keymap.set("n", keymaps.buffer.toggle_kind, ":VimoireToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
   end
 end
+
+-- Images keymaps
+if keymaps.images then
+  if keymaps.images.import then
+    vim.keymap.set("n", keymaps.images.import, ":VimoireInsertImage<CR>", { desc = "Vimoire: import image" })
+  end
+  if keymaps.images.browse then
+    vim.keymap.set("n", keymaps.images.browse, ":VimoireImagePicker<CR>", { desc = "Vimoire: browse images" })
+  end
+end

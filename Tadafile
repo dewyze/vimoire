@@ -182,22 +182,22 @@
   > Name from frontmatter title, fallback "Recovered: {id}"
   > Notifies user with list of recovered entries
 
-- Phase 14: Help System:
+- Phase 14: Image Management:
+  - [ ] Assets folder structure
+  - [ ] Image insertion workflow
+  - [ ] Reference tracking (what's used where)
+
+- Phase 15: Focus Mode:
+  - [ ] Zen mode integration (Snacks)
+  - [ ] Padded/centered buffers
+  - [ ] UI hiding options
+
+- Phase 16: Help System:
   - [ ] :VimoireHelp command
   - [ ] Prose syntax reference
   - [ ] Keybindings reference
   - [ ] Commands reference
   - [ ] Workflow tips
-
-- Phase 15: Image Management:
-  - [ ] Assets folder structure
-  - [ ] Image insertion workflow
-  - [ ] Reference tracking (what's used where)
-
-- Phase 16: Focus Mode:
-  - [ ] Zen mode integration (Snacks)
-  - [ ] Padded/centered buffers
-  - [ ] UI hiding options
 
 - Phase 17: Goals:
   - [ ] Word count targets (daily/chapter/manuscript)

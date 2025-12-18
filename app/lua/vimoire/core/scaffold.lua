@@ -46,6 +46,10 @@ function M.create(project_dir, title)
   Path:new(project_dir, "exports", "templates"):mkdir({ parents = true })
   Path:new(project_dir, "exports", "configs"):mkdir()
   Path:new(project_dir, "exports", "output"):mkdir()
+  Path:new(project_dir, "assets", "images"):mkdir({ parents = true })
+
+  -- Create .gitkeep files for empty directories
+  Path:new(project_dir, "assets", "images", ".gitkeep"):write("", "w")
 
   -- Copy export templates
   copy_template_file("export/chapter.md", project_dir .. "/exports/templates/chapter.md")
