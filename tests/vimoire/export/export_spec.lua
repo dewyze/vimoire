@@ -42,10 +42,10 @@ describe("export", function()
       assert.truthy(chap1a.content:match("# Chapter 1"))
     end)
 
-    it("strips marks and todos", function()
+    it("strips marks", function()
       helpers.write_file(
         temp_dir .. "/entries/chap1a/prose.md",
-        "He walked {{mark}}slowly.{{todo:fix}}"
+        "He walked {{mark}}slowly.{{mark:fix}}"
       )
 
       local files = export.prepare_files(state)
@@ -53,8 +53,7 @@ describe("export", function()
       local chap1a = files[2]
       -- Title injected for chapters, then body content
       assert.truthy(chap1a.content:match("He walked slowly%.$"))
-      assert.falsy(chap1a.content:match("{{mark}}"))
-      assert.falsy(chap1a.content:match("{{todo"))
+      assert.falsy(chap1a.content:match("{{mark"))
     end)
   end)
 

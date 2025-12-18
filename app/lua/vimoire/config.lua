@@ -26,6 +26,7 @@ M.defaults = {
     },
     buffer = {
       notes = "<leader>N",
+      marks = "<leader>M",
     },
   },
   ui = {

@@ -31,7 +31,7 @@ The Committee
 	Here are some metadata tags:
 	Chapter {{chapter.num}}: The Beginning
 	{{mark}}
-	This paragraph needs work {{todo}}
-	She pulled out {{todo:what does she pull out?}} from her pocket.
+	This paragraph needs work {{mark:needs work}}
+	She pulled out {{mark:what does she pull out?}} from her pocket.
 
 	End of test file.

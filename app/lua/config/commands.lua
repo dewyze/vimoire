@@ -119,6 +119,47 @@ vim.api.nvim_create_user_command("VimoireSnippets", function()
   })
 end, { desc = "Browse snippets" })
 
+vim.api.nvim_create_user_command("VimoireMarks", function()
+  local marks = require("vimoire.marks")
+  local Snacks = require("snacks")
+
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local content = table.concat(lines, "\n")
+  local mark_list = marks.parse(content)
+
+  if #mark_list == 0 then
+    vim.notify("No marks in buffer", vim.log.levels.INFO)
+    return
+  end
+
+  local picker_items = {}
+  for _, mark in ipairs(mark_list) do
+    local display = "Line " .. mark.line
+    if mark.text then
+      display = display .. ": " .. mark.text
+    end
+
+    table.insert(picker_items, {
+      text = display,
+      mark = mark,
+    })
+  end
+
+  Snacks.picker({
+    title = "Marks",
+    items = picker_items,
+    format = function(item)
+      return { { item.text, "Normal" } }
+    end,
+    confirm = function(picker, selected)
+      if selected and selected.mark then
+        picker:close()
+        vim.api.nvim_win_set_cursor(0, { selected.mark.line, selected.mark.col - 1 })
+      end
+    end,
+  })
+end, { desc = "Browse marks in current buffer" })
+
 vim.api.nvim_create_user_command("VimoireSnippetExtract", function()
   local state = require("vimoire.state")
   local snippets = require("vimoire.snippets")

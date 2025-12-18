@@ -61,18 +61,6 @@ describe("preprocess", function()
       assert.equals("This paragraph continues.", output)
     end)
 
-    it("removes {{todo}}", function()
-      local input = "This needs work {{todo}} here."
-      local output = preprocess.strip_tags(input)
-      assert.equals("This needs work  here.", output)
-    end)
-
-    it("removes {{todo:description}}", function()
-      local input = "She pulled out {{todo:what object?}} from her pocket."
-      local output = preprocess.strip_tags(input)
-      assert.equals("She pulled out  from her pocket.", output)
-    end)
-
     it("strips trailing newline after tag", function()
       local input = "{{mark:rewrite}}\nThe paragraph."
       local output = preprocess.strip_tags(input)

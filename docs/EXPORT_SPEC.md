@@ -215,7 +215,6 @@ Missing files: warn and skip. Invalid entry IDs: warn and skip.
 | Chapter number | `{{chapter.num}}` | Running count (chapters only, pages don't increment) |
 | Book variables | `{{book.title}}`, `{{book.author}}` | Values from book.yml |
 | Marks | `{{mark}}`, `{{mark:text}}` | Stripped |
-| Todos | `{{todo}}`, `{{todo:text}}` | Stripped |
 
 Chapter numbering example: Page, Chapter, Chapter, Page, Chapter → chapters numbered 1, 2, 3.
 

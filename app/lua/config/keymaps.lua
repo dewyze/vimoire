@@ -45,4 +45,7 @@ if keymaps.buffer then
   if keymaps.buffer.notes then
     vim.keymap.set("n", keymaps.buffer.notes, ":VimoireNotes<CR>", { desc = "Vimoire: open notes" })
   end
+  if keymaps.buffer.marks then
+    vim.keymap.set("n", keymaps.buffer.marks, ":VimoireMarks<CR>", { desc = "Vimoire: browse marks" })
+  end
 end

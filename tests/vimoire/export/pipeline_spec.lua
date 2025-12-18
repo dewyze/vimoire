@@ -52,8 +52,8 @@ describe("pipeline", function()
       assert.equals("The story begins.", result)
     end)
 
-    it("strips todos and marks", function()
-      local content = "{{todo:fix this}}He walked {{mark}}slowly."
+    it("strips marks", function()
+      local content = "{{mark:fix this}}He walked {{mark}}slowly."
 
       local result = pipeline.process_entry(content, {})
 

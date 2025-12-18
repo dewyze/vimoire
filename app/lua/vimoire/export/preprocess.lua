@@ -16,7 +16,6 @@ end
 function M.strip_tags(content)
   local result = content
   result = result:gsub("{{mark:?[^}]*}}\n?", "")
-  result = result:gsub("{{todo:?[^}]*}}\n?", "")
   return result
 end
 

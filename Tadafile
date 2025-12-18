@@ -49,7 +49,7 @@
     > Scene breaks use *** not --- (avoids setext heading ambiguity)
     - [x] Syntax highlighting (visible delimiters, styled content - no concealing)
     > italic, bold, underline, headers (6 levels), scene breaks, fenced divs, metadata tags
-    > Metadata tags: {{chapter.num}}, {{mark}}, {{mark:text}}, {{todo}}, {{todo:text}}
+    > Metadata tags: {{chapter.num}}, {{mark}}, {{mark:text}}
     > Custom vim syntax file (app/syntax/vimoire_prose.vim) - treesitter treats tab-indented lines as code blocks
     - [x] Spellcheck (book-local dictionary at spell/en.add)
     - [x] Notes/planning filetype settings (standard markdown via treesitter)
@@ -169,9 +169,11 @@
   > Autosave triggers on CursorHold, InsertLeave, BufLeave
 
 - Phase 12: Marks Browser:
-  - [ ] Index {{mark}} and {{mark:text}} across manuscript
-  - [ ] Neotree source or Telescope picker for marks
-  - [ ] Jump to mark location
+  - [x] Parse {{mark}} and {{mark:text}} from buffer content
+  - [x] Snacks picker for per-chapter marks (:VimoireMarks, <leader>M)
+  - [x] Jump to mark location on selection
+  > Scoped to current buffer, not manuscript-wide
+  > Merged mark and todo concepts into single {{mark}} tag
 
 - Phase 13: Healthcheck:
   - [ ] Track ephemeral state and cache

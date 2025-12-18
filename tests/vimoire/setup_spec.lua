@@ -14,8 +14,9 @@ describe("Setup", function()
     it("sets up statusline", function()
       state:load(fixture_path)
       setup.on_manuscript_loaded()
-      assert.is_not_nil(vim.o.statusline)
-      assert.matches("vimoire_display_name", vim.o.statusline)
+      -- Statusline is now window-local and uses highlight groups
+      assert.is_not_nil(vim.wo.statusline)
+      assert.matches("%%#", vim.wo.statusline)
     end)
 
     it("adds to recent projects", function()
