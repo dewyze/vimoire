@@ -116,4 +116,8 @@ function SectionBase:destroy(state)
   return true
 end
 
+function SectionBase:toggle(_state)
+  return false, "Can only toggle chapters and pages"
+end
+
 return SectionBase

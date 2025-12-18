@@ -147,6 +147,10 @@ function DocumentBase:destroy(state)
 end
 
 -- Abstract methods - subclasses must implement
+function DocumentBase:toggle(_state)
+  return false, "Can only toggle chapters and pages"
+end
+
 function DocumentBase:base()
   error("Subclass must implement base()")
 end

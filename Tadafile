@@ -175,11 +175,10 @@
   > Scoped to current buffer, not manuscript-wide
   > Merged mark and todo concepts into single {{mark}} tag
 
-- Phase 13: Healthcheck:
-  - [ ] Track ephemeral state and cache
-  - [ ] Build healthcheck for data integrity
-  > Verify entries have prose.md files, manuscript.json consistency
-  > Check for missing book.yml (required since Phase 6)
+- Phase 13: Entry Management:
+  - [x] Chapter/Page toggle (T in neotree, :VimoireToggleKind from buffer)
+  - [ ] Orphan detection (warn about manuscript folders not in manifest)
+  > Leaner than original healthcheck scope — git handles recovery
 
 - Phase 14: Help System:
   - [ ] :VimoireHelp command

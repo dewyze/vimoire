@@ -34,4 +34,8 @@ function Folder:add_index()
   return 1
 end
 
+function Folder:toggle(_state)
+  return false, "Can only toggle chapters and pages"
+end
+
 return Folder

@@ -27,6 +27,7 @@ M.defaults = {
     buffer = {
       notes = "<leader>N",
       marks = "<leader>M",
+      toggle_kind = "<leader>T",
     },
   },
   ui = {

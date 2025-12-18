@@ -162,4 +162,17 @@ function M.move_down(state)
   end
 end
 
+function M.toggle_kind(state)
+  local node = state.tree:get_node()
+  local item = vimoire_state.items[node.id]
+  if not item then return end
+
+  local ok, err = item:toggle(vimoire_state)
+  if ok then
+    M.refresh(state, item.id)
+  else
+    vim.notify(err, vim.log.levels.WARN)
+  end
+end
+
 return M

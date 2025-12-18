@@ -61,6 +61,7 @@ return {
             ["m"] = "move",
             ["J"] = "move_down",
             ["K"] = "move_up",
+            ["T"] = "toggle_kind",
           },
         },
       },

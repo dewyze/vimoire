@@ -18,6 +18,23 @@ vim.api.nvim_create_user_command("VimoireNotes", function()
   vim.b.vimoire_item_id = item.id
 end, { desc = "Open notes for current chapter/page" })
 
+vim.api.nvim_create_user_command("VimoireToggleKind", function()
+  local state = require("vimoire.state")
+  local item_id = vim.b.vimoire_item_id
+  if not item_id then return end
+
+  local item = state.items[item_id]
+  if not item then return end
+
+  local ok, err = item:toggle(state)
+  if ok then
+    local manager = require("neo-tree.sources.manager")
+    manager.refresh("manuscript")
+  else
+    vim.notify(err, vim.log.levels.WARN)
+  end
+end, { desc = "Toggle chapter/page for current buffer" })
+
 vim.api.nvim_create_user_command("VimoireSnippets", function()
   local state = require("vimoire.state")
   local snippets = require("vimoire.snippets")

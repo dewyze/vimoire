@@ -38,4 +38,10 @@ function Page:export_context()
   }
 end
 
+function Page:toggle(state)
+  self:update(state, { kind = "chapter" })
+  state:load(state.manuscript.root)
+  return true
+end
+
 return Page

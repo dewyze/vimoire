@@ -48,4 +48,7 @@ if keymaps.buffer then
   if keymaps.buffer.marks then
     vim.keymap.set("n", keymaps.buffer.marks, ":VimoireMarks<CR>", { desc = "Vimoire: browse marks" })
   end
+  if keymaps.buffer.toggle_kind then
+    vim.keymap.set("n", keymaps.buffer.toggle_kind, ":VimoireToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
+  end
 end

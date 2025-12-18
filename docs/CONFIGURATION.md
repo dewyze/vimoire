@@ -86,6 +86,8 @@ Buffer-level actions for the current file.
 | Key | Default | Description |
 |-----|---------|-------------|
 | `notes` | `<leader>N` | Open notes for current chapter/page |
+| `marks` | `<leader>M` | Browse marks in current buffer |
+| `toggle_kind` | `<leader>T` | Toggle chapter/page for current entry |
 
 ### editor
 
@@ -157,3 +159,4 @@ These keymaps are active when focused on the manuscript tree. They are not confi
 | `n` | Open notes |
 | `m` | Move (not yet implemented) |
 | `J` / `K` | Reorder down/up |
+| `T` | Toggle chapter/page |
