@@ -177,8 +177,10 @@
 
 - Phase 13: Entry Management:
   - [x] Chapter/Page toggle (T in neotree, :VimoireToggleKind from buffer)
-  - [ ] Orphan detection (warn about manuscript folders not in manifest)
-  > Leaner than original healthcheck scope — git handles recovery
+  - [x] Orphan detection and auto-recovery
+  > Scans entries/ on load, recovers orphans as pages at bottom
+  > Name from frontmatter title, fallback "Recovered: {id}"
+  > Notifies user with list of recovered entries
 
 - Phase 14: Help System:
   - [ ] :VimoireHelp command

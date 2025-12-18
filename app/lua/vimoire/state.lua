@@ -7,6 +7,7 @@ local state = {
 
 local Manuscript = require("vimoire.core.manuscript")
 local Book = require("vimoire.core.book")
+local orphan = require("vimoire.core.orphan")
 local Entry = require("vimoire.core.entry")
 local PlanningSection = require("vimoire.core.planning_section")
 local PlanningItem = require("vimoire.core.planning_item")
@@ -25,6 +26,15 @@ end
 function state:load(manuscript_path)
   self.manuscript = Manuscript.load(manuscript_path)
   self.book = Book.load(manuscript_path)
+
+  -- Detect and recover orphaned entries
+  local recovered = orphan.recover(self.manuscript)
+  if #recovered > 0 then
+    self.manuscript:save()
+    local msg = "Recovered " .. #recovered .. " orphaned entries:\n- " .. table.concat(recovered, "\n- ")
+    vim.notify(msg, vim.log.levels.INFO)
+  end
+
   self:rebuild()
 end
 
