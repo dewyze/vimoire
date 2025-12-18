@@ -40,6 +40,12 @@ local c = {
   export_folder = "#4a3848",
   export_file = "#6a5868",
 
+  -- Statusline contexts
+  status_prose = "#e8dcc6",
+  status_notes = "#e0dcc8",
+  status_planning = "#e8d8c0",
+  status_export = "#e0d8c8",
+
   -- Feedback
   error = "#8a3030",
   warning = "#7a5020",
@@ -164,3 +170,9 @@ hl(0, "vimoireBoldItalicStyle", { bold = true, italic = true })
 hl(0, "vimoireBoldStyle", { bold = true })
 hl(0, "vimoireItalicStyle", { italic = true })
 hl(0, "vimoireUnderlineStyle", { underline = true })
+
+-- Statusline (context-colored backgrounds)
+hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })
+hl(0, "VimoireStatusNotes", { fg = c.section, bg = c.status_notes })
+hl(0, "VimoireStatusPlanning", { fg = c.planning, bg = c.status_planning })
+hl(0, "VimoireStatusExport", { fg = c.export, bg = c.status_export })

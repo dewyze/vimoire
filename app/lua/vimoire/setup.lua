@@ -2,6 +2,8 @@ local setup = {}
 local state = require("vimoire.state")
 local recent = require("vimoire.core.recent")
 local preferences = require("vimoire.core.preferences")
+local statusline = require("vimoire.statusline")
+local autosave = require("vimoire.autosave")
 
 local function refresh_neotree()
   local manager = require("neo-tree.sources.manager")
@@ -19,7 +21,8 @@ function setup.on_manuscript_loaded()
   manuscript_source.display_name = "󱓷 " .. state.book.title
   recent.add(state.manuscript.root, state.book.title)
   set_window_title()
-  vim.o.statusline = "%{get(b:, 'vimoire_display_name', expand('%:t'))}"
+  statusline.setup()
+  autosave.setup()
 
   local augroup = vim.api.nvim_create_augroup("VimoireSetup", { clear = true })
 
@@ -49,14 +52,6 @@ function setup.on_manuscript_loaded()
         last_edited[state.manuscript.id] = item.id
         preferences.set("last_edited", last_edited)
       end
-    end
-  })
-
-  vim.api.nvim_create_autocmd("FileType", {
-    group = augroup,
-    pattern = "neo-tree",
-    callback = function()
-      vim.wo.statusline = " "
     end
   })
 
