@@ -55,10 +55,7 @@ end
 
 -- Images keymaps
 if keymaps.images then
-  if keymaps.images.import then
-    vim.keymap.set("n", keymaps.images.import, ":VimoireInsertImage<CR>", { desc = "Vimoire: import image" })
-  end
-  if keymaps.images.browse then
-    vim.keymap.set("n", keymaps.images.browse, ":VimoireImagePicker<CR>", { desc = "Vimoire: browse images" })
+  if keymaps.images.insert then
+    vim.keymap.set("n", keymaps.images.insert, ":VimoireInsertImage<CR>", { desc = "Vimoire: insert image" })
   end
 end

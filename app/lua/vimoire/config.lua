@@ -30,8 +30,7 @@ M.defaults = {
       toggle_kind = "<leader>T",
     },
     images = {
-      import = "<leader>ii",
-      browse = "<leader>fi",
+      insert = "<leader>fi",
     },
   },
   ui = {

@@ -183,9 +183,11 @@
   > Notifies user with list of recovered entries
 
 - Phase 14: Image Management:
-  - [ ] Assets folder structure
-  - [ ] Image insertion workflow
-  - [ ] Reference tracking (what's used where)
+  - [x] Assets folder structure (assets/images/, scaffolded on project creation)
+  - [x] Image insertion workflow (unified picker: from file or from assets)
+  - [x] Export integration (copy assets to temp dir for pandoc)
+  - [x] Cover image support (book.yml cover field, --epub-cover-image)
+  > Reference tracking deferred (orphan detection, what's used where)
 
 - Phase 15: Focus Mode:
   - [ ] Zen mode integration (Snacks)

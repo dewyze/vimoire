@@ -36,6 +36,7 @@ function Book.new(data, root_path)
   self.copyright = data.copyright
   self.publisher = data.publisher
   self.isbn = data.isbn
+  self.cover = data.cover
   self.root = root_path
   return self
 end

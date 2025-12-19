@@ -12,6 +12,17 @@ local function get_app_template_root()
   return app_root and (app_root .. "templates/export/") or nil
 end
 
+local function resolve_cover_path(state)
+  if not state.book.cover then
+    return nil
+  end
+  local cover_path = state.manuscript.root .. "/" .. state.book.cover
+  if Path:new(cover_path):exists() then
+    return cover_path
+  end
+  return nil
+end
+
 -- Find a template file, checking project first then app defaults
 local function find_template(root, filename)
   local project_path = root .. "/exports/templates/" .. filename
@@ -96,6 +107,14 @@ function M.write_temp_files(files)
   return temp_dir, file_list
 end
 
+local function copy_assets_to_temp(root, temp_dir)
+  local assets_src = root .. "/assets"
+  if Path:new(assets_src):exists() then
+    local assets_dst = temp_dir .. "/assets"
+    vim.fn.system({ "cp", "-r", assets_src, assets_dst })
+  end
+end
+
 function M.build_pandoc_args(opts, cfg)
   local args = {}
 
@@ -152,6 +171,7 @@ function M.run(state, opts)
   local files = M.prepare_files(state)
   files = cfg:assemble(files)
   local temp_dir, input_files = M.write_temp_files(files)
+  copy_assets_to_temp(state.manuscript.root, temp_dir)
 
   -- Output path
   local output_dir = state.manuscript.root .. "/exports/output"
@@ -170,6 +190,7 @@ function M.run(state, opts)
     language = state.book.language,
     css_path = find_template(root, "epub.css"),
     reference_doc = find_template(root, "reference.docx"),
+    cover_path = resolve_cover_path(state),
   }, cfg)
 
   local cmd = { "pandoc" }
@@ -224,6 +245,7 @@ function M.run_with_config(state, config_path)
   local files = M.prepare_files(state, entries)
   files = cfg:assemble(files)
   local temp_dir, input_files = M.write_temp_files(files)
+  copy_assets_to_temp(state.manuscript.root, temp_dir)
 
   -- Output path
   local output_dir = state.manuscript.root .. "/exports/output"
@@ -242,6 +264,7 @@ function M.run_with_config(state, config_path)
     language = state.book.language,
     css_path = find_template(root, "epub.css"),
     reference_doc = find_template(root, "reference.docx"),
+    cover_path = resolve_cover_path(state),
   }, cfg)
 
   local cmd = { "pandoc" }

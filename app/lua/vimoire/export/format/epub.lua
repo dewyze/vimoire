@@ -18,6 +18,9 @@ function Epub:pandoc_args(opts)
   if opts.css_path then
     table.insert(args, "--css=" .. opts.css_path)
   end
+  if opts.cover_path then
+    table.insert(args, "--epub-cover-image=" .. opts.cover_path)
+  end
   return args
 end
 
