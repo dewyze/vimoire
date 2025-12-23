@@ -1,3 +1,7 @@
+vim.api.nvim_create_user_command("VimoireFocus", function()
+  require("vimoire.focus").toggle()
+end, { desc = "Toggle focus mode (margins)" })
+
 vim.api.nvim_create_user_command("VimoireHome", function()
   require("neo-tree.command").execute({ action = "close" })
   require("vimoire.setup").show_dashboard()

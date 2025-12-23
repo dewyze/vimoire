@@ -45,6 +45,7 @@ M.defaults = {
     linebreak = true,
     visual_line_navigation = true,
     autosave = false,
+    focus_mode = true,
   },
   finder = {
     preview = true,
