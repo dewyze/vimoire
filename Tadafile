@@ -190,9 +190,7 @@
   > Reference tracking deferred (orphan detection, what's used where)
 
 - Phase 15: Focus Mode:
-  - [ ] Zen mode integration (Snacks)
-  - [ ] Padded/centered buffers
-  - [ ] UI hiding options
+  - [x] Manual toggle (:VimoireFocus command, margins module)
 
 - Phase 16: Help System:
   - [ ] :VimoireHelp command
@@ -220,3 +218,6 @@
 
 - Phase 19: Comments:
   - [ ] Build comments panel with extmark anchors
+
+- Post-MVP Enhancements:
+  - [ ] Focus mode auto-enable on prose files (window layout conflicts with neo-tree)

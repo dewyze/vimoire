@@ -29,6 +29,9 @@ end
 if keymaps.views and keymaps.views.home then
   vim.keymap.set("n", keymaps.views.home, ":VimoireHome<CR>", { desc = "Vimoire: home" })
 end
+if keymaps.views and keymaps.views.focus then
+  vim.keymap.set("n", keymaps.views.focus, ":VimoireFocus<CR>", { desc = "Vimoire: toggle focus mode" })
+end
 
 -- Snippets keymaps
 if keymaps.snippets then

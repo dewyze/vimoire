@@ -69,6 +69,7 @@ Neo-tree sidebar controls.
 | Key | Default | Description |
 |-----|---------|-------------|
 | `home` | `gvh` | Show dashboard |
+| `focus` | `gvf` | Toggle focus mode |
 
 #### keymaps.snippets
 
