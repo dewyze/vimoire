@@ -62,3 +62,6 @@ if keymaps.images then
     vim.keymap.set("n", keymaps.images.insert, ":VimoireInsertImage<CR>", { desc = "Vimoire: insert image" })
   end
 end
+
+-- General editor keymaps
+vim.keymap.set("n", "<leader>nh", ":noh<CR>", { desc = "Clear search highlight" })

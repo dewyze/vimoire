@@ -38,7 +38,7 @@ M.defaults = {
     mouse_mode = "single_click", -- "single_click" | "double_click"
   },
   editor = {
-    textwidth = 80,
+    textwidth = 86,
     scrolloff = 5,
     tabstop = 4,
     shiftwidth = 4,

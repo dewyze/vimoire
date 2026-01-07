@@ -12,19 +12,12 @@ local function random_id()
   return table.concat(result)
 end
 
-function M.generate(existing)
-  local existing_set = {}
-  if existing then
-    for _, id in ipairs(existing) do
-      existing_set[id] = true
-    end
-  end
-
+function M.generate(existing_set)
+  existing_set = existing_set or {}
   local result
   repeat
     result = random_id()
   until not existing_set[result]
-
   return result
 end
 

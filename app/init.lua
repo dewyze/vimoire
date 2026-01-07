@@ -1,3 +1,5 @@
+math.randomseed(os.time() + os.clock() * 1000)
+
 require("config.lazy")
 require("config.defaults")
 require("vimoire.highlights").setup()

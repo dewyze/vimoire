@@ -4,19 +4,6 @@ SectionBase.__index = SectionBase
 local id_util = require("vimoire.util.id")
 local items_util = require("vimoire.util.items")
 
-local function collect_ids(items, ids)
-  ids = ids or {}
-  for _, item in ipairs(items) do
-    if item.id then
-      table.insert(ids, item.id)
-    end
-    if item.items then
-      collect_ids(item.items, ids)
-    end
-  end
-  return ids
-end
-
 function SectionBase.new(data, root)
   local self = setmetatable({}, SectionBase)
   for k, v in pairs(data) do
@@ -29,8 +16,7 @@ function SectionBase.new(data, root)
 end
 
 function SectionBase.create_section(class, state, name, parent_items, at_index)
-  local existing_ids = collect_ids(state.manuscript.items)
-  local new_id = id_util.generate(existing_ids)
+  local new_id = id_util.generate(state.items)
 
   local data = { id = new_id, kind = class.KIND, name = name, items = {} }
   table.insert(parent_items, at_index, data)
