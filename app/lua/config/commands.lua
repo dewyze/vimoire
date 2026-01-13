@@ -46,6 +46,7 @@ end, { desc = "Toggle chapter/page for current buffer" })
 vim.api.nvim_create_user_command("VimoireSnippets", function()
   local state = require("vimoire.state")
   local snippets = require("vimoire.snippets")
+  local snippet_editor = require("vimoire.snippet_editor")
   local Snacks = require("snacks")
 
   if not state.manuscript then
@@ -68,30 +69,20 @@ vim.api.nvim_create_user_command("VimoireSnippets", function()
     return first_line
   end
 
-  local function format_date(iso_date)
-    if not iso_date then return nil end
-    local y, m, d = iso_date:match("^(%d+)-(%d+)-(%d+)")
-    if not y then return nil end
-    local months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
-    return months[tonumber(m)] .. " " .. tonumber(d) .. ", " .. y
+  local function build_preview(snippet)
+    local parts = { snippet.text }
+    if snippet.description then
+      table.insert(parts, "\n\n------\n\n" .. snippet.description)
+    end
+    return table.concat(parts)
   end
 
   local picker_items = {}
   for _, snippet in ipairs(snippet_list) do
-    local footer_parts = {}
-    if snippet.source_name then
-      table.insert(footer_parts, "From: " .. snippet.source_name)
-    end
-    local date_str = format_date(snippet.created_at)
-    if date_str then
-      table.insert(footer_parts, date_str)
-    end
-    local footer = #footer_parts > 0 and ("\n\n---\n\n" .. table.concat(footer_parts, " | ")) or ""
-
     table.insert(picker_items, {
       text = truncate(snippet.text, 50),
       snippet = snippet,
-      preview_text = snippet.text .. footer,
+      preview_text = build_preview(snippet),
     })
   end
 
@@ -115,6 +106,16 @@ vim.api.nvim_create_user_command("VimoireSnippets", function()
       return { { item.text, "Normal" } }
     end,
     actions = {
+      edit_snippet = function(picker)
+        local sel = picker:current()
+        if sel and sel.snippet then
+          picker:close()
+          snippet_editor.open({
+            root = root,
+            snippet_id = sel.snippet.id,
+          })
+        end
+      end,
       delete_snippet = function(picker)
         local sel = picker:current()
         if sel and sel.snippet then
@@ -127,6 +128,7 @@ vim.api.nvim_create_user_command("VimoireSnippets", function()
     win = {
       input = {
         keys = {
+          ["<C-e>"] = { "edit_snippet", mode = { "n", "i" }, desc = "Edit snippet" },
           ["<C-d>"] = { "delete_snippet", mode = { "n", "i" }, desc = "Delete snippet" },
         },
       },
@@ -191,17 +193,12 @@ end, { desc = "Insert mark at cursor" })
 
 vim.api.nvim_create_user_command("VimoireSnippetExtract", function()
   local state = require("vimoire.state")
-  local snippets = require("vimoire.snippets")
+  local snippet_editor = require("vimoire.snippet_editor")
 
   if not state.manuscript then
     vim.notify("No manuscript loaded", vim.log.levels.WARN)
     return
   end
-
-  local item_id = vim.b.vimoire_item_id
-  local item = item_id and state.items[item_id]
-  local source_id = item and item.id or nil
-  local source_name = item and item:display_name() or nil
 
   local start_pos = vim.fn.getpos("'<")
   local end_pos = vim.fn.getpos("'>")
@@ -221,8 +218,10 @@ vim.api.nvim_create_user_command("VimoireSnippetExtract", function()
   end
 
   vim.cmd("normal! gvd")
-  snippets.add(state.manuscript.root, text, source_id, source_name)
-  vim.notify("Snippet saved", vim.log.levels.INFO)
+  snippet_editor.open({
+    root = state.manuscript.root,
+    text = text,
+  })
 end, { range = true, desc = "Extract selection as snippet" })
 
 local THEMES = {
