@@ -32,6 +32,9 @@ end
 if keymaps.views and keymaps.views.focus then
   vim.keymap.set("n", keymaps.views.focus, ":VimoireFocus<CR>", { desc = "Vimoire: toggle focus mode" })
 end
+if keymaps.views and keymaps.views.focus_redistribute then
+  vim.keymap.set("n", keymaps.views.focus_redistribute, ":VimoireFocusRedistribute<CR>", { desc = "Vimoire: recalculate focus margins" })
+end
 
 -- Snippets keymaps
 if keymaps.snippets then
@@ -54,12 +57,22 @@ if keymaps.buffer then
   if keymaps.buffer.toggle_kind then
     vim.keymap.set("n", keymaps.buffer.toggle_kind, ":VimoireToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
   end
+  if keymaps.buffer.insert_mark then
+    vim.keymap.set("n", keymaps.buffer.insert_mark, ":VimoireInsertMark<CR>", { desc = "Vimoire: insert mark" })
+  end
 end
 
 -- Images keymaps
 if keymaps.images then
   if keymaps.images.insert then
     vim.keymap.set("n", keymaps.images.insert, ":VimoireInsertImage<CR>", { desc = "Vimoire: insert image" })
+  end
+end
+
+-- Editing keymaps
+if keymaps.editing then
+  if keymaps.editing.append_display_line then
+    vim.keymap.set("n", keymaps.editing.append_display_line, "g$a", { desc = "Append at end of display line" })
   end
 end
 

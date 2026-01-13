@@ -20,6 +20,7 @@ M.defaults = {
     views = {
       home = "gvh",
       focus = "gvf",
+      focus_redistribute = "gvr",
     },
     snippets = {
       browse = "<leader>fs",
@@ -29,9 +30,13 @@ M.defaults = {
       notes = "<leader>N",
       marks = "<leader>M",
       toggle_kind = "<leader>T",
+      insert_mark = "<leader>im",
     },
     images = {
       insert = "<leader>fi",
+    },
+    editing = {
+      append_display_line = "gA",
     },
   },
   ui = {
