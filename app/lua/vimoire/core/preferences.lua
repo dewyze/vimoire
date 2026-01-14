@@ -2,13 +2,26 @@ local Path = require("plenary.path")
 
 local M = {}
 
-local PREFS_DIR = vim.fn.expand("~/.vimoire")
-local PREFS_FILE = PREFS_DIR .. "/preferences.json"
-
+local DEFAULT_PREFS_DIR = vim.fn.expand("~/.vimoire")
+local _prefs_dir = DEFAULT_PREFS_DIR
 local _cache = nil
 
+function M.set_directory(dir)
+  _prefs_dir = dir
+  _cache = nil
+end
+
+function M.reset_directory()
+  _prefs_dir = DEFAULT_PREFS_DIR
+  _cache = nil
+end
+
+local function prefs_file()
+  return _prefs_dir .. "/preferences.json"
+end
+
 local function ensure_dir()
-  local dir = Path:new(PREFS_DIR)
+  local dir = Path:new(_prefs_dir)
   if not dir:exists() then
     dir:mkdir({ parents = true })
   end
@@ -19,7 +32,7 @@ local function load()
     return _cache
   end
 
-  local path = Path:new(PREFS_FILE)
+  local path = Path:new(prefs_file())
   if not path:exists() then
     _cache = {}
     return _cache
@@ -39,7 +52,7 @@ end
 local function save(data)
   ensure_dir()
   local json = vim.json.encode(data)
-  Path:new(PREFS_FILE):write(json, "w")
+  Path:new(prefs_file()):write(json, "w")
   _cache = data
 end
 

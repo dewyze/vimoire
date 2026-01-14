@@ -1,29 +1,17 @@
 local assert = require("luassert")
 local helpers = require("tests.helpers")
+local preferences = require("vimoire.core.preferences")
 
 describe("preferences", function()
-  local preferences
   local prefs_dir
-  local original_expand
 
   before_each(function()
-    package.loaded["vimoire.core.preferences"] = nil
-
     prefs_dir = helpers.temp_dir()
-
-    original_expand = vim.fn.expand
-    vim.fn.expand = function(path)
-      if path == "~/.vimoire" then
-        return prefs_dir
-      end
-      return original_expand(path)
-    end
-
-    preferences = require("vimoire.core.preferences")
+    preferences.set_directory(prefs_dir)
   end)
 
   after_each(function()
-    vim.fn.expand = original_expand
+    preferences.reset_directory()
     helpers.cleanup(prefs_dir)
   end)
 
@@ -36,8 +24,8 @@ describe("preferences", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
         colorscheme = "vimoire-parchment",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
-      preferences = require("vimoire.core.preferences")
+      preferences.reset_directory()
+      preferences.set_directory(prefs_dir)
 
       assert.equals("vimoire-parchment", preferences.get("colorscheme"))
     end)
@@ -46,8 +34,8 @@ describe("preferences", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
         colorscheme = "vimoire-parchment",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
-      preferences = require("vimoire.core.preferences")
+      preferences.reset_directory()
+      preferences.set_directory(prefs_dir)
 
       assert.is_nil(preferences.get("nonexistent"))
     end)
@@ -66,8 +54,8 @@ describe("preferences", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
         colorscheme = "vimoire-inkwell",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
-      preferences = require("vimoire.core.preferences")
+      preferences.reset_directory()
+      preferences.set_directory(prefs_dir)
 
       preferences.set("colorscheme", "vimoire-lumen")
 
@@ -81,8 +69,8 @@ describe("preferences", function()
         colorscheme = "vimoire-inkwell",
         other_setting = "preserved",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
-      preferences = require("vimoire.core.preferences")
+      preferences.reset_directory()
+      preferences.set_directory(prefs_dir)
 
       preferences.set("colorscheme", "vimoire-vellum")
 

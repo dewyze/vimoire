@@ -6,8 +6,13 @@ describe("Setup", function()
   local state = require("vimoire.state")
   local fixture_path = "tests/fixtures/standard"
 
+  before_each(function()
+    helpers.setup_test_preferences()
+  end)
+
   after_each(function()
     helpers.reset_state()
+    helpers.reset_preferences()
   end)
 
   describe("on_manuscript_loaded", function()

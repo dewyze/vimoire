@@ -1,32 +1,18 @@
 local assert = require("luassert")
 local helpers = require("tests.helpers")
+local preferences = require("vimoire.core.preferences")
+local recent = require("vimoire.core.recent")
 
 describe("recent", function()
-  local recent
   local prefs_dir
-  local original_expand
 
   before_each(function()
-    package.loaded["vimoire.core.preferences"] = nil
-    package.loaded["vimoire.core.recent"] = nil
-
-    -- Create temp directory for preferences
     prefs_dir = helpers.temp_dir()
-
-    -- Stub vim.fn.expand to redirect ~/.vimoire
-    original_expand = vim.fn.expand
-    vim.fn.expand = function(path)
-      if path == "~/.vimoire" then
-        return prefs_dir
-      end
-      return original_expand(path)
-    end
-
-    recent = require("vimoire.core.recent")
+    preferences.set_directory(prefs_dir)
   end)
 
   after_each(function()
-    vim.fn.expand = original_expand
+    preferences.reset_directory()
     helpers.cleanup(prefs_dir)
   end)
 
@@ -45,9 +31,8 @@ describe("recent", function()
         },
       }
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode(prefs_data))
-      package.loaded["vimoire.core.preferences"] = nil
-      package.loaded["vimoire.core.recent"] = nil
-      recent = require("vimoire.core.recent")
+      preferences.reset_directory()
+      preferences.set_directory(prefs_dir)
 
       local projects = recent.list()
 
@@ -67,9 +52,8 @@ describe("recent", function()
         },
       }
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode(prefs_data))
-      package.loaded["vimoire.core.preferences"] = nil
-      package.loaded["vimoire.core.recent"] = nil
-      recent = require("vimoire.core.recent")
+      preferences.reset_directory()
+      preferences.set_directory(prefs_dir)
 
       local projects = recent.list()
 
@@ -85,6 +69,7 @@ describe("recent", function()
       helpers.cleanup(prefs_dir)
       prefs_dir = helpers.temp_dir()
       helpers.cleanup(prefs_dir) -- Remove it so add() has to create it
+      preferences.set_directory(prefs_dir)
 
       local project_dir = helpers.temp_copy("tests/fixtures/standard")
       recent.add(project_dir, "New Book")

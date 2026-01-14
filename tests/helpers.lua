@@ -1,7 +1,24 @@
 local M = {}
 
 local state = require("vimoire.state")
+local preferences = require("vimoire.core.preferences")
 local Path = require("plenary.path")
+
+-- Use temp directory for preferences during tests
+local _prefs_temp_dir = nil
+
+function M.setup_test_preferences()
+  _prefs_temp_dir = M.temp_dir()
+  preferences.set_directory(_prefs_temp_dir)
+end
+
+function M.reset_preferences()
+  preferences.reset_directory()
+  if _prefs_temp_dir then
+    M.cleanup(_prefs_temp_dir)
+    _prefs_temp_dir = nil
+  end
+end
 
 function M.temp_dir()
   local temp_dir = vim.fn.tempname()
