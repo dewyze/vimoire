@@ -50,6 +50,11 @@ syntax match vimoireItalic /\*[^*]\+\*/
 " Requires non-underscore before opening and after closing to avoid mid-word matches
 syntax match vimoireItalicUnderscore /\<_[^_]\+_\>/
 
+" Dialogue: "quoted speech"
+" Single-line: "text" all on one line
+" Multi-line: lines starting with " continue dialogue until line ending with "
+syntax region vimoireDialogue start=/"/ end=/"/ skip=/\n"/
+
 " Default highlight links (colorschemes can override)
 highlight default link vimoireH1 Title
 highlight default link vimoireH2 Title

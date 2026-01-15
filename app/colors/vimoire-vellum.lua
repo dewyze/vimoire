@@ -20,7 +20,7 @@ local c = {
   metadata = "#6a5048",
   todo = "#7a5020",
   scene_break = "#c0b098",
-  dialogue = "#6a5040",
+  dialogue = "#7a4830",
   italic = "#585868",
 
   -- UI accents
@@ -172,7 +172,7 @@ hl(0, "vimoireBoldItalicStyle", { fg = c.italic, bold = true, italic = true })
 hl(0, "vimoireBoldStyle", { bold = true })
 hl(0, "vimoireItalicStyle", { fg = c.italic, italic = true })
 hl(0, "vimoireUnderlineStyle", { underline = true })
-hl(0, "vimoireDialogue", { fg = c.dialogue })
+hl(0, "vimoireDialogue", { fg = c.dialogue, bold = true })
 
 -- Statusline (context-colored backgrounds)
 hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })
