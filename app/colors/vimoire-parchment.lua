@@ -20,6 +20,8 @@ local c = {
   metadata = "#7a6488",
   todo = "#8a6030",
   scene_break = "#b0a090",
+  dialogue = "#785840",
+  italic = "#5a6470",
 
   -- UI accents
   cursor_line = "#f0ebe2",
@@ -165,11 +167,12 @@ hl(0, "vimoireMetaMarkText", { fg = c.metadata })
 hl(0, "vimoireMetaTodo", { fg = c.bg, bg = c.todo })
 hl(0, "vimoireMetaTodoText", { fg = c.bg, bg = c.todo })
 
--- Inline formatting (inherit fg, just add attributes)
-hl(0, "vimoireBoldItalicStyle", { bold = true, italic = true })
+-- Inline formatting (colored themes get tints)
+hl(0, "vimoireBoldItalicStyle", { fg = c.italic, bold = true, italic = true })
 hl(0, "vimoireBoldStyle", { bold = true })
-hl(0, "vimoireItalicStyle", { italic = true })
+hl(0, "vimoireItalicStyle", { fg = c.italic, italic = true })
 hl(0, "vimoireUnderlineStyle", { underline = true })
+hl(0, "vimoireDialogue", { fg = c.dialogue })
 
 -- Statusline (context-colored backgrounds)
 hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })

@@ -165,11 +165,12 @@ hl(0, "vimoireMetaMarkText", { fg = c.metadata })
 hl(0, "vimoireMetaTodo", { fg = c.fg, bg = c.bg_lighter })
 hl(0, "vimoireMetaTodoText", { fg = c.fg, bg = c.bg_lighter })
 
--- Inline formatting (inherit fg, just add attributes)
+-- Inline formatting (monochrome: attributes only, no color)
 hl(0, "vimoireBoldItalicStyle", { bold = true, italic = true })
 hl(0, "vimoireBoldStyle", { bold = true })
 hl(0, "vimoireItalicStyle", { italic = true })
 hl(0, "vimoireUnderlineStyle", { underline = true })
+hl(0, "vimoireDialogue", { fg = c.fg_dim })
 
 -- Statusline (brightness variations for context)
 hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })

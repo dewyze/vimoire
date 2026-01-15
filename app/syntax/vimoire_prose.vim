@@ -46,9 +46,9 @@ syntax match vimoireBold /\*\*[^*]\+\*\*/
 " Use negative lookbehind/lookahead via \@<! and \@!
 syntax match vimoireItalic /\*[^*]\+\*/
 
-" Underline: _text_
+" Italic (underscore variant): _text_
 " Requires non-underscore before opening and after closing to avoid mid-word matches
-syntax match vimoireUnderline /\<_[^_]\+_\>/
+syntax match vimoireItalicUnderscore /\<_[^_]\+_\>/
 
 " Default highlight links (colorschemes can override)
 highlight default link vimoireH1 Title
@@ -66,12 +66,12 @@ highlight default link vimoireMetaMarkText Identifier
 highlight default link vimoireBoldItalic vimoireBoldItalicStyle
 highlight default link vimoireBold vimoireBoldStyle
 highlight default link vimoireItalic vimoireItalicStyle
-highlight default link vimoireUnderline vimoireUnderlineStyle
+highlight default link vimoireItalicUnderscore vimoireItalicStyle
+highlight default link vimoireDialogue String
 
 " Default inline styles (attributes only, inherit fg)
 highlight default vimoireBoldItalicStyle cterm=bold,italic gui=bold,italic
 highlight default vimoireBoldStyle cterm=bold gui=bold
 highlight default vimoireItalicStyle cterm=italic gui=italic
-highlight default vimoireUnderlineStyle cterm=underline gui=underline
 
 let b:current_syntax = "vimoire_prose"
