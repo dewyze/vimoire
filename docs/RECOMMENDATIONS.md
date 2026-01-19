@@ -59,9 +59,9 @@ Classes use `setmetatable(Class, { __index = BaseClass })` for inheritance. `Doc
 
 ### 5. Options as Data Structures
 
-Add options and delete options are tables with `label` and `execute` function. The view config attaches appropriate options to items at construction. No giant switch statements choosing what action to take.
+Add options and delete options are tables with `label` and `execute` function. Each class defines its own options as a class constant and returns them via method (`item:add_options()`). No giant switch statements choosing what action to take.
 
-**Why it works:** New options are data, not code changes. Easy to test in isolation.
+**Why it works:** New options are data, not code changes. The object owns its behavior—caller asks, object answers. Easy to test in isolation.
 
 **Preserve:** Keep options declarative. Don't add conditional logic to option execution.
 
