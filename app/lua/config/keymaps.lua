@@ -1,20 +1,24 @@
 local config = require("vimoire.config")
 local keymaps = config.get("keymaps")
 
--- Finder keymaps (migrating from telescope to snacks)
+-- Finder keymaps (snacks-based)
+if keymaps.finder.navigate then
+  vim.keymap.set("n", keymaps.finder.navigate, ":VimoireNavigate<CR>", { desc = "Vimoire: navigate" })
+end
 if keymaps.finder.manuscript then
   vim.keymap.set("n", keymaps.finder.manuscript, ":VimoireManuscript<CR>", { desc = "Vimoire: manuscript" })
 end
 if keymaps.finder.characters then
   vim.keymap.set("n", keymaps.finder.characters, ":VimoireCharacters<CR>", { desc = "Vimoire: characters" })
 end
-
--- Remaining telescope-based finders (to be migrated)
-local migrated = { manuscript = true, characters = true }
-for name, key in pairs(keymaps.finder) do
-  if key and not migrated[name] then
-    vim.keymap.set("n", key, ":Telescope vimoire " .. name .. "<CR>", { desc = "Vimoire: " .. name })
-  end
+if keymaps.finder.settings then
+  vim.keymap.set("n", keymaps.finder.settings, ":VimoireSettings<CR>", { desc = "Vimoire: settings" })
+end
+if keymaps.finder.reference then
+  vim.keymap.set("n", keymaps.finder.reference, ":VimoireReference<CR>", { desc = "Vimoire: reference" })
+end
+if keymaps.finder.exports then
+  vim.keymap.set("n", keymaps.finder.exports, ":VimoireExports<CR>", { desc = "Vimoire: exports" })
 end
 
 -- Navigator keymaps
