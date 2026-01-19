@@ -5,10 +5,14 @@ local keymaps = config.get("keymaps")
 if keymaps.finder.manuscript then
   vim.keymap.set("n", keymaps.finder.manuscript, ":VimoireManuscript<CR>", { desc = "Vimoire: manuscript" })
 end
+if keymaps.finder.characters then
+  vim.keymap.set("n", keymaps.finder.characters, ":VimoireCharacters<CR>", { desc = "Vimoire: characters" })
+end
 
 -- Remaining telescope-based finders (to be migrated)
+local migrated = { manuscript = true, characters = true }
 for name, key in pairs(keymaps.finder) do
-  if key and name ~= "manuscript" then
+  if key and not migrated[name] then
     vim.keymap.set("n", key, ":Telescope vimoire " .. name .. "<CR>", { desc = "Vimoire: " .. name })
   end
 end

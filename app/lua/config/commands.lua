@@ -222,6 +222,41 @@ vim.api.nvim_create_user_command("VimoireManuscript", function()
   })
 end, { desc = "Browse manuscript" })
 
+vim.api.nvim_create_user_command("VimoireCharacters", function()
+  local Snacks = require("snacks")
+  local finder = require("vimoire.finder")
+  local open = require("vimoire.navigation.open")
+  local state = require("vimoire.state")
+  local vimoire_config = require("vimoire.config")
+
+  local entries = finder.build_planning_entries("characters")
+  local preview_enabled = vimoire_config.get("finder.preview")
+
+  Snacks.picker({
+    title = "Characters",
+    items = vim.tbl_map(function(entry)
+      return {
+        text = entry.name,
+        entry = entry,
+        file = entry.path,
+      }
+    end, entries),
+    format = function(item)
+      return { { item.text, "Normal" } }
+    end,
+    preview = preview_enabled and "file" or false,
+    confirm = function(picker, selected)
+      if selected and selected.entry.id then
+        picker:close()
+        local item = state.items[selected.entry.id]
+        if item then
+          open.open_item(item)
+        end
+      end
+    end,
+  })
+end, { desc = "Browse characters" })
+
 vim.api.nvim_create_user_command("VimoireInsertMark", function()
   vim.api.nvim_put({ "{{mark}}" }, "c", true, true)
 end, { desc = "Insert mark at cursor" })
