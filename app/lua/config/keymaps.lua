@@ -1,9 +1,14 @@
 local config = require("vimoire.config")
 local keymaps = config.get("keymaps")
 
--- Finder keymaps
+-- Finder keymaps (migrating from telescope to snacks)
+if keymaps.finder.manuscript then
+  vim.keymap.set("n", keymaps.finder.manuscript, ":VimoireManuscript<CR>", { desc = "Vimoire: manuscript" })
+end
+
+-- Remaining telescope-based finders (to be migrated)
 for name, key in pairs(keymaps.finder) do
-  if key then
+  if key and name ~= "manuscript" then
     vim.keymap.set("n", key, ":Telescope vimoire " .. name .. "<CR>", { desc = "Vimoire: " .. name })
   end
 end

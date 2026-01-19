@@ -177,3 +177,7 @@ hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })
 hl(0, "VimoireStatusNotes", { fg = c.section, bg = c.status_notes })
 hl(0, "VimoireStatusPlanning", { fg = c.planning, bg = c.status_planning })
 hl(0, "VimoireStatusExport", { fg = c.export, bg = c.status_export })
+
+-- Snacks picker (match Normal background, not NormalFloat)
+hl(0, "SnacksPickerList", { fg = c.fg, bg = c.bg })
+hl(0, "SnacksPickerListCursorLine", { bg = c.cursor_line })
