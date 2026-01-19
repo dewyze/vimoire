@@ -14,12 +14,6 @@ local PlanningItem = require("vimoire.core.planning_item")
 local Folder = require("vimoire.core.folder")
 local ExportFile = require("vimoire.core.export_file")
 local add_options = require("vimoire.core.add_options")
-local view_config = require("vimoire.view.config")
-
-local function apply_view(item)
-  local config = view_config[item.kind] or {}
-  item.immutable = config.immutable or false
-end
 
 function state:load(manuscript_path)
   self.manuscript = Manuscript.load(manuscript_path)
@@ -66,7 +60,6 @@ function state:rebuild()
   -- Book metadata node
   if self.book then
     self.items[self.book.id] = self.book
-    apply_view(self.book)
   end
 
   -- Folders (synthetic UI containers)
@@ -105,7 +98,6 @@ function state:rebuild()
           local file_path = dir_path .. "/" .. name
           local file = ExportFile.new(file_id, name, file_path)
           file.parent_items = items
-          apply_view(file)
           self.items[file_id] = file
           table.insert(items, { id = file_id })
         end
@@ -130,18 +122,12 @@ function state:rebuild()
   self.items["export_configs"] = Folder.new("export_configs", "Configs", "export_folder", configs_items)
   self.items["export_output"] = Folder.new("export_output", "Output", "export_folder", output_items)
 
-  -- Apply view config to folders
-  for _, id in ipairs({ "manuscript", "planning", "characters", "settings", "reference", "orphaned_notes", "export", "export_templates", "export_configs", "export_output" }) do
-    apply_view(self.items[id])
-  end
-
   -- Process manuscript entries
   local function process_items(items, parent_section)
     for _, item_data in ipairs(items) do
       local item = Entry.build(item_data, root)
       item.parent_items = items
       item.parent_section = parent_section
-      apply_view(item)
       self.items[item.id] = item
       register_path(self, item)
 
@@ -166,7 +152,6 @@ function state:rebuild()
         item = PlanningItem.new(data, root)
       end
       item.parent_items = parent_items
-      apply_view(item)
       self.items[data.id] = item
       register_path(self, item)
 

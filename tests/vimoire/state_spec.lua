@@ -112,7 +112,7 @@ describe("State", function()
     it("does not mark entries as immutable", function()
       state:load(fixture_path)
       local chapter = state.items["chap1a"]
-      assert.is_false(chapter.immutable)
+      assert.is_nil(chapter.immutable)
     end)
   end)
 

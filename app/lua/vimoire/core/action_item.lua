@@ -5,6 +5,7 @@ function ActionItem.new(id, name, action_fn)
   self.id = id
   self.name = name
   self.kind = "action"
+  self.immutable = true
   self._action_fn = action_fn
   return self
 end

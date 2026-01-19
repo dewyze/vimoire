@@ -7,6 +7,7 @@ function Folder.new(id, name, kind, items, opts)
   self.id = id
   self.name = name
   self.kind = kind
+  self.immutable = true
   self.items = items or {}
   self._add_options = opts.add_options
   return self

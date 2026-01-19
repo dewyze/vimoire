@@ -29,6 +29,7 @@ function Book.new(data, root_path)
   local self = setmetatable({}, { __index = Book })
   self.id = Book.ID
   self.kind = Book.KIND
+  self.immutable = true
   self.title = data.title or "Untitled"
   self.author = data.author or ""
   self.description = data.description or ""
