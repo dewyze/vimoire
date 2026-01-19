@@ -99,8 +99,8 @@ describe("State", function()
     it("applies add_options to section", function()
       state:load(fixture_path)
       local section = state.items["p1x3q8"]
-      assert.is_table(section.add_options)
-      assert.is_true(#section.add_options > 0)
+      assert.is_table(section:add_options())
+      assert.is_true(#section:add_options() > 0)
     end)
 
     it("marks folders as immutable", function()

@@ -13,11 +13,11 @@ local PlanningSection = require("vimoire.core.planning_section")
 local PlanningItem = require("vimoire.core.planning_item")
 local Folder = require("vimoire.core.folder")
 local ExportFile = require("vimoire.core.export_file")
+local add_options = require("vimoire.core.add_options")
 local view_config = require("vimoire.view.config")
 
 local function apply_view(item)
   local config = view_config[item.kind] or {}
-  item.add_options = config.add_options
   item.immutable = config.immutable or false
 end
 
@@ -70,16 +70,24 @@ function state:rebuild()
   end
 
   -- Folders (synthetic UI containers)
-  self.items["manuscript"] = Folder.new("manuscript", "Manuscript", "manuscript", self.manuscript.items)
+  self.items["manuscript"] = Folder.new("manuscript", "Manuscript", "manuscript", self.manuscript.items, {
+    add_options = { add_options.SECTION, add_options.CHAPTER, add_options.PAGE },
+  })
   self.items["planning"] = Folder.new("planning", "Planning", "planning", {
     { id = "characters" },
     { id = "settings" },
     { id = "reference" },
     { id = "orphaned_notes" },
   })
-  self.items["characters"] = Folder.new("characters", "Characters", "characters", self.manuscript.characters or {})
-  self.items["settings"] = Folder.new("settings", "Settings", "settings", self.manuscript.settings or {})
-  self.items["reference"] = Folder.new("reference", "Reference", "reference", self.manuscript.reference or {})
+  self.items["characters"] = Folder.new("characters", "Characters", "characters", self.manuscript.characters or {}, {
+    add_options = { add_options.PLANNING_ITEM },
+  })
+  self.items["settings"] = Folder.new("settings", "Settings", "settings", self.manuscript.settings or {}, {
+    add_options = { add_options.PLANNING_ITEM },
+  })
+  self.items["reference"] = Folder.new("reference", "Reference", "reference", self.manuscript.reference or {}, {
+    add_options = { add_options.PLANNING_ITEM, add_options.SUBFOLDER },
+  })
   self.items["orphaned_notes"] = Folder.new("orphaned_notes", "Orphaned Notes", "orphaned_notes", self.manuscript.orphaned_notes or {})
 
   -- Export section (filesystem-backed)

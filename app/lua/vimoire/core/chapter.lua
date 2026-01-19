@@ -1,4 +1,5 @@
 local DocumentBase = require("vimoire.core.document_base")
+local add_options = require("vimoire.core.add_options")
 
 local Chapter = {}
 Chapter.__index = Chapter
@@ -7,6 +8,7 @@ setmetatable(Chapter, { __index = DocumentBase })
 Chapter.KIND = "chapter"
 Chapter.BASE = "entries"
 Chapter.TEXT_FILENAME = "prose.md"
+Chapter.ADD_OPTIONS = { add_options.CHAPTER, add_options.PAGE, add_options.SECTION }
 
 function Chapter.new(data, root)
   local self = DocumentBase.new(data, root)
@@ -42,6 +44,10 @@ function Chapter:toggle(state)
   self:update(state, { kind = "page" })
   state:load(state.manuscript.root)
   return true
+end
+
+function Chapter:add_options()
+  return Chapter.ADD_OPTIONS
 end
 
 return Chapter

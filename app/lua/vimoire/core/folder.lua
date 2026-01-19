@@ -1,12 +1,14 @@
 local Folder = {}
 Folder.__index = Folder
 
-function Folder.new(id, name, kind, items)
+function Folder.new(id, name, kind, items, opts)
+  opts = opts or {}
   local self = setmetatable({}, Folder)
   self.id = id
   self.name = name
   self.kind = kind
   self.items = items or {}
+  self._add_options = opts.add_options
   return self
 end
 
@@ -36,6 +38,10 @@ end
 
 function Folder:toggle(_state)
   return false, "Can only toggle chapters and pages"
+end
+
+function Folder:add_options()
+  return self._add_options
 end
 
 return Folder

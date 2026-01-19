@@ -1,4 +1,5 @@
 local DocumentBase = require("vimoire.core.document_base")
+local add_options = require("vimoire.core.add_options")
 
 local PlanningItem = {}
 PlanningItem.__index = PlanningItem
@@ -7,6 +8,7 @@ setmetatable(PlanningItem, { __index = DocumentBase })
 PlanningItem.KIND = "planning_item"
 PlanningItem.BASE = "planning"
 PlanningItem.TEXT_FILENAME = "text.md"
+PlanningItem.ADD_OPTIONS = { add_options.PLANNING_ITEM }
 
 function PlanningItem.new(data, root)
   local self = DocumentBase.new(data, root)
@@ -29,6 +31,10 @@ end
 
 function PlanningItem:text_path()
   return self:dir_path() .. "/" .. PlanningItem.TEXT_FILENAME
+end
+
+function PlanningItem:add_options()
+  return PlanningItem.ADD_OPTIONS
 end
 
 return PlanningItem
