@@ -51,9 +51,10 @@ syntax match vimoireItalic /\*[^*]\+\*/
 syntax match vimoireItalicUnderscore /\<_[^_]\+_\>/
 
 " Dialogue: "quoted speech"
-" Single-line: "text" all on one line
-" Multi-line: lines starting with " continue dialogue until line ending with "
-syntax region vimoireDialogue start=/"/ end=/"/ skip=/\n"/
+" Single-line: "text" (open and close on same line)
+syntax match vimoireDialogue /"[^"]*"/
+" Multi-line: opens with " not closed on line, ends at second " on subsequent line
+syntax region vimoireDialogue start=/"[^"]*$/ end=/\(^[^"]*"[^"]*\)\@<="/
 
 " Default highlight links (colorschemes can override)
 highlight default link vimoireH1 Title
