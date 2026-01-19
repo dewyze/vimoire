@@ -9,7 +9,6 @@ An audit of patterns to preserve, refactor, and replace. Focused on OO design qu
 The foundation is sound: unified `state.items` registry, polymorphic document interfaces via metatables, duck-typed container detection. Approximately 80% of the codebase follows its own OO principles.
 
 The contamination is concentrated:
-- View config coupled into state management
 - Type-checking conditionals in 3-4 locations
 - Duplicate tree-walking logic across modules
 - Two god objects that do too much
@@ -80,22 +79,7 @@ Neo-tree sources transform domain items into display nodes. They don't contain b
 
 ## Patterns to Refactor
 
-### 1. View Config Coupling
-
-**Current:** `state.lua` applies view configuration (icons, highlights, add_options) directly to domain objects during rebuild. Domain objects carry presentation data.
-
-**Problem:** Mixing concerns. Domain objects shouldn't know about icons. Forces a kind-based lookup during every rebuild.
-
-**Recommendation:** View properties should be resolved at render time by the component, not attached to domain objects. Two approaches:
-
-- **Class constants:** Define `icon`, `highlight` as constants on each class. No lookup table needed.
-- **Render-time resolution:** Components query a view config by item kind when rendering, not when building state.
-
-`add_options` is a special case—it's behavior, not presentation. Consider making it a method on items (`item:add_options()`) or defining it as a class constant.
-
----
-
-### 2. Export Module Decomposition
+### 1. Export Module Decomposition
 
 **Current:** `export/init.lua` is 290 lines handling template resolution, file preparation, pandoc argument building, export execution, and config-based exports.
 
@@ -110,7 +94,7 @@ Each module should be testable in isolation.
 
 ---
 
-### 3. Duplicate Node Factory
+### 2. Duplicate Node Factory
 
 **Current:** Both manuscript and export navigation sources define their own `node_from_item` function with identical logic.
 
@@ -120,7 +104,7 @@ Each module should be testable in isolation.
 
 ---
 
-### 4. Tree Walking Consolidation
+### 3. Tree Walking Consolidation
 
 **Current:** Multiple modules walk the item tree independently:
 - `state.rebuild()` walks to apply view config and indexing
@@ -137,7 +121,7 @@ Telescope, export, and other consumers use this instead of rolling their own wal
 
 ---
 
-### 5. Command File Growth
+### 4. Command File Growth
 
 **Current:** `commands.lua` is 434 lines containing all user commands. Growing unboundedly.
 
@@ -176,32 +160,7 @@ The caller asks, the object answers. New types implement the method; calling cod
 
 ---
 
-### 2. View Config as Type Dispatch
-
-**Current:** `view_config` table maps kind strings to presentation properties. State rebuild iterates and applies based on `item.kind`.
-
-**Problem:** It's a switch statement wearing a table costume. Same fundamental issue as type-checking conditionals.
-
-**Recommendation:** Define view properties on classes:
-
-```lua
-Chapter.icon = icons.CHAPTER
-Chapter.highlight = "VimoireChapter"
-```
-
-Or use a method:
-
-```lua
-function Chapter:view_config()
-  return { icon = icons.CHAPTER, highlight = "VimoireChapter" }
-end
-```
-
-The config is on the class, not in an external lookup table.
-
----
-
-### 3. Factory Pattern Exception
+### 2. Factory Pattern Exception
 
 **Note:** `Entry.build` uses a kind-to-class map to hydrate items from JSON. This is acceptable.
 
@@ -215,33 +174,29 @@ The config is on the class, not in an external lookup table.
 
 Ordered by dependency—earlier phases establish patterns that later phases build on.
 
-### Phase 1: View Pattern Foundation
+### Phase 1: Polymorphic Methods
 
-**Move view properties to classes** — Define icon/highlight as class constants. Eliminates view_config lookup pattern. This is the foundational architectural change; everything else builds on it.
-
-### Phase 2: Polymorphic Methods
-
-These can be done in any order, but do them after Phase 1 to maintain the "properties and methods live on classes" pattern throughout.
+These can be done in any order.
 
 1. **Add `context()` method to item classes** — Eliminates statusline type checks.
 
 2. **Add `numbered()` method to document classes** — Chapters return true, pages return false. Eliminates kind check in indexing.
 
-### Phase 3: Consolidation
+### Phase 2: Consolidation
 
-Depends on Phase 1. These extract shared code using the patterns established above.
+These extract shared code.
 
-3. **Extract shared node factory** — Single module for item-to-node transformation. Uses class-based view properties.
+1. **Extract shared node factory** — Single module for item-to-node transformation.
 
-4. **Add collector utility for flat item lists** — Telescope and export reuse instead of reimplementing walks.
+2. **Add collector utility for flat item lists** — Telescope and export reuse instead of reimplementing walks.
 
-### Phase 4: Decomposition
+### Phase 3: Decomposition
 
 Independent of other phases. Can be done anytime, but lower priority.
 
-5. **Decompose export module** — Extract templates.lua and pandoc.lua. Improves testability.
+1. **Decompose export module** — Extract templates.lua and pandoc.lua. Improves testability.
 
-6. **Split commands.lua by domain** — Organizational improvement. Not urgent but prevents future pain.
+2. **Split commands.lua by domain** — Organizational improvement. Not urgent but prevents future pain.
 
 ---
 

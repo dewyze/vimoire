@@ -17,8 +17,6 @@ local view_config = require("vimoire.view.config")
 
 local function apply_view(item)
   local config = view_config[item.kind] or {}
-  item.icon = config.icon
-  item.highlight = config.highlight
   item.add_options = config.add_options
   item.immutable = config.immutable or false
 end

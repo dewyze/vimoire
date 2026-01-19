@@ -86,15 +86,14 @@ describe("State", function()
   end)
 
   describe("view attributes", function()
-    it("applies icon to manuscript folder", function()
-      state:load(fixture_path)
-      assert.is_not_nil(state.items["manuscript"].icon)
+    local view = require("vimoire.view")
+
+    it("resolves icon for manuscript folder via view module", function()
+      assert.is_not_nil(view.icon_for("manuscript"))
     end)
 
-    it("applies highlight to chapter", function()
-      state:load(fixture_path)
-      local chapter = state.items["chap1a"]
-      assert.equals("VimoireChapter", chapter.highlight)
+    it("resolves highlight for chapter via view module", function()
+      assert.equals("VimoireChapter", view.highlight_for("chapter"))
     end)
 
     it("applies add_options to section", function()

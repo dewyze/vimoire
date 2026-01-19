@@ -1,30 +1,30 @@
 local M = {}
 local cc = require("neo-tree.sources.common.components")
 local vimoire_state = require("vimoire.state")
-local view_config = require("vimoire.view.config")
-
-local function get_view_attrs(node)
-  local cfg = view_config[node.type]
-  return cfg or {}
-end
+local view = require("vimoire.view")
 
 M.icon = function(config, node, state)
   local padding = config.padding or " "
   local item = vimoire_state.items[node.id]
 
-  if item and item.icon then
-    return {
-      text = item.icon .. padding,
-      highlight = item.highlight,
-    }
+  if item then
+    local icon = view.icon_for(item.kind)
+    local highlight = view.highlight_for(item.kind)
+    if icon then
+      return {
+        text = icon .. padding,
+        highlight = highlight,
+      }
+    end
   end
 
-  -- Fall back to view config for items not in state (e.g. action nodes)
-  local attrs = get_view_attrs(node)
-  if attrs.icon then
+  -- Fall back to view lookup by node.type for items not in state (e.g. action nodes)
+  local icon = view.icon_for(node.type)
+  local highlight = view.highlight_for(node.type)
+  if icon then
     return {
-      text = attrs.icon .. padding,
-      highlight = attrs.highlight,
+      text = icon .. padding,
+      highlight = highlight,
     }
   end
 
@@ -36,19 +36,19 @@ M.name = function(config, node, state)
   if item then
     return {
       text = node.name,
-      highlight = item.highlight,
+      highlight = view.highlight_for(item.kind),
     }
   end
 
-  -- Fall back to view config for items not in state (e.g. action nodes)
-  local attrs = get_view_attrs(node)
+  -- Fall back to view lookup by node.type for items not in state (e.g. action nodes)
+  local highlight = view.highlight_for(node.type)
   local name = node.name
   if node.type == "action" then
     name = "[ " .. name .. " ]"
   end
   return {
     text = name,
-    highlight = attrs.highlight or "NeoTreeFileName",
+    highlight = highlight or "NeoTreeFileName",
   }
 end
 
