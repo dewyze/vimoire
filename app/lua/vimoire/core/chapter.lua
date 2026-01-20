@@ -50,4 +50,8 @@ function Chapter:add_options()
   return Chapter.ADD_OPTIONS
 end
 
+function Chapter:numbered()
+  return true
+end
+
 return Chapter

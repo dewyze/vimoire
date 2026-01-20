@@ -133,7 +133,7 @@ function state:rebuild()
 
       if item.items then
         process_items(item.items, item)
-      elseif item.kind == "chapter" then
+      elseif item:numbered() then
         chapter_count = chapter_count + 1
         item.chapter_index = chapter_count
       end

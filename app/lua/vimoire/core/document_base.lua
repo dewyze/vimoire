@@ -163,4 +163,8 @@ function DocumentBase:category()
   return "prose"
 end
 
+function DocumentBase:numbered()
+  return false
+end
+
 return DocumentBase

@@ -139,20 +139,15 @@ Not urgent, but prevents future pain.
 
 ## Patterns to Eliminate
 
-### 1. Type-Checking Conditionals
+### 1. Type-Checking Conditionals ✓
 
-**Current:** A few locations still check `item.kind` or `node.type` to determine behavior:
-- State rebuild checks kind to assign chapter indices
-- Components check type for special rendering
+**Status:** Eliminated. All behavioral kind checks have been replaced with polymorphic methods:
 
-**Problem:** Violates OO principles. Caller decides behavior instead of object. Adding new types requires changing calling code.
-
-**Recommendation:** Replace each with a method the object implements:
-
-| Instead of | Use |
-|------------|-----|
-| `if item.kind == "chapter"` for numbering | `item:numbered()` returns boolean |
-| `if item.kind == "section"` for container check | `if item.items then` (already correct elsewhere) |
+| Was | Now |
+|-----|-----|
+| `item.kind == "chapter"` for numbering | `item:numbered()` |
+| `item.kind` for statusline category | `item:category()` |
+| `item.kind == "section"` for container check | `if item.items then` |
 
 The caller asks, the object answers. New types implement the method; calling code never changes.
 
@@ -172,9 +167,12 @@ The caller asks, the object answers. New types implement the method; calling cod
 
 Ordered by dependency—earlier phases establish patterns that later phases build on.
 
-### Phase 1: Polymorphic Methods
+### Phase 1: Polymorphic Methods ✓
 
-1. **Add `numbered()` method to document classes** — Chapters return true, pages return false. Eliminates kind check in indexing.
+All kind-checking conditionals have been eliminated:
+
+1. ~~**Add `numbered()` method to document classes**~~ — Done. Chapters return true, pages inherit false from DocumentBase.
+2. ~~**Add `category()` method to document classes**~~ — Done. Eliminates kind checks in statusline.
 
 ### Phase 2: Consolidation
 
