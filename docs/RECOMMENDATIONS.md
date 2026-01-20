@@ -9,7 +9,7 @@ An audit of patterns to preserve, refactor, and replace. Focused on OO design qu
 The foundation is sound: unified `state.items` registry, polymorphic document interfaces via metatables, duck-typed container detection. Approximately 80% of the codebase follows its own OO principles.
 
 The contamination is concentrated:
-- Type-checking conditionals in 3-4 locations
+- Type-checking conditionals in 2-3 locations
 - Duplicate tree-walking logic across modules
 - Two god objects that do too much
 
@@ -141,8 +141,7 @@ Not urgent, but prevents future pain.
 
 ### 1. Type-Checking Conditionals
 
-**Current:** Several locations check `item.kind` or `node.type` to determine behavior:
-- Statusline checks kind to determine context color
+**Current:** A few locations still check `item.kind` or `node.type` to determine behavior:
 - State rebuild checks kind to assign chapter indices
 - Components check type for special rendering
 
@@ -153,7 +152,6 @@ Not urgent, but prevents future pain.
 | Instead of | Use |
 |------------|-----|
 | `if item.kind == "chapter"` for numbering | `item:numbered()` returns boolean |
-| `if item.kind == "planning_item"` for context | `item:context()` returns context key |
 | `if item.kind == "section"` for container check | `if item.items then` (already correct elsewhere) |
 
 The caller asks, the object answers. New types implement the method; calling code never changes.
@@ -176,11 +174,7 @@ Ordered by dependency—earlier phases establish patterns that later phases buil
 
 ### Phase 1: Polymorphic Methods
 
-These can be done in any order.
-
-1. **Add `context()` method to item classes** — Eliminates statusline type checks.
-
-2. **Add `numbered()` method to document classes** — Chapters return true, pages return false. Eliminates kind check in indexing.
+1. **Add `numbered()` method to document classes** — Chapters return true, pages return false. Eliminates kind check in indexing.
 
 ### Phase 2: Consolidation
 
