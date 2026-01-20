@@ -37,4 +37,8 @@ function PlanningItem:add_options()
   return PlanningItem.ADD_OPTIONS
 end
 
+function PlanningItem:category()
+  return "planning"
+end
+
 return PlanningItem

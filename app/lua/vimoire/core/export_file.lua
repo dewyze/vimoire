@@ -48,4 +48,8 @@ function ExportFile:destroy(state)
   return true
 end
 
+function ExportFile:category()
+  return "export"
+end
+
 return ExportFile

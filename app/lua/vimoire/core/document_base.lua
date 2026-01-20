@@ -159,4 +159,8 @@ function DocumentBase:extras()
   error("Subclass must implement extras()")
 end
 
+function DocumentBase:category()
+  return "prose"
+end
+
 return DocumentBase

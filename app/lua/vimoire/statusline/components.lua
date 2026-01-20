@@ -17,27 +17,12 @@ function M.get_context(item, filepath)
 
   local filename = filepath and filepath:match("([^/]+)$") or ""
 
-  -- Notes files for chapters/pages
+  -- Notes files always get notes context regardless of item type
   if filename == "notes.md" then
     return colors.CONTEXTS.NOTES
   end
 
-  -- Planning items
-  if item.kind == "planning_item" or item.kind == "subfolder" then
-    return colors.CONTEXTS.PLANNING
-  end
-
-  -- Export files
-  if item.kind == "export_file" then
-    return colors.CONTEXTS.EXPORT
-  end
-
-  -- Manuscript entries (chapter, page, section)
-  if item.kind == "chapter" or item.kind == "page" or item.kind == "section" then
-    return colors.CONTEXTS.PROSE
-  end
-
-  return colors.CONTEXTS.DEFAULT
+  return item:category()
 end
 
 -- Build breadcrumb path for an item

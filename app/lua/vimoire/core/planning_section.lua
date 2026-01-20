@@ -23,4 +23,8 @@ function PlanningSection:add_options()
   return PlanningSection.ADD_OPTIONS
 end
 
+function PlanningSection:category()
+  return "planning"
+end
+
 return PlanningSection

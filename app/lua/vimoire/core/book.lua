@@ -59,4 +59,8 @@ function Book:display_name()
   return "Book Info"
 end
 
+function Book:category()
+  return "default"
+end
+
 return Book

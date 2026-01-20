@@ -106,4 +106,8 @@ function SectionBase:toggle(_state)
   return false, "Can only toggle chapters and pages"
 end
 
+function SectionBase:category()
+  return "prose"
+end
+
 return SectionBase

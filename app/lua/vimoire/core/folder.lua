@@ -45,4 +45,8 @@ function Folder:add_options()
   return self._add_options
 end
 
+function Folder:category()
+  return "default"
+end
+
 return Folder
