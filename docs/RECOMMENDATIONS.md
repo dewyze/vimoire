@@ -137,23 +137,9 @@ Not urgent, but prevents future pain.
 
 ---
 
-## Patterns to Eliminate
+## Notes
 
-### 1. Type-Checking Conditionals ✓
-
-**Status:** Eliminated. All behavioral kind checks have been replaced with polymorphic methods:
-
-| Was | Now |
-|-----|-----|
-| `item.kind == "chapter"` for numbering | `item:numbered()` |
-| `item.kind` for statusline category | `item:category()` |
-| `item.kind == "section"` for container check | `if item.items then` |
-
-The caller asks, the object answers. New types implement the method; calling code never changes.
-
----
-
-### 2. Factory Pattern Exception
+### Factory Pattern Exception
 
 **Note:** `Entry.build` uses a kind-to-class map to hydrate items from JSON. This is acceptable.
 
@@ -167,14 +153,7 @@ The caller asks, the object answers. New types implement the method; calling cod
 
 Ordered by dependency—earlier phases establish patterns that later phases build on.
 
-### Phase 1: Polymorphic Methods ✓
-
-All kind-checking conditionals have been eliminated:
-
-1. ~~**Add `numbered()` method to document classes**~~ — Done. Chapters return true, pages inherit false from DocumentBase.
-2. ~~**Add `category()` method to document classes**~~ — Done. Eliminates kind checks in statusline.
-
-### Phase 2: Consolidation
+### Phase 1: Consolidation
 
 These extract shared code.
 
@@ -182,9 +161,9 @@ These extract shared code.
 
 2. **Add collector utility for flat item lists** — Telescope and export reuse instead of reimplementing walks.
 
-### Phase 3: Decomposition
+### Phase 2: Decomposition
 
-Independent of other phases. Can be done anytime, but lower priority.
+Independent of Phase 1. Can be done anytime, but lower priority.
 
 1. **Decompose export module** — Extract templates.lua and pandoc.lua. Improves testability.
 
