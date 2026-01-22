@@ -3,6 +3,7 @@ local config = require("vimoire.export.config")
 local pipeline = require("vimoire.export.pipeline")
 local frontmatter = require("vimoire.export.frontmatter")
 local template = require("vimoire.export.template")
+local pandoc = require("vimoire.export.pandoc")
 local Path = require("plenary.path")
 
 local M = {}
@@ -116,32 +117,7 @@ local function copy_assets_to_temp(root, temp_dir)
 end
 
 function M.build_pandoc_args(opts, cfg)
-  local args = {}
-
-  -- Input files
-  for _, file in ipairs(opts.input_files) do
-    table.insert(args, file)
-  end
-
-  -- Output
-  table.insert(args, "-o")
-  table.insert(args, opts.output_path)
-
-  -- Metadata
-  table.insert(args, "--metadata")
-  table.insert(args, "title=" .. opts.title)
-  table.insert(args, "--metadata")
-  table.insert(args, "author=" .. opts.author)
-  table.insert(args, "--metadata")
-  table.insert(args, "lang=" .. opts.language)
-
-  -- Format-specific options
-  local format_args = cfg:pandoc_args(opts)
-  for _, arg in ipairs(format_args) do
-    table.insert(args, arg)
-  end
-
-  return args
+  return pandoc.build_args(opts, cfg)
 end
 
 local function sanitize_filename(name)
@@ -154,33 +130,23 @@ local function write_log(output_dir, content)
   Path:new(log_path):write(content, "w")
 end
 
-function M.run(state, opts)
-  opts = opts or {}
-  local format = opts.format or "epub"
-  local cfg = config.for_format(format)
-
-  -- Check pandoc
-  if vim.fn.executable("pandoc") ~= 1 then
+local function execute(state, entries, cfg, output_filename)
+  if not pandoc.available() then
     return {
       success = false,
       error = "pandoc not found. Install it with: brew install pandoc (macOS) or apt install pandoc (Linux)",
     }
   end
 
-  -- Prepare and assemble files
-  local files = M.prepare_files(state)
+  local files = M.prepare_files(state, entries)
   files = cfg:assemble(files)
   local temp_dir, input_files = M.write_temp_files(files)
   copy_assets_to_temp(state.manuscript.root, temp_dir)
 
-  -- Output path
   local output_dir = state.manuscript.root .. "/exports/output"
   vim.fn.mkdir(output_dir, "p")
+  local output_path = output_dir .. "/" .. output_filename
 
-  local filename = sanitize_filename(state.book.title) .. "." .. format
-  local output_path = output_dir .. "/" .. filename
-
-  -- Build and run pandoc
   local root = state.manuscript.root
   local args = M.build_pandoc_args({
     input_files = input_files,
@@ -193,27 +159,25 @@ function M.run(state, opts)
     cover_path = resolve_cover_path(state),
   }, cfg)
 
-  local cmd = { "pandoc" }
-  for _, arg in ipairs(args) do
-    table.insert(cmd, arg)
-  end
+  local result = pandoc.run(args)
 
-  local result = vim.fn.system(cmd)
-  local success = vim.v.shell_error == 0
-
-  -- Cleanup temp files
   vim.fn.delete(temp_dir, "rf")
 
-  -- Write log on failure
-  if not success then
-    write_log(output_dir, result)
+  if not result.success then
+    write_log(output_dir, result.error)
+    return { success = false, error = result.error, log_path = output_dir .. "/export.log" }
   end
 
-  if success then
-    return { success = true, output_path = output_path }
-  else
-    return { success = false, error = result, log_path = output_dir .. "/export.log" }
-  end
+  return { success = true, output_path = output_path }
+end
+
+function M.run(state, opts)
+  opts = opts or {}
+  local format = opts.format or "epub"
+  local cfg = config.for_format(format)
+  local filename = sanitize_filename(state.book.title) .. "." .. format
+
+  return execute(state, nil, cfg, filename)
 end
 
 function M.run_with_config(state, config_path)
@@ -226,68 +190,15 @@ function M.run_with_config(state, config_path)
     return { success = false, error = "No entries in config. Add entries or run :VimoireExportConfig to regenerate." }
   end
 
-  -- Check pandoc
-  if vim.fn.executable("pandoc") ~= 1 then
-    return {
-      success = false,
-      error = "pandoc not found. Install it with: brew install pandoc (macOS) or apt install pandoc (Linux)",
-    }
-  end
-
-  -- Collect only the entries specified in config
   local entries = collector.collect_by_ids(state, cfg.entries)
 
   if #entries == 0 then
     return { success = false, error = "No valid entries found. Check that entry IDs in config match your manuscript." }
   end
 
-  -- Prepare and assemble files
-  local files = M.prepare_files(state, entries)
-  files = cfg:assemble(files)
-  local temp_dir, input_files = M.write_temp_files(files)
-  copy_assets_to_temp(state.manuscript.root, temp_dir)
-
-  -- Output path
-  local output_dir = state.manuscript.root .. "/exports/output"
-  vim.fn.mkdir(output_dir, "p")
-
   local filename = cfg.output or (sanitize_filename(state.book.title) .. "." .. cfg.format)
-  local output_path = output_dir .. "/" .. filename
 
-  -- Build and run pandoc
-  local root = state.manuscript.root
-  local args = M.build_pandoc_args({
-    input_files = input_files,
-    output_path = output_path,
-    title = state.book.title,
-    author = state.book.author,
-    language = state.book.language,
-    css_path = find_template(root, "epub.css"),
-    reference_doc = find_template(root, "reference.docx"),
-    cover_path = resolve_cover_path(state),
-  }, cfg)
-
-  local cmd = { "pandoc" }
-  for _, arg in ipairs(args) do
-    table.insert(cmd, arg)
-  end
-
-  local result = vim.fn.system(cmd)
-  local success = vim.v.shell_error == 0
-
-  -- Cleanup temp files
-  vim.fn.delete(temp_dir, "rf")
-
-  -- Write log on failure
-  if not success then
-    write_log(output_dir, result)
-  end
-
-  if success then
-    return { success = true, output_path = output_path }
-  else
-    return { success = false, error = result, log_path = output_dir .. "/export.log" }
-  end
+  return execute(state, entries, cfg, filename)
 end
 
 return M
