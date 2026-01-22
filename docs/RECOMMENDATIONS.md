@@ -6,12 +6,12 @@ An audit of patterns to preserve, refactor, and replace. Focused on OO design qu
 
 ## Current State Summary
 
-The foundation is sound: unified `state.items` registry, polymorphic document interfaces via metatables, duck-typed container detection. Approximately 80% of the codebase follows its own OO principles.
+The foundation is sound: unified `state.items` registry, polymorphic document interfaces via metatables, duck-typed container detection. The codebase follows its own OO principles consistently.
 
-The contamination is concentrated:
-- Type-checking conditionals in 2-3 locations
-- Duplicate tree-walking logic across modules
-- Two god objects that do too much
+Recent refactoring completed:
+- Shared node factory extracted
+- Collector utility for flat item lists
+- Export module decomposed (pandoc.lua, template.lua)
 
 ---
 
@@ -77,51 +77,9 @@ Neo-tree sources transform domain items into display nodes. They don't contain b
 
 ---
 
-## Patterns to Refactor
+## Remaining Refactoring
 
-### 1. Export Module Decomposition
-
-**Current:** `export/init.lua` is 290 lines handling template resolution, file preparation, pandoc argument building, export execution, and config-based exports.
-
-**Problem:** Untestable monolith. Can't test template discovery without running exports. Can't test argument building without file I/O.
-
-**Recommendation:** Extract into focused modules:
-- `export/templates.lua` — Template discovery, loading, validation
-- `export/pandoc.lua` — Argument building, command execution
-- `export/init.lua` — Orchestrator that composes the above
-
-Each module should be testable in isolation.
-
----
-
-### 2. Duplicate Node Factory
-
-**Current:** Both manuscript and export navigation sources define their own `node_from_item` function with identical logic.
-
-**Problem:** Duplication. Changes need to happen in two places.
-
-**Recommendation:** Extract to `navigation/node_factory.lua`. Single function that transforms domain items to neo-tree nodes. All sources import and use it.
-
----
-
-### 3. Tree Walking Consolidation
-
-**Current:** Multiple modules walk the item tree independently:
-- `state.rebuild()` walks to apply view config and indexing
-- Telescope extension walks to build flat entry lists
-- Export source walks to collect exportable items
-
-**Problem:** Same traversal logic reimplemented in different ways. Divergence risk.
-
-**Recommendation:** Provide a collector pattern on state or as a utility:
-- `state:collect(filter_fn)` — Returns flat list of items matching filter
-- Or `collector.collect(items, filter_fn)` — Standalone utility
-
-Telescope, export, and other consumers use this instead of rolling their own walks.
-
----
-
-### 4. Command File Growth
+### Command File Growth
 
 **Current:** `commands.lua` is 434 lines containing all user commands. Growing unboundedly.
 
@@ -146,28 +104,6 @@ Not urgent, but prevents future pain.
 **Why it's different:** Deserialization requires knowing which class to instantiate. This dispatch happens exactly once per item at load time, not repeatedly during operations. It's a factory, not a behavioral dispatch.
 
 **Keep as-is:** But be aware this is the ONE place kind-based dispatch is legitimate.
-
----
-
-## Priority Order
-
-Ordered by dependency—earlier phases establish patterns that later phases build on.
-
-### Phase 1: Consolidation
-
-These extract shared code.
-
-1. **Extract shared node factory** — Single module for item-to-node transformation.
-
-2. **Add collector utility for flat item lists** — Telescope and export reuse instead of reimplementing walks.
-
-### Phase 2: Decomposition
-
-Independent of Phase 1. Can be done anytime, but lower priority.
-
-1. **Decompose export module** — Extract templates.lua and pandoc.lua. Improves testability.
-
-2. **Split commands.lua by domain** — Organizational improvement. Not urgent but prevents future pain.
 
 ---
 
