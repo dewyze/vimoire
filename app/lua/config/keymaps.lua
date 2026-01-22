@@ -27,7 +27,11 @@ if keymaps.navigator.toggle then
 end
 
 if keymaps.navigator.reveal then
-  vim.keymap.set("n", keymaps.navigator.reveal, ":Neotree reveal source=manuscript<CR>", { desc = "Vimoire: find in navigator" })
+  vim.keymap.set("n", keymaps.navigator.reveal, function()
+    local path_util = require("vimoire.util.path")
+    local source = path_util.navigator_source(vim.fn.expand("%:p"))
+    vim.cmd("Neotree reveal source=" .. source)
+  end, { desc = "Vimoire: find in navigator" })
 end
 
 if keymaps.navigator.manuscript then

@@ -99,6 +99,7 @@ function state:rebuild()
           local file = ExportFile.new(file_id, name, file_path)
           file.parent_items = items
           self.items[file_id] = file
+          register_path(self, file)
           table.insert(items, { id = file_id })
         end
       end
