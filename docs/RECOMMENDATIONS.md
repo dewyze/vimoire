@@ -12,6 +12,7 @@ Recent refactoring completed:
 - Shared node factory extracted
 - Collector utility for flat item lists
 - Export module decomposed (pandoc.lua, template.lua)
+- Commands split by domain (export, snippets, navigation)
 
 ---
 
@@ -74,24 +75,6 @@ Neo-tree sources transform domain items into display nodes. They don't contain b
 **Why it works:** UI framework is decoupled from domain. Could swap to a different tree view without touching domain code.
 
 **Preserve:** Keep navigation sources thin. Business logic belongs on domain objects.
-
----
-
-## Remaining Refactoring
-
-### Command File Growth
-
-**Current:** `commands.lua` is 434 lines containing all user commands. Growing unboundedly.
-
-**Problem:** God file. Hard to navigate. Unrelated commands mixed together.
-
-**Recommendation:** Group commands by domain:
-- `commands/export.lua` — Export-related commands
-- `commands/snippets.lua` — Snippet commands
-- `commands/navigation.lua` — Navigation and tree commands
-- `commands/init.lua` — Composes all command modules
-
-Not urgent, but prevents future pain.
 
 ---
 
