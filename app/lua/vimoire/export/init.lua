@@ -8,11 +8,6 @@ local Path = require("plenary.path")
 
 local M = {}
 
-local function get_app_template_root()
-  local app_root = debug.getinfo(1, "S").source:sub(2):match("(.*/app/)")
-  return app_root and (app_root .. "templates/export/") or nil
-end
-
 local function resolve_cover_path(state)
   if not state.book.cover then
     return nil
@@ -24,48 +19,9 @@ local function resolve_cover_path(state)
   return nil
 end
 
--- Find a template file, checking project first then app defaults
-local function find_template(root, filename)
-  local project_path = root .. "/exports/templates/" .. filename
-  if Path:new(project_path):exists() then
-    return project_path
-  end
-
-  local app_root = get_app_template_root()
-  if app_root then
-    local app_path = app_root .. filename
-    if Path:new(app_path):exists() then
-      return app_path
-    end
-  end
-
-  return nil
-end
-
--- Load chapter template from project or fall back to default
-local function load_chapter_template(root)
-  local project_template = root .. "/exports/templates/chapter.md"
-  local loaded = template.load(project_template)
-  if loaded then
-    return loaded
-  end
-
-  -- Fall back to app default
-  local app_root = get_app_template_root()
-  if app_root then
-    local default_template = app_root .. "chapter.md"
-    loaded = template.load(default_template)
-    if loaded then
-      return loaded
-    end
-  end
-
-  return template.DEFAULT_CHAPTER
-end
-
 function M.prepare_files(state, entries)
   entries = entries or collector.collect_entries(state)
-  local chapter_template = load_chapter_template(state.manuscript.root)
+  local chapter_template = template.load_chapter(state.manuscript.root)
   local files = {}
 
   for _, entry in ipairs(entries) do
@@ -154,8 +110,8 @@ local function execute(state, entries, cfg, output_filename)
     title = state.book.title,
     author = state.book.author,
     language = state.book.language,
-    css_path = find_template(root, "epub.css"),
-    reference_doc = find_template(root, "reference.docx"),
+    css_path = template.find(root, "epub.css"),
+    reference_doc = template.find(root, "reference.docx"),
     cover_path = resolve_cover_path(state),
   }, cfg)
 
