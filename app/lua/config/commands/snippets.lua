@@ -71,9 +71,11 @@ vim.api.nvim_create_user_command("Snippets", function()
     win = {
       input = {
         keys = {
-          ["<C-e>"] = { "edit_snippet", mode = { "n", "i" }, desc = "Edit snippet" },
-          ["<C-d>"] = { "delete_snippet", mode = { "n", "i" }, desc = "Delete snippet" },
+          ["<Esc>"] = { "close", mode = { "n", "i" } },
+          ["<C-e>"] = { "edit_snippet", mode = { "n", "i" }, desc = "Edit" },
+          ["<C-d>"] = { "delete_snippet", mode = { "n", "i" }, desc = "Delete" },
         },
+        footer_keys = { "<C-e>", "<C-d>" },
       },
     },
     confirm = function(picker, selected)

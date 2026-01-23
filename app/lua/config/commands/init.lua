@@ -91,8 +91,27 @@ vim.api.nvim_create_user_command("Marks", function()
 end, { desc = "Browse marks in current buffer" })
 
 vim.api.nvim_create_user_command("InsertMark", function()
-  vim.api.nvim_put({ "{{mark}}" }, "c", true, true)
+  vim.api.nvim_put({ "{{mark:}}" }, "c", true, true)
+  local pos = vim.api.nvim_win_get_cursor(0)
+  vim.api.nvim_win_set_cursor(0, { pos[1], pos[2] - 2 })
+  vim.cmd("startinsert")
 end, { desc = "Insert mark at cursor" })
+
+vim.api.nvim_create_user_command("InsertPageBreak", function()
+  vim.api.nvim_put({ "\\newpage" }, "c", true, true)
+end, { desc = "Force a page break in PDF/DOCX output" })
+
+vim.api.nvim_create_user_command("InsertRule", function()
+  vim.api.nvim_put({ "---" }, "c", true, true)
+end, { desc = "Insert a thematic break or scene separator" })
+
+vim.api.nvim_create_user_command("InsertDiv", function()
+  vim.api.nvim_put({ "::: classname", "" , ":::" }, "c", true, true)
+end, { desc = "Wrap content in a fenced div for custom styling" })
+
+vim.api.nvim_create_user_command("InsertComment", function()
+  vim.api.nvim_put({ "<!--  -->" }, "c", true, true)
+end, { desc = "Insert a comment that won't appear in output" })
 
 -- Theme
 local THEMES = {
@@ -198,9 +217,10 @@ vim.api.nvim_create_user_command("InsertImage", function()
       win = {
         input = {
           keys = {
-            ["<C-d>"] = { "delete_image", mode = { "n", "i" }, desc = "Delete image" },
-            ["<C-r>"] = { "rename_image", mode = { "n", "i" }, desc = "Rename image" },
+            ["<C-d>"] = { "delete_image", mode = { "n", "i" }, desc = "Delete" },
+            ["<C-r>"] = { "rename_image", mode = { "n", "i" }, desc = "Rename" },
           },
+          footer_keys = { "<C-d>", "<C-r>" },
         },
       },
       confirm = function(picker, selected)

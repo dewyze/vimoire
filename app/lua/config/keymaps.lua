@@ -2,8 +2,9 @@ local config = require("vimoire.config")
 local keymaps = config.get("keymaps")
 
 -- Command palette
-vim.keymap.set("n", "<D-S-p>", ":Palette<CR>", { desc = "Command palette" })
+vim.keymap.set({ "n", "i", "v" }, "<D-S-p>", "<Cmd>Palette<CR>", { desc = "Command palette" })
 vim.keymap.set("n", "<leader>p", ":Palette<CR>", { desc = "Command palette" })
+vim.keymap.set("v", "<leader>p", "<Cmd>Palette<CR>", { desc = "Command palette" })
 
 -- Finder keymaps
 if keymaps.finder.smart then

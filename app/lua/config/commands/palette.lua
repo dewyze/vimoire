@@ -1,5 +1,4 @@
 -- Commands to show in palette (controls order too)
--- Note: SnippetExtract excluded (visual mode only)
 -- Note: Characters/Settings/Reference excluded (use Planning or Navigate)
 local COMMANDS = {
   -- Find
@@ -7,7 +6,6 @@ local COMMANDS = {
   { cmd = "Manuscript", display = "Find > Manuscript" },
   { cmd = "Planning", display = "Find > Planning" },
   { cmd = "Exports", display = "Find > Exports" },
-  { cmd = "Snippets", display = "Find > Snippets" },
 
   -- View
   { cmd = "Home", display = "View > Home" },
@@ -23,6 +21,14 @@ local COMMANDS = {
   -- Insert
   { cmd = "InsertMark", display = "Insert > Mark" },
   { cmd = "InsertImage", display = "Insert > Image" },
+  { cmd = "InsertPageBreak", display = "Insert > Pandoc > Page Break" },
+  { cmd = "InsertRule", display = "Insert > Pandoc > Horizontal Rule" },
+  { cmd = "InsertDiv", display = "Insert > Pandoc > Fenced Div" },
+  { cmd = "InsertComment", display = "Insert > Pandoc > Comment" },
+
+  -- Snippets
+  { cmd = "Snippets", display = "Snippets > Browse" },
+  { cmd = "SnippetExtract", display = "Snippets > Extract Selection" },
 
   -- Export
   { cmd = "Export", display = "Export > Run Export" },
@@ -30,10 +36,13 @@ local COMMANDS = {
 }
 
 local function get_keymap_for_command(cmd_name)
-  local keymaps = vim.api.nvim_get_keymap("n")
-  for _, km in ipairs(keymaps) do
-    if km.rhs and km.rhs:match(":" .. cmd_name .. "<CR>") then
-      return km.lhs
+  -- Check both normal and visual mode keymaps
+  for _, mode in ipairs({ "n", "v" }) do
+    local keymaps = vim.api.nvim_get_keymap(mode)
+    for _, km in ipairs(keymaps) do
+      if km.rhs and km.rhs:match(":" .. cmd_name .. "<CR>") then
+        return km.lhs
+      end
     end
   end
   return nil
@@ -80,5 +89,12 @@ vim.api.nvim_create_user_command("Palette", function()
         vim.cmd(selected.cmd)
       end
     end,
+    win = {
+      input = {
+        keys = {
+          ["<Esc>"] = { "close", mode = { "n", "i" } },
+        },
+      },
+    },
   })
 end, { desc = "Open command palette" })
