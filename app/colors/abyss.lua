@@ -1,70 +1,70 @@
--- Vimoire Vellum colorscheme
--- Sepia theme evoking aged manuscripts
--- Like writing on ancient parchment by candlelight
+-- Vimoire Abyss colorscheme
+-- Cool oceanic dark theme with bioluminescent accents
+-- Like writing in a lighthouse, deep water and silver light
 
 vim.cmd("hi clear")
-vim.g.colors_name = "vimoire-vellum"
-vim.o.background = "light"
+vim.g.colors_name = "abyss"
+vim.o.background = "dark"
 
 local c = {
-  -- Base tones (parchment/sepia family)
-  bg = "#f0e4d0",
-  bg_darker = "#e8dcc6",
-  bg_lighter = "#f8f0e0",
-  fg = "#3d3428",
-  fg_dim = "#5a4e40",
-  fg_muted = "#8a7a68",
+  -- Base tones (deep ocean blue-black)
+  bg = "#0d1117",
+  bg_darker = "#080c10",
+  bg_lighter = "#151d26",
+  fg = "#c8d4e0",
+  fg_dim = "#8a9aac",
+  fg_muted = "#4a5a6c",
 
-  -- Prose elements (earth tones)
-  header = "#5a4030",
-  metadata = "#6a5048",
-  todo = "#7a5020",
-  scene_break = "#c0b098",
-  dialogue = "#7a4830",
-  italic = "#585868",
+  -- Prose elements (cool with warm accents)
+  header = "#7ab0d0",
+  metadata = "#9a8ac0",
+  todo = "#e0a050",
+  scene_break = "#4a6070",
+  dialogue = "#70b8b0",
+  italic = "#a0b8c8",
 
   -- UI accents
-  cursor_line = "#e8dcc8",
-  visual = "#dcd0b8",
-  search_bg = "#d8c8a0",
-  search_fg = "#3d3428",
-  match = "#7a5020",
+  cursor_line = "#151c24",
+  visual = "#1e2a38",
+  search_bg = "#2a4050",
+  search_fg = "#e0e8f0",
+  match = "#70b8b0",
 
-  -- Neotree structure (earthy accents)
-  book = "#6a4838",
-  manuscript = "#5a4840",
-  section = "#6a5a48",
-  chapter = "#4a6050",
-  page = "#5a6848",
-  planning = "#7a4a3a",
-  planning_item = "#5a3a2a",
-  export = "#5a4858",
-  export_folder = "#4a3848",
-  export_file = "#6a5868",
+  -- Neotree structure (oceanic palette)
+  book = "#e0d0a0",
+  manuscript = "#a0c0d8",
+  section = "#70a0c0",
+  chapter = "#60b0a0",
+  page = "#80b890",
+  planning = "#c0a080",
+  planning_item = "#d0b898",
+  export = "#8090b0",
+  export_folder = "#7080a0",
+  export_file = "#90a0c0",
 
   -- Statusline contexts
-  status_prose = "#e8dcc6",
-  status_notes = "#e0dcc8",
-  status_planning = "#e8d8c0",
-  status_export = "#e0d8c8",
+  status_prose = "#0d1117",
+  status_notes = "#0d1318",
+  status_planning = "#12110d",
+  status_export = "#0d0f14",
 
   -- Feedback
-  error = "#8a3030",
-  warning = "#7a5020",
-  info = "#4a5a60",
-  hint = "#4a6050",
+  error = "#c07080",
+  warning = "#d0a050",
+  info = "#70a0c0",
+  hint = "#60b0a0",
 
   -- Spellcheck
-  spell_bad = "#8a3030",
-  spell_cap = "#7a5020",
-  spell_rare = "#6a5048",
+  spell_bad = "#c07080",
+  spell_cap = "#d0a050",
+  spell_rare = "#9a8ac0",
 }
 
 local hl = vim.api.nvim_set_hl
 
 -- Base UI
 hl(0, "Normal", { fg = c.fg, bg = c.bg })
-hl(0, "NormalFloat", { fg = c.fg, bg = c.bg_lighter })
+hl(0, "NormalFloat", { fg = c.fg, bg = c.bg_darker })
 hl(0, "FloatBorder", { fg = c.fg_muted })
 hl(0, "Cursor", { fg = c.bg, bg = c.fg })
 hl(0, "CursorLine", { bg = c.cursor_line })
@@ -81,8 +81,8 @@ hl(0, "StatusLine", { fg = c.fg_dim, bg = c.bg_darker })
 hl(0, "StatusLineNC", { fg = c.fg_muted, bg = c.bg_darker })
 hl(0, "WinBar", { fg = c.fg, bold = true })
 hl(0, "WinBarNC", { fg = c.fg_muted })
-hl(0, "VertSplit", { fg = c.bg_darker })
-hl(0, "WinSeparator", { fg = c.bg_darker })
+hl(0, "VertSplit", { fg = c.bg_lighter })
+hl(0, "WinSeparator", { fg = c.bg_lighter })
 hl(0, "NonText", { fg = c.fg_muted })
 hl(0, "MatchParen", { fg = c.match, bold = true })
 hl(0, "ErrorMsg", { fg = c.error })
@@ -119,11 +119,11 @@ hl(0, "NeoTreeNormal", { fg = c.fg, bg = c.bg_darker })
 hl(0, "NeoTreeNormalNC", { fg = c.fg, bg = c.bg_darker })
 hl(0, "NeoTreeEndOfBuffer", { fg = c.bg_darker, bg = c.bg_darker })
 hl(0, "NeoTreeCursorLine", { bg = c.cursor_line })
-hl(0, "NeoTreeTitleBar", { fg = c.bg_lighter, bg = c.fg_dim, bold = true })
+hl(0, "NeoTreeTitleBar", { fg = c.bg_darker, bg = c.fg_dim, bold = true })
 hl(0, "NeoTreeFloatBorder", { fg = c.fg_muted })
 hl(0, "NeoTreeFloatTitle", { fg = c.header, bold = true })
 
--- Vimoire Navigator (earthy accent colors)
+-- Vimoire Navigator (oceanic accents)
 hl(0, "VimoireBook", { fg = c.book, bold = true })
 hl(0, "VimoireManuscript", { fg = c.manuscript, bold = true })
 hl(0, "VimoireSection", { fg = c.section, bold = true })
@@ -135,12 +135,12 @@ hl(0, "VimoirePlanningItem", { fg = c.planning_item })
 hl(0, "VimoireExport", { fg = c.export, bold = true })
 hl(0, "VimoireExportFolder", { fg = c.export_folder, bold = true })
 hl(0, "VimoireExportFile", { fg = c.export_file })
-hl(0, "VimoireActionButton", { fg = c.bg_lighter, bg = c.export, bold = true })
+hl(0, "VimoireActionButton", { fg = c.bg_darker, bg = c.export, bold = true })
 hl(0, "VimoireWinbar", { fg = c.fg, bold = true })
 
 -- Vimoire Start Screen
 hl(0, "VimoireLogo", { fg = c.header, bold = true })
-hl(0, "VimoireLogoGlow", { fg = c.bg_darker })
+hl(0, "VimoireLogoGlow", { fg = c.bg_lighter })
 hl(0, "VimoireTagline", { fg = c.fg_muted, italic = true })
 hl(0, "VimoireStar", { fg = c.metadata })
 hl(0, "VimoireHeader", { fg = c.header, bold = true })
@@ -167,12 +167,12 @@ hl(0, "vimoireMetaMarkText", { fg = c.metadata })
 hl(0, "vimoireMetaTodo", { fg = c.bg, bg = c.todo })
 hl(0, "vimoireMetaTodoText", { fg = c.bg, bg = c.todo })
 
--- Inline formatting (colored themes get tints)
+-- Inline formatting (oceanic tints)
 hl(0, "vimoireBoldItalicStyle", { fg = c.italic, bold = true, italic = true })
 hl(0, "vimoireBoldStyle", { bold = true })
 hl(0, "vimoireItalicStyle", { fg = c.italic, italic = true })
 hl(0, "vimoireUnderlineStyle", { underline = true })
-hl(0, "vimoireDialogue", { fg = c.dialogue, bold = true })
+hl(0, "vimoireDialogue", { fg = c.dialogue })
 
 -- Statusline (context-colored backgrounds)
 hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })

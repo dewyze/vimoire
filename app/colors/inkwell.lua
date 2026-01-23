@@ -3,7 +3,7 @@
 -- Like writing by candlelight in a leather-bound study
 
 vim.cmd("hi clear")
-vim.g.colors_name = "vimoire-inkwell"
+vim.g.colors_name = "inkwell"
 vim.o.background = "dark"
 
 local c = {

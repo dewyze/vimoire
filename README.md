@@ -74,19 +74,31 @@ Pandoc-powered export to **EPUB** and **DOCX**. Chapter numbering, scene breaks,
 
 ### Themes
 
-<p align="center">
-  <img src="assets/themes.png">
-</p>
+Eleven moods for writing. Switch with `:Theme` or set in config.
 
-Five moods for writing:
+#### Dark
 
-- **Inkwell** — warm dark, like writing by candlelight
-- **Parchment** — warm light, morning coffee and manuscript pages
-- **Vellum** — sepia tones, for that "ancient tome" aesthetic
-- **Umbra** — high contrast dark, for the minimalist in your soul
-- **Lumen** — high contrast light, aggressive clarity
+| Inkwell | Umbra | Abyss |
+|:---:|:---:|:---:|
+| ![Inkwell](assets/themes/inkwell.png) | ![Umbra](assets/themes/umbra.png) | ![Abyss](assets/themes/abyss.png) |
+| *Warm candlelight* | *High contrast* | *Ocean blues* |
 
-Switch with `:VimoireTheme` or set in config.
+| Hollow | Dusk | Tempest |
+|:---:|:---:|:---:|
+| ![Hollow](assets/themes/hollow.png) | ![Dusk](assets/themes/dusk.png) | ![Tempest](assets/themes/tempest.png) |
+| *Forest greens* | *Twilight purples* | *Storm grays* |
+
+| Hearth | Nebula |  |
+|:---:|:---:|:---:|
+| ![Hearth](assets/themes/hearth.png) | ![Nebula](assets/themes/nebula.png) |  |
+| *Firelight reds* | *Cosmic purples* |  |
+
+#### Light
+
+| Parchment | Vellum | Lumen |
+|:---:|:---:|:---:|
+| ![Parchment](assets/themes/parchment.png) | ![Vellum](assets/themes/vellum.png) | ![Lumen](assets/themes/lumen.png) |
+| *Warm cream* | *Aged sepia* | *High contrast* |
 
 ### The Little Things
 
@@ -142,7 +154,7 @@ Customize via `~/.vimoire/config.lua`:
 
 ```lua
 return {
-  colorscheme = "vimoire-parchment",
+  colorscheme = "parchment",
 }
 ```
 

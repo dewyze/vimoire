@@ -115,23 +115,62 @@ end, { desc = "Insert a comment that won't appear in output" })
 
 -- Theme
 local THEMES = {
-  "vimoire-inkwell",
-  "vimoire-parchment",
-  "vimoire-vellum",
-  "vimoire-umbra",
-  "vimoire-lumen",
+  -- Dark
+  { name = "inkwell", desc = "Dark — Warm Candlelight" },
+  { name = "umbra", desc = "Dark — High Contrast" },
+  { name = "abyss", desc = "Dark — Ocean Blues" },
+  { name = "hollow", desc = "Dark — Forest Greens" },
+  { name = "dusk", desc = "Dark — Twilight Purples" },
+  { name = "tempest", desc = "Dark — Storm Grays" },
+  { name = "hearth", desc = "Dark — Firelight Reds" },
+  { name = "nebula", desc = "Dark — Cosmic Purples" },
+  -- Light
+  { name = "parchment", desc = "Light — Warm Cream" },
+  { name = "vellum", desc = "Light — Aged Sepia" },
+  { name = "lumen", desc = "Light — High Contrast" },
 }
 
 vim.api.nvim_create_user_command("Theme", function()
-  vim.ui.select(THEMES, {
-    prompt = "Select theme:",
-    snacks = { layout = { hidden = { "input" }, preview = false } },
-  }, function(choice)
-    if not choice then return end
+  local Snacks = require("snacks")
+  local original = vim.g.colors_name
 
-    vim.cmd.colorscheme(choice)
-    require("vimoire.core.preferences").set("colorscheme", choice)
-  end)
+  local current_file = vim.api.nvim_buf_get_name(0)
+  local items = vim.tbl_map(function(t)
+    return {
+      text = t.name,
+      file = current_file,
+      display = t.name:gsub("^%l", string.upper),
+      desc = t.desc,
+    }
+  end, THEMES)
+
+  Snacks.picker({
+    title = "Theme",
+    items = items,
+    format = function(item)
+      return {
+        { item.display, "Normal" },
+        { "  " },
+        { item.desc, "Comment" },
+      }
+    end,
+    preview = "colorscheme",
+    preset = "vertical",
+    on_close = function(picker)
+      -- Restore original if cancelled (no selection made)
+      if picker.preview.state.colorscheme and original then
+        vim.cmd.colorscheme(original)
+      end
+    end,
+    confirm = function(picker, item)
+      picker:close()
+      if item then
+        picker.preview.state.colorscheme = nil
+        vim.cmd.colorscheme(item.text)
+        require("vimoire.core.preferences").set("colorscheme", item.text)
+      end
+    end,
+  })
 end, { desc = "Select and save Vimoire colorscheme" })
 
 -- Images

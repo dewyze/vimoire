@@ -1,7 +1,7 @@
 local M = {}
 
 M.defaults = {
-  colorscheme = "vimoire-inkwell",
+  colorscheme = "inkwell",
   keymaps = {
     finder = {
       smart = "<leader>ff",

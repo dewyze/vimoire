@@ -1,61 +1,63 @@
--- Vimoire Umbra colorscheme
--- High contrast monochrome theme for pure focus
--- The darkest part of a shadow - nothing but you and the words
+-- Vimoire Tempest colorscheme
+-- Storm dark theme with steel grays and lightning accents
+-- Like writing during a thunderstorm, dramatic flashes in the dark
 
 vim.cmd("hi clear")
-vim.g.colors_name = "vimoire-umbra"
+vim.g.colors_name = "tempest"
 vim.o.background = "dark"
 
 local c = {
-  -- Base tones (near-monochrome, slight warmth)
-  bg = "#0e0e0e",
-  bg_darker = "#080808",
-  bg_lighter = "#1a1a1a",
-  fg = "#e4e0dc",
-  fg_dim = "#b0aca8",
-  fg_muted = "#606060",
+  -- Base tones (storm gray-blue)
+  bg = "#101418",
+  bg_darker = "#0a0c10",
+  bg_lighter = "#181c22",
+  fg = "#d4d8dc",
+  fg_dim = "#9ca0a8",
+  fg_muted = "#585c64",
 
-  -- Prose elements (minimal, grayscale)
-  header = "#d0d0d0",
-  metadata = "#808080",
-  todo = "#a0a0a0",
-  scene_break = "#505050",
+  -- Prose elements (steel with warm lightning)
+  header = "#b0b8c0",
+  metadata = "#8898a8",
+  todo = "#e8a048",
+  scene_break = "#484c54",
+  dialogue = "#c8c0a8",
+  italic = "#a8b0b8",
 
   -- UI accents
-  cursor_line = "#1a1a1a",
-  visual = "#2a2a2a",
-  search_bg = "#3a3a3a",
-  search_fg = "#e4e0dc",
-  match = "#c0c0c0",
+  cursor_line = "#161a1e",
+  visual = "#242830",
+  search_bg = "#303840",
+  search_fg = "#e0e4e8",
+  match = "#e8a048",
 
-  -- Neotree structure (hierarchy through brightness only)
-  book = "#e0e0e0",
-  manuscript = "#d0d0d0",
-  section = "#b0b0b0",
-  chapter = "#a0a0a0",
-  page = "#909090",
-  planning = "#888888",
-  planning_item = "#787878",
-  export = "#989898",
-  export_folder = "#888888",
-  export_file = "#787878",
+  -- Neotree structure (storm palette)
+  book = "#d0c8a0",
+  manuscript = "#a8b0c0",
+  section = "#8098b0",
+  chapter = "#78a0a0",
+  page = "#88a898",
+  planning = "#b89070",
+  planning_item = "#c8a080",
+  export = "#8888a0",
+  export_folder = "#787890",
+  export_file = "#9898b0",
 
-  -- Statusline contexts (brightness variations)
-  status_prose = "#080808",
-  status_notes = "#101010",
-  status_planning = "#0c0c0c",
-  status_export = "#0e0e0e",
+  -- Statusline contexts
+  status_prose = "#101418",
+  status_notes = "#10141a",
+  status_planning = "#141210",
+  status_export = "#101214",
 
-  -- Feedback (subtle)
+  -- Feedback
   error = "#c08080",
-  warning = "#c0b080",
-  info = "#8090a0",
-  hint = "#80a090",
+  warning = "#e8a048",
+  info = "#8098b0",
+  hint = "#78a0a0",
 
   -- Spellcheck
   spell_bad = "#c08080",
-  spell_cap = "#c0b080",
-  spell_rare = "#a090a0",
+  spell_cap = "#e8a048",
+  spell_rare = "#8898a8",
 }
 
 local hl = vim.api.nvim_set_hl
@@ -95,10 +97,10 @@ hl(0, "Comment", { fg = c.fg_muted, italic = true })
 hl(0, "Special", { fg = c.metadata })
 hl(0, "Identifier", { fg = c.fg })
 hl(0, "Directory", { fg = c.section })
-hl(0, "String", { fg = c.fg_dim })
-hl(0, "Statement", { fg = c.fg_dim })
-hl(0, "Function", { fg = c.fg_dim })
-hl(0, "Todo", { fg = c.bg, bg = c.todo })
+hl(0, "String", { fg = c.page })
+hl(0, "Statement", { fg = c.section })
+hl(0, "Function", { fg = c.chapter })
+hl(0, "Todo", { fg = c.bg, bg = c.todo, bold = true })
 
 -- Diagnostics
 hl(0, "DiagnosticError", { fg = c.error })
@@ -121,7 +123,7 @@ hl(0, "NeoTreeTitleBar", { fg = c.bg_darker, bg = c.fg_dim, bold = true })
 hl(0, "NeoTreeFloatBorder", { fg = c.fg_muted })
 hl(0, "NeoTreeFloatTitle", { fg = c.header, bold = true })
 
--- Vimoire Navigator (brightness hierarchy, no color)
+-- Vimoire Navigator (storm accents)
 hl(0, "VimoireBook", { fg = c.book, bold = true })
 hl(0, "VimoireManuscript", { fg = c.manuscript, bold = true })
 hl(0, "VimoireSection", { fg = c.section, bold = true })
@@ -133,27 +135,27 @@ hl(0, "VimoirePlanningItem", { fg = c.planning_item })
 hl(0, "VimoireExport", { fg = c.export, bold = true })
 hl(0, "VimoireExportFolder", { fg = c.export_folder, bold = true })
 hl(0, "VimoireExportFile", { fg = c.export_file })
-hl(0, "VimoireActionButton", { fg = c.bg_darker, bg = c.fg_dim, bold = true })
+hl(0, "VimoireActionButton", { fg = c.bg_darker, bg = c.export, bold = true })
 hl(0, "VimoireWinbar", { fg = c.fg, bold = true })
 
 -- Vimoire Start Screen
 hl(0, "VimoireLogo", { fg = c.header, bold = true })
 hl(0, "VimoireLogoGlow", { fg = c.bg_lighter })
 hl(0, "VimoireTagline", { fg = c.fg_muted, italic = true })
-hl(0, "VimoireStar", { fg = c.fg_dim })
+hl(0, "VimoireStar", { fg = c.metadata })
 hl(0, "VimoireHeader", { fg = c.header, bold = true })
 hl(0, "VimoireProject", { fg = c.fg })
-hl(0, "VimoireProjectSelected", { fg = c.fg, bold = true, underline = true })
+hl(0, "VimoireProjectSelected", { fg = c.match, bold = true })
 hl(0, "VimoirePath", { fg = c.fg_muted })
 hl(0, "VimoireDate", { fg = c.fg_muted })
-hl(0, "VimoireAction", { fg = c.fg_dim })
-hl(0, "VimoireKey", { fg = c.fg, bold = true })
+hl(0, "VimoireAction", { fg = c.chapter })
+hl(0, "VimoireKey", { fg = c.todo, bold = true })
 
--- Vimoire Prose (minimal, text-focused)
+-- Vimoire Prose (steel and lightning)
 hl(0, "vimoireH1", { fg = c.header, bold = true })
 hl(0, "vimoireH2", { fg = c.header, bold = true })
 hl(0, "vimoireH3", { fg = c.header })
-hl(0, "vimoireH4", { fg = c.fg_dim })
+hl(0, "vimoireH4", { fg = c.header })
 hl(0, "vimoireH5", { fg = c.fg_dim })
 hl(0, "vimoireH6", { fg = c.fg_dim })
 hl(0, "vimoireSceneBreak", { fg = c.scene_break })
@@ -162,17 +164,17 @@ hl(0, "vimoireFencedDiv", { fg = c.fg_muted })
 hl(0, "vimoireMetaChapter", { fg = c.metadata })
 hl(0, "vimoireMetaMark", { fg = c.metadata })
 hl(0, "vimoireMetaMarkText", { fg = c.metadata })
-hl(0, "vimoireMetaTodo", { fg = c.fg, bg = c.bg_lighter })
-hl(0, "vimoireMetaTodoText", { fg = c.fg, bg = c.bg_lighter })
+hl(0, "vimoireMetaTodo", { fg = c.bg, bg = c.todo })
+hl(0, "vimoireMetaTodoText", { fg = c.bg, bg = c.todo })
 
--- Inline formatting (monochrome: attributes only, no color)
-hl(0, "vimoireBoldItalicStyle", { bold = true, italic = true })
+-- Inline formatting (cool steel with warm dialogue)
+hl(0, "vimoireBoldItalicStyle", { fg = c.italic, bold = true, italic = true })
 hl(0, "vimoireBoldStyle", { bold = true })
-hl(0, "vimoireItalicStyle", { italic = true })
+hl(0, "vimoireItalicStyle", { fg = c.italic, italic = true })
 hl(0, "vimoireUnderlineStyle", { underline = true })
-hl(0, "vimoireDialogue", { fg = c.fg_dim })
+hl(0, "vimoireDialogue", { fg = c.dialogue })
 
--- Statusline (brightness variations for context)
+-- Statusline (context-colored backgrounds)
 hl(0, "VimoireStatusProse", { fg = c.fg_dim, bg = c.status_prose })
 hl(0, "VimoireStatusNotes", { fg = c.section, bg = c.status_notes })
 hl(0, "VimoireStatusPlanning", { fg = c.planning, bg = c.status_planning })

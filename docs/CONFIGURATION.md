@@ -9,7 +9,7 @@ Only include settings you want to override. Everything else uses defaults.
 ```lua
 -- ~/.vimoire/config.lua
 return {
-  colorscheme = "vimoire-inkwell",
+  colorscheme = "inkwell",
 
   keymaps = {
     finder = {
@@ -94,14 +94,24 @@ return {
 
 ## colorscheme
 
-Default: `"vimoire-inkwell"`
+Default: `"inkwell"`
 
 Available themes:
-- `vimoire-inkwell` — warm dark (default)
-- `vimoire-parchment` — warm light
-- `vimoire-vellum` — sepia
-- `vimoire-umbra` — high contrast monochrome dark
-- `vimoire-lumen` — high contrast monochrome light
+
+**Dark:**
+- `inkwell` — warm candlelight (default)
+- `umbra` — high contrast monochrome
+- `abyss` — ocean blues
+- `hollow` — forest greens
+- `dusk` — twilight purples
+- `tempest` — storm grays
+- `hearth` — firelight reds
+- `nebula` — cosmic purples
+
+**Light:**
+- `parchment` — warm cream
+- `vellum` — aged sepia
+- `lumen` — high contrast monochrome
 
 You can also change themes at runtime with `:Theme`.
 

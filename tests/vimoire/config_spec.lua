@@ -36,28 +36,28 @@ describe("config", function()
 
   describe("effective_colorscheme", function()
     it("returns default when no user config or preferences exist", function()
-      assert.equals("vimoire-inkwell", config.effective_colorscheme())
+      assert.equals("inkwell", config.effective_colorscheme())
     end)
 
     it("returns preferences colorscheme when no user config exists", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
-        colorscheme = "vimoire-parchment",
+        colorscheme = "parchment",
       }))
       package.loaded["vimoire.core.preferences"] = nil
 
-      assert.equals("vimoire-parchment", config.effective_colorscheme())
+      assert.equals("parchment", config.effective_colorscheme())
     end)
 
     it("returns user config colorscheme over preferences", function()
       helpers.write_file(user_config_dir .. "/config.lua", [[
-        return { colorscheme = "vimoire-umbra" }
+        return { colorscheme = "umbra" }
       ]])
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
-        colorscheme = "vimoire-parchment",
+        colorscheme = "parchment",
       }))
       package.loaded["vimoire.core.preferences"] = nil
 
-      assert.equals("vimoire-umbra", config.effective_colorscheme())
+      assert.equals("umbra", config.effective_colorscheme())
     end)
 
     it("returns preferences colorscheme when user config exists but has no colorscheme", function()
@@ -65,11 +65,11 @@ describe("config", function()
         return { editor = { textwidth = 100 } }
       ]])
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
-        colorscheme = "vimoire-vellum",
+        colorscheme = "vellum",
       }))
       package.loaded["vimoire.core.preferences"] = nil
 
-      assert.equals("vimoire-vellum", config.effective_colorscheme())
+      assert.equals("vellum", config.effective_colorscheme())
     end)
   end)
 end)
