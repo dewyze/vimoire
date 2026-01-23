@@ -20,7 +20,6 @@ M.defaults = {
     views = {
       home = "gvh",
       focus = "gvf",
-      focus_redistribute = "gvr",
     },
     snippets = {
       browse = "<leader>fs",

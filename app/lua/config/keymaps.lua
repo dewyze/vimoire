@@ -49,9 +49,6 @@ end
 if keymaps.views and keymaps.views.focus then
   vim.keymap.set("n", keymaps.views.focus, ":VimoireFocus<CR>", { desc = "Vimoire: toggle focus mode" })
 end
-if keymaps.views and keymaps.views.focus_redistribute then
-  vim.keymap.set("n", keymaps.views.focus_redistribute, ":VimoireFocusRedistribute<CR>", { desc = "Vimoire: recalculate focus margins" })
-end
 
 -- Snippets keymaps
 if keymaps.snippets then
