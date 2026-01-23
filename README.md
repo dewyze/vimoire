@@ -3,7 +3,7 @@
 **Vim + Grimoire.** A magical tome for crafting stories.
 
 <p align="center">
-  <img src="assets/icon.png" width="128">
+  <img src="assets/icon.png" width="256">
 </p>
 
 Vimoire is a standalone Neovim app for writing long-form fiction. Modal editing, manuscript structure, and export to real formats—without the cruft of an IDE or the mouse-dependency of traditional writing software.
@@ -25,7 +25,7 @@ Vimoire takes that muscle memory and wraps it in an environment built for storie
 ### Manuscript Structure
 
 <p align="center">
-  <img src="assets/navigator_manuscript.png">
+  <img src="assets/navigator_manuscript.png" width="400">
 </p>
 
 Organize your book with **chapters**, **pages**, and **sections**:
@@ -76,29 +76,18 @@ Pandoc-powered export to **EPUB** and **DOCX**. Chapter numbering, scene breaks,
 
 Eleven moods for writing. Switch with `:Theme` or set in config.
 
-#### Dark
-
-| Inkwell | Umbra | Abyss |
+|   |   |   |
 |:---:|:---:|:---:|
+| **Dark** | | |
 | ![Inkwell](assets/themes/inkwell.png) | ![Umbra](assets/themes/umbra.png) | ![Abyss](assets/themes/abyss.png) |
-| *Warm candlelight* | *High contrast* | *Ocean blues* |
-
-| Hollow | Dusk | Tempest |
-|:---:|:---:|:---:|
+| Inkwell · *Warm candlelight* | Umbra · *High contrast* | Abyss · *Ocean blues* |
 | ![Hollow](assets/themes/hollow.png) | ![Dusk](assets/themes/dusk.png) | ![Tempest](assets/themes/tempest.png) |
-| *Forest greens* | *Twilight purples* | *Storm grays* |
-
-| Hearth | Nebula |  |
-|:---:|:---:|:---:|
-| ![Hearth](assets/themes/hearth.png) | ![Nebula](assets/themes/nebula.png) |  |
-| *Firelight reds* | *Cosmic purples* |  |
-
-#### Light
-
-| Parchment | Vellum | Lumen |
-|:---:|:---:|:---:|
+| Hollow · *Forest greens* | Dusk · *Twilight purples* | Tempest · *Storm grays* |
+| ![Hearth](assets/themes/hearth.png) | ![Nebula](assets/themes/nebula.png) | |
+| Hearth · *Firelight reds* | Nebula · *Cosmic purples* | |
+| **Light** | | |
 | ![Parchment](assets/themes/parchment.png) | ![Vellum](assets/themes/vellum.png) | ![Lumen](assets/themes/lumen.png) |
-| *Warm cream* | *Aged sepia* | *High contrast* |
+| Parchment · *Warm cream* | Vellum · *Aged sepia* | Lumen · *High contrast* |
 
 ### The Little Things
 
@@ -173,6 +162,10 @@ See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 - **Muscle memory matters.** If you know vim, you know 90% of Vimoire.
 - **Plain text is forever.** Your prose lives in markdown files you can read anywhere.
 - **Fewer features, done well.** We're not building Scrivener. We're building a grimoire.
+
+## About This Project
+
+Vimoire is almost entirely vibe-coded—built with heavy LLM assistance to scratch a personal itch. This means there are likely bugs, antipatterns, or rough edges I haven't caught. If you spot something off, please open an issue. Feedback genuinely welcome.
 
 ## License
 
