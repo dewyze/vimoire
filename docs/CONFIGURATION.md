@@ -2,28 +2,97 @@
 
 Vimoire loads user configuration from `~/.vimoire/config.lua`. This file is separate from the app code (which lives in `~/.config/vimoire/` via `NVIM_APPNAME`).
 
-## Example Configuration
+Only include settings you want to override. Everything else uses defaults.
+
+## Complete Default Configuration
 
 ```lua
 -- ~/.vimoire/config.lua
 return {
-  colorscheme = "vimoire-parchment",
+  colorscheme = "vimoire-inkwell",
+
   keymaps = {
     finder = {
-      navigate = "<C-p>",
+      smart = "<leader>ff",
+      smart_alt = "<C-p>",
+      manuscript = "<leader>fm",
+      planning = "<leader>fp",
+      snippets = "<leader>fs",
+      exports = "<leader>fe",
+    },
+    navigator = {
+      toggle = "<leader>nt",
+      reveal = "<leader>nf",
+      manuscript = "<leader>nm",
+      export = "<leader>ne",
+    },
+    views = {
+      home = "<leader>vh",
+      focus = "<leader>vf",
+    },
+    writing = {
+      notes = "<leader>wn",
+      marks = "<leader>wm",
+      toggle_kind = "<leader>wk",
+      prose = "<leader>ww",
+    },
+    insert = {
+      mark = "<leader>im",
+      image = "<leader>ii",
+    },
+    snippets = {
+      insert = "<leader>si",
+      extract = "<leader>sx",
+    },
+    misc = {
+      clear_highlight = "<Esc><Esc>",
+      save = "<D-s>",
+      copy = "<D-c>",
+      paste = "<D-v>",
     },
   },
+
+  ui = {
+    mouse_mode = "single_click",
+  },
+
   editor = {
-    textwidth = 72,
+    textwidth = 86,
+    scrolloff = 5,
+    tabstop = 4,
+    shiftwidth = 4,
+    wrap = true,
+    linebreak = true,
+    visual_line_navigation = true,
+    autosave = false,
+    focus_mode = true,
+  },
+
+  finder = {
+    preview = true,
+  },
+
+  export = {
+    auto_open = true,
+  },
+
+  neovide = {
+    font = "Iosevka Term Slab:h16",
+    linespace = 8,
+    padding = {
+      top = 20,
+      left = 20,
+      right = 20,
+      bottom = 20,
+    },
+    scroll_animation_length = 0.3,
   },
 }
 ```
 
-Only include the settings you want to override. Everything else uses defaults.
+---
 
-## Options Reference
-
-### colorscheme
+## colorscheme
 
 Default: `"vimoire-inkwell"`
 
@@ -34,97 +103,126 @@ Available themes:
 - `vimoire-umbra` — high contrast monochrome dark
 - `vimoire-lumen` — high contrast monochrome light
 
-You can also set the theme at runtime with `:VimoireTheme`.
+You can also change themes at runtime with `:Theme`.
 
-### keymaps
+---
 
-#### keymaps.finder
+## keymaps
+
+All keymaps use `<leader>` with mnemonic prefixes. Set any key to `false` to disable it.
+
+### keymaps.finder
 
 Pickers for navigating your manuscript.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `navigate` | `<leader>ff` | All items |
+| `smart` | `<leader>ff` | Context-aware: all items |
+| `smart_alt` | `<C-p>` | Alternate binding for smart finder |
 | `manuscript` | `<leader>fm` | Manuscript entries only |
-| `characters` | `<leader>fc` | Characters folder |
-| `settings` | `<leader>fp` | Settings folder |
-| `reference` | `<leader>fr` | Reference folder |
+| `planning` | `<leader>fp` | All planning items |
+| `snippets` | `<leader>fs` | Browse snippets |
 | `exports` | `<leader>fe` | Export output files |
 
-Set any key to `false` to disable it.
-
-#### keymaps.navigator
+### keymaps.navigator
 
 Neo-tree sidebar controls.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `toggle` | `<LocalLeader>nt` | Toggle tree visibility |
-| `reveal` | `<LocalLeader>nf` | Reveal current file in tree |
-| `manuscript` | `gvm` | Switch to manuscript view |
-| `export` | `gve` | Switch to export view |
+| `toggle` | `<leader>nt` | Toggle tree visibility |
+| `reveal` | `<leader>nf` | Reveal current file in tree |
+| `manuscript` | `<leader>nm` | Switch to manuscript view |
+| `export` | `<leader>ne` | Switch to export view |
 
-#### keymaps.views
+### keymaps.views
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `home` | `gvh` | Show dashboard |
-| `focus` | `gvf` | Toggle focus mode |
+| `home` | `<leader>vh` | Show dashboard |
+| `focus` | `<leader>vf` | Toggle focus mode |
 
-#### keymaps.snippets
+### keymaps.writing
 
-Snippet management for the current chapter/page.
+Buffer-level actions for prose files.
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `notes` | `<leader>wn` | Open notes for current chapter/page |
+| `marks` | `<leader>wm` | Browse marks in current buffer |
+| `toggle_kind` | `<leader>wk` | Toggle chapter/page for current entry |
+| `prose` | `<leader>ww` | Open prose for current chapter/page |
+
+### keymaps.insert
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `mark` | `<leader>im` | Insert a mark tag |
+| `image` | `<leader>ii` | Insert an image |
+
+### keymaps.snippets
 
 | Key | Default | Mode | Description |
 |-----|---------|------|-------------|
-| `browse` | `<leader>fs` | normal | Browse and insert snippets |
-| `extract` | `<leader>xs` | visual | Cut selection to snippet |
+| `insert` | `<leader>si` | normal | Browse and insert snippets |
+| `extract` | `<leader>sx` | visual | Cut selection to snippet |
 
-#### keymaps.buffer
-
-Buffer-level actions for the current file.
+### keymaps.misc
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `notes` | `<leader>N` | Open notes for current chapter/page |
-| `marks` | `<leader>M` | Browse marks in current buffer |
-| `toggle_kind` | `<leader>T` | Toggle chapter/page for current entry |
+| `clear_highlight` | `<Esc><Esc>` | Clear search highlight |
+| `save` | `<D-s>` | Save (Cmd+S on macOS) |
+| `copy` | `<D-c>` | Copy (Cmd+C on macOS) |
+| `paste` | `<D-v>` | Paste (Cmd+V on macOS) |
 
-### editor
+---
 
-Settings applied to prose and markdown buffers.
-
-| Key | Default | Description |
-|-----|---------|-------------|
-| `textwidth` | `80` | Text width for formatting |
-| `scrolloff` | `5` | Lines to keep above/below cursor |
-| `tabstop` | `4` | Tab display width |
-| `shiftwidth` | `4` | Indent width |
-| `wrap` | `true` | Soft wrap long lines |
-| `linebreak` | `true` | Wrap at word boundaries |
-| `visual_line_navigation` | `true` | Map j/k to gj/gk (navigate visual lines) |
-
-### ui
+## ui
 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `mouse_mode` | `"single_click"` | Tree open behavior: `"single_click"` or `"double_click"` |
 
-### finder
+---
+
+## editor
+
+Settings applied to prose and notes buffers.
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `textwidth` | `86` | Text width for formatting |
+| `scrolloff` | `5` | Lines to keep above/below cursor |
+| `tabstop` | `4` | Tab display width |
+| `shiftwidth` | `4` | Indent width |
+| `wrap` | `true` | Soft wrap long lines |
+| `linebreak` | `true` | Wrap at word boundaries |
+| `visual_line_navigation` | `true` | Map j/k to gj/gk |
+| `autosave` | `false` | Auto-save on cursor hold and buffer leave |
+| `focus_mode` | `true` | Enable focus mode by default |
+
+---
+
+## finder
 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `preview` | `true` | Show file preview in picker |
 
-### export
+---
+
+## export
 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `auto_open` | `true` | Open exported file after successful export |
 
-Use `--no-open` flag to skip auto-open for a single export: `:VimoireExport --no-open`
+Use `--no-open` flag to skip auto-open for a single export: `:Export --no-open`
 
-### neovide
+---
+
+## neovide
 
 Settings for Neovide (ignored in terminal Neovim).
 
@@ -138,7 +236,9 @@ Settings for Neovide (ignored in terminal Neovim).
 | `padding.bottom` | `20` | Window padding |
 | `scroll_animation_length` | `0.3` | Scroll animation duration |
 
-## Neo-tree Keymaps
+---
+
+## Navigator Keymaps
 
 These keymaps are active when focused on the manuscript tree. They are not configurable.
 
@@ -158,6 +258,5 @@ These keymaps are active when focused on the manuscript tree. They are not confi
 | `r` | Rename |
 | `d` | Delete |
 | `n` | Open notes |
-| `m` | Move (not yet implemented) |
 | `J` / `K` | Reorder down/up |
 | `T` | Toggle chapter/page |

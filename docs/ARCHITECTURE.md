@@ -1,30 +1,28 @@
-# Vimoire — Architecture Overview
+# Vimoire — Architecture
 
-### Sections
-
-**book.yml**: User-facing book identity file (title, author, description, publishing metadata).
-**manuscript.json**: Internal app state (structure, ordering, IDs). Not user-edited.
-**Book project structure**: A single project uses a specific UUID and domain based file structure.
-**Plugin architecture**: Suggested example architecture for the lua plugin we are writing.
+Internal reference for understanding how Vimoire structures data.
 
 ---
 
 ## book.yml
 
-User-facing identity file. See `BOOK_YML_SPEC.md` for full specification.
+User-facing identity file. Editable by the user.
 
 ```yaml
 title: "The Unreliable Memoirs of Gerald the Sentient Toaster"
 description: "A toaster gains sentience and has feelings about bread."
 author: "Author Name"
 language: en
+cover: "assets/images/cover.jpg"  # optional
 ```
 
 ---
 
 ## manuscript.json
 
-Internal structural state. Nested `items` array contains entries (chapters, pages) and sections. Sections have their own nested `items` array. This makes tree operations (K/J reordering, moving between sections) natural—just array manipulations.
+Internal structural state. Not user-edited—modified via app operations.
+
+Nested `items` array contains entries (chapters, pages) and sections. Sections have their own nested `items` array. This makes tree operations (K/J reordering, moving between sections) natural—just array manipulations.
 
 ```json
 {
@@ -51,19 +49,19 @@ Internal structural state. Nested `items` array contains entries (chapters, page
     }
   ],
   "characters": [
-    { "id": "char1", "name": "Gerald", "file": "gerald.md" }
+    { "id": "chr001", "name": "Gerald" }
   ],
   "settings": [
-    { "id": "set1", "name": "The Kitchen", "file": "kitchen.md" }
+    { "id": "set001", "name": "The Kitchen" }
   ],
   "reference": [
-    { "id": "ref1", "name": "Sentience Theory", "file": "sentience.md" },
+    { "id": "ref001", "name": "Sentience Theory" },
     {
-      "id": "sub1",
+      "id": "sub001",
       "kind": "subfolder",
       "name": "Bread",
       "items": [
-        { "id": "ref2", "name": "Types of Bread", "file": "types.md" }
+        { "id": "ref002", "name": "Types of Bread" }
       ]
     }
   ]
@@ -75,123 +73,74 @@ Internal structural state. Nested `items` array contains entries (chapters, page
 - `page` — unnumbered (title pages, interludes, appendices), has prose.md and notes.md
 - `section` — container only, no files, just groups entries
 
-**Planning item kinds:**
-- Planning items have `id`, `name`, and `file` (relative path)
-- `subfolder` — container for nested planning items, has `items` array
-
-**Extras (notes, snippets, comments):**
-- Documents have an `extras` flag controlling access to notes.md, snippets.json, and comments.json
-- Entries (chapters, pages) have `extras = true` — they get extras
-- Planning items have `extras = false` — just the main file
-
-**Document path methods:**
-- `dir_path()` — base directory for the document (`<root>/<base>/<id>`)
-- `text_path()` — main content file (entries: `prose.md`, planning: `text.md`)
-- `notes_path()` — notes file, nil if extras disabled (`dir_path()/notes.md`)
+**Planning items:**
+- Have `id` and `name`, stored as `planning/<id>/text.md`
+- `subfolder` — container for nested items (reference only), has `items` array
 
 ---
 
-## Book Project File Structure
+## File Structure
 
 ```
 book_root/
-  book.yml              # user-facing book identity
-  manuscript.json       # internal structural state
+  book.yml                    # user-facing book identity
+  manuscript.json             # internal structural state
 
   entries/
-    <uuid>/              # chapters and pages
+    <id>/                     # chapters and pages
       prose.md
       notes.md
-      comments.json
-      snippets.json
 
   planning/
-    <uuid>/              # planning items (characters, settings, reference, orphaned_notes)
+    <id>/                     # characters, settings, reference, orphaned_notes
       text.md
 
-  notes.md
+  snippets/
+    <id>.md                   # extracted text snippets
+
   assets/
-  spell/en.add
-  build/
+    images/                   # book images, cover
+
+  exports/
+    templates/                # pandoc templates (epub.css, etc.)
+    configs/                  # export configuration YAML
+    output/                   # generated EPUB/DOCX
+
+  spell/
+    en.add                    # book-local dictionary
 ```
 
 Note: Sections exist only in manuscript.json as containers—no files on disk.
 
 ---
 
-## Neotree Navigation Operations
+## ID Scheme
 
-The neotree source provides a hierarchical manuscript view with the following operations:
-
-**Manuscript (root):**
-- Add section, chapter, or page
-
-**Section:**
-- Rename section
-- Remove section (with safety checks)
-- Move section up/down (reorder)
-- Add chapter or page
-
-**Chapter/Page:**
-- Open prose.md
-- Rename
-- Add sibling (chapter or page in same parent)
-- Remove (prompts user about snippet handling: transfer or delete)
-- Move up/down (reorder)
-
-**Planning Folders (Characters, Settings, Reference):**
-- Add item (character, setting, or reference)
-- Items display alphabetically; fuzzy finder recommended for large lists
-
-**Planning Items (Character, Setting, Reference files):**
-- Open file
-- Add sibling item
-- Remove file
-- Edit frontmatter (name, age/location) directly in editor
-
----
-
-## Notes
-
-- This is a suggested structure. Adjust as needed.
-- Vimoire runs in isolated `NVIM_APPNAME=vimoire` config.
-- Plotting can be extracted to separate plugin later.
-- **Files should be opened via plugin commands** (neotree, pickers), not directly with `:e`. This allows buffer metadata to be set on open.
+All entities use **6-character alphanumeric IDs** (a-z, 0-9) generated randomly with collision detection. At 36^6 combinations (2.1 billion), collisions are statistically impossible for books of any practical size.
 
 ---
 
 ## Buffer Metadata
 
-When files are opened via neotree or pickers, the buffer is tagged with `vim.b.vimoire_item_id` containing the item's ID. This enables buffer-context commands like `:VimoireNotes` to know which chapter/page the user is editing.
+When files are opened via navigator or pickers, the buffer is tagged with `vim.b.vimoire_item_id`. This enables buffer-context commands like `:Notes` to know which chapter/page the user is editing.
 
 **Shared open logic:** `vimoire.navigation.open` provides `open_item(item)` which:
 1. Opens the file with `:edit`
 2. Sets `vim.b.vimoire_item_id`
 
-Both neotree and pickers use this to ensure consistent behavior.
+Both navigator and pickers use this to ensure consistent behavior.
 
 ---
 
-## ID Scheme
+## Bootstrap
 
-Chapters, sections, and other entities use **6-character alphanumeric IDs** (a-z, 0-9) generated randomly with collision detection. At 36^6 combinations (2.1 billion), collisions are statistically impossible for books of any practical size. ID generation includes a collision check against existing IDs in the manuscript.
-
----
-
-## Bootstrap & App Launch (Future-Proofing)
-
-Currently, vimoire requires the user to open Neovim from the manuscript root directory. **Future app packaging** may want:
-- File picker dialog to select a manuscript folder
-- Command-line argument for manuscript path
-- Remember last opened project
-
-**Design constraint for init.lua:** Build it to accept manuscript path from multiple sources (in order):
+Vimoire accepts manuscript path from multiple sources (in order):
 1. Command-line argument (passed by app launcher)
 2. Environment variable (set by wrapper script)
 3. Current working directory (fallback)
-4. User prompt (if not found)
+4. Dashboard prompt (if not found)
 
-This allows the core logic to remain unchanged while supporting different launch modes (CLI, file picker, remembered project) without refactoring later.
+This allows the core logic to support different launch modes (CLI, app bundle, remembered project) without refactoring.
 
 ---
 
@@ -199,56 +148,8 @@ This allows the core logic to remain unchanged while supporting different launch
 
 **Location:** `~/.vimoire/config.lua`
 
-This is intentionally separate from `~/.config/vimoire/` (where app code lives via `NVIM_APPNAME`). This separation means:
+Separate from `~/.config/vimoire/` (app code via `NVIM_APPNAME`). This means:
 - App code location varies (dev symlink, Homebrew install, etc.)
-- User config location is always `~/.vimoire/` regardless of install method
-- No conflicts between app code and user files
+- User config is always `~/.vimoire/` regardless of install method
 
-**Loading strategy:**
-- App code uses `vimoire.config` module with defaults
-- On startup, explicitly loads `~/.vimoire/config.lua` (hardcoded path)
-- User config merged with defaults using `vim.tbl_deep_extend("force", defaults, user_config)`
-
-**Example user config:**
-```lua
-return {
-  colorscheme = "vimoire-light",
-  keymaps = {
-    finder = {
-      navigate = "<leader>ff",
-    },
-  },
-}
-```
-
-**Development setup:**
-- Symlink: `ln -s /path/to/repo/app ~/.config/vimoire`
-- User config at `~/.vimoire/config.lua` (create manually if needed)
-
----
-
-## Colorschemes
-
-Vimoire uses Neovim's native colorscheme system.
-
-**Shipped colorschemes** (in `app/colors/`):
-- `vimoire-inkwell` — warm dark theme (default)
-- `vimoire-parchment` — warm light theme
-- `vimoire-vellum` — sepia/manuscript theme
-- `vimoire-umbra` — high contrast monochrome dark theme
-- `vimoire-lumen` — high contrast monochrome light theme
-
-**User override:** Set `colorscheme` in `~/.vimoire/config.lua` or use `:colorscheme` at runtime.
-
-**Custom highlight groups:**
-
-Prose syntax (defined in `syntax/vimoire_prose.vim` with `highlight default`):
-- `vimoireH1` through `vimoireH6`, `vimoireSceneBreak`, `vimoireBlockQuote`, `vimoireFencedDiv`
-- `vimoireMetaChapter`, `vimoireMetaMark`, `vimoireMetaMarkText`, `vimoireMetaTodo`, `vimoireMetaTodoText`
-- `vimoireBoldStyle`, `vimoireItalicStyle`, `vimoireUnderlineStyle`, `vimoireBoldItalicStyle`
-
-UI groups (fallbacks in `lua/vimoire/highlights.lua` via ColorScheme autocmd):
-- Navigator: `VimoireBook`, `VimoireManuscript`, `VimoireSection`, `VimoireChapter`, `VimoirePage`, `VimoirePlanning`, `VimoirePlanningSubfolder`, `VimoirePlanningItem`
-- Start screen: `VimoireLogo`, `VimoireTagline`, `VimoireStar`, `VimoireHeader`, `VimoireProject`, `VimoireProjectSelected`, `VimoirePath`, `VimoireDate`, `VimoireAction`, `VimoireKey`
-
-**Third-party colorschemes:** Work automatically via fallback links to standard groups (Title, Comment, Function, etc.). Vimoire colorschemes override with specific colors.
+See [CONFIGURATION.md](CONFIGURATION.md) for all options.
