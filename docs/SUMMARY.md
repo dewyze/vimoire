@@ -10,7 +10,7 @@ See `ARCHITECTURE.md` for file structures, project layout, and plugin module arc
 
 ## Features
 
-**Structure & Navigation** — Neotree shows chapters/sections by order; Telescope for fast jump; create/rename/delete/reorder chapters (atomic JSON+FS updates).
+**Structure & Navigation** — Neotree shows chapters/sections by order; pickers for fast jump; create/rename/delete/reorder chapters (atomic JSON+FS updates).
 
 **Authoring** — Custom filetype `vimoire.markdown` with role-based settings. Panels for notes, snippets, comments tied to each chapter.
 

@@ -40,7 +40,7 @@ You can also set the theme at runtime with `:VimoireTheme`.
 
 #### keymaps.finder
 
-Telescope pickers for navigating your manuscript.
+Pickers for navigating your manuscript.
 
 | Key | Default | Description |
 |-----|---------|-------------|
@@ -114,7 +114,7 @@ Settings applied to prose and markdown buffers.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `preview` | `true` | Show file preview in Telescope |
+| `preview` | `true` | Show file preview in picker |
 
 ### export
 

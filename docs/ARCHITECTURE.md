@@ -156,19 +156,19 @@ The neotree source provides a hierarchical manuscript view with the following op
 - This is a suggested structure. Adjust as needed.
 - Vimoire runs in isolated `NVIM_APPNAME=vimoire` config.
 - Plotting can be extracted to separate plugin later.
-- **Files should be opened via plugin commands** (neotree, telescope), not directly with `:e`. This allows buffer metadata to be set on open.
+- **Files should be opened via plugin commands** (neotree, pickers), not directly with `:e`. This allows buffer metadata to be set on open.
 
 ---
 
 ## Buffer Metadata
 
-When files are opened via neotree or telescope, the buffer is tagged with `vim.b.vimoire_item_id` containing the item's ID. This enables buffer-context commands like `:VimoireNotes` to know which chapter/page the user is editing.
+When files are opened via neotree or pickers, the buffer is tagged with `vim.b.vimoire_item_id` containing the item's ID. This enables buffer-context commands like `:VimoireNotes` to know which chapter/page the user is editing.
 
 **Shared open logic:** `vimoire.navigation.open` provides `open_item(item)` which:
 1. Opens the file with `:edit`
 2. Sets `vim.b.vimoire_item_id`
 
-Both neotree and telescope use this to ensure consistent behavior.
+Both neotree and pickers use this to ensure consistent behavior.
 
 ---
 
