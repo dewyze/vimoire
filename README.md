@@ -67,7 +67,7 @@ The `g` prefix escapes to buffer lines when you need them.
 When it's time to share your work:
 
 ```
-:VimoireExport
+:Export
 ```
 
 Pandoc-powered export to **EPUB** and **DOCX**. Chapter numbering, scene breaks, and proper formatting—handled.
@@ -114,7 +114,7 @@ Eleven moods for writing. Switch with `:Theme` or set in config.
 3. Use the navigator (`<leader>nt`) to browse your manuscript
 4. `a` to add chapters, `K`/`J` to reorder, `<CR>` to open
 5. Write. `<leader>fm` to jump between chapters.
-6. `:VimoireExport` when you're ready to share
+6. `:Export` when you're ready to share
 
 Your prose lives in plain markdown files—readable anywhere, forever.
 
