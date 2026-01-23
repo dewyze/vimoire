@@ -4,18 +4,18 @@ require("config.commands.snippets")
 require("config.commands.navigation")
 
 -- Focus commands
-vim.api.nvim_create_user_command("VimoireFocus", function()
+vim.api.nvim_create_user_command("Focus", function()
   require("vimoire.focus").toggle()
 end, { desc = "Toggle focus mode (margins)" })
 
 -- Dashboard
-vim.api.nvim_create_user_command("VimoireHome", function()
+vim.api.nvim_create_user_command("Home", function()
   require("neo-tree.command").execute({ action = "close" })
   require("vimoire.setup").show_dashboard()
 end, { desc = "Show Vimoire dashboard" })
 
 -- Item commands
-vim.api.nvim_create_user_command("VimoireNotes", function()
+vim.api.nvim_create_user_command("Notes", function()
   local state = require("vimoire.state")
   local item_id = vim.b.vimoire_item_id
   if not item_id then return end
@@ -30,7 +30,7 @@ vim.api.nvim_create_user_command("VimoireNotes", function()
   vim.b.vimoire_item_id = item.id
 end, { desc = "Open notes for current chapter/page" })
 
-vim.api.nvim_create_user_command("VimoireToggleKind", function()
+vim.api.nvim_create_user_command("ToggleKind", function()
   local state = require("vimoire.state")
   local item_id = vim.b.vimoire_item_id
   if not item_id then return end
@@ -48,7 +48,7 @@ vim.api.nvim_create_user_command("VimoireToggleKind", function()
 end, { desc = "Toggle chapter/page for current buffer" })
 
 -- Marks
-vim.api.nvim_create_user_command("VimoireMarks", function()
+vim.api.nvim_create_user_command("Marks", function()
   local marks = require("vimoire.marks")
   local Snacks = require("snacks")
 
@@ -89,7 +89,7 @@ vim.api.nvim_create_user_command("VimoireMarks", function()
   })
 end, { desc = "Browse marks in current buffer" })
 
-vim.api.nvim_create_user_command("VimoireInsertMark", function()
+vim.api.nvim_create_user_command("InsertMark", function()
   vim.api.nvim_put({ "{{mark}}" }, "c", true, true)
 end, { desc = "Insert mark at cursor" })
 
@@ -102,7 +102,7 @@ local THEMES = {
   "vimoire-lumen",
 }
 
-vim.api.nvim_create_user_command("VimoireTheme", function()
+vim.api.nvim_create_user_command("Theme", function()
   vim.ui.select(THEMES, {
     prompt = "Select theme:",
     snacks = { layout = { hidden = { "input" }, preview = false } },
@@ -115,7 +115,7 @@ vim.api.nvim_create_user_command("VimoireTheme", function()
 end, { desc = "Select and save Vimoire colorscheme" })
 
 -- Images
-vim.api.nvim_create_user_command("VimoireInsertImage", function()
+vim.api.nvim_create_user_command("InsertImage", function()
   local state = require("vimoire.state")
   local images = require("vimoire.images")
   local Snacks = require("snacks")

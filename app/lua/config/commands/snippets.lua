@@ -1,4 +1,4 @@
-vim.api.nvim_create_user_command("VimoireSnippets", function()
+vim.api.nvim_create_user_command("Snippets", function()
   local state = require("vimoire.state")
   local snippets = require("vimoire.snippets")
   local snippet_editor = require("vimoire.snippet_editor")
@@ -101,7 +101,7 @@ vim.api.nvim_create_user_command("VimoireSnippets", function()
   })
 end, { desc = "Browse snippets" })
 
-vim.api.nvim_create_user_command("VimoireSnippetExtract", function()
+vim.api.nvim_create_user_command("SnippetExtract", function()
   local state = require("vimoire.state")
   local snippet_editor = require("vimoire.snippet_editor")
 

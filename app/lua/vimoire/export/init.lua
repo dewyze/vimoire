@@ -143,7 +143,7 @@ function M.run_with_config(state, config_path)
   end
 
   if not cfg.entries or #cfg.entries == 0 then
-    return { success = false, error = "No entries in config. Add entries or run :VimoireExportConfig to regenerate." }
+    return { success = false, error = "No entries in config. Add entries or run :ExportConfig to regenerate." }
   end
 
   local entries = collector.collect_by_ids(state, cfg.entries)

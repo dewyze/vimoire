@@ -3,22 +3,22 @@ local keymaps = config.get("keymaps")
 
 -- Finder keymaps
 if keymaps.finder.smart then
-  vim.keymap.set("n", keymaps.finder.smart, ":VimoireNavigate<CR>", { desc = "Vimoire: smart finder" })
+  vim.keymap.set("n", keymaps.finder.smart, ":Navigate<CR>", { desc = "Vimoire: smart finder" })
 end
 if keymaps.finder.smart_alt then
-  vim.keymap.set("n", keymaps.finder.smart_alt, ":VimoireNavigate<CR>", { desc = "Vimoire: smart finder" })
+  vim.keymap.set("n", keymaps.finder.smart_alt, ":Navigate<CR>", { desc = "Vimoire: smart finder" })
 end
 if keymaps.finder.manuscript then
-  vim.keymap.set("n", keymaps.finder.manuscript, ":VimoireManuscript<CR>", { desc = "Vimoire: manuscript" })
+  vim.keymap.set("n", keymaps.finder.manuscript, ":Manuscript<CR>", { desc = "Vimoire: manuscript" })
 end
 if keymaps.finder.planning then
-  vim.keymap.set("n", keymaps.finder.planning, ":VimoirePlanning<CR>", { desc = "Vimoire: planning" })
+  vim.keymap.set("n", keymaps.finder.planning, ":Planning<CR>", { desc = "Vimoire: planning" })
 end
 if keymaps.finder.snippets then
-  vim.keymap.set("n", keymaps.finder.snippets, ":VimoireSnippets<CR>", { desc = "Vimoire: snippets" })
+  vim.keymap.set("n", keymaps.finder.snippets, ":Snippets<CR>", { desc = "Vimoire: snippets" })
 end
 if keymaps.finder.exports then
-  vim.keymap.set("n", keymaps.finder.exports, ":VimoireExports<CR>", { desc = "Vimoire: exports" })
+  vim.keymap.set("n", keymaps.finder.exports, ":Exports<CR>", { desc = "Vimoire: exports" })
 end
 
 -- Navigator keymaps
@@ -41,45 +41,45 @@ end
 
 -- Views keymaps
 if keymaps.views and keymaps.views.home then
-  vim.keymap.set("n", keymaps.views.home, ":VimoireHome<CR>", { desc = "Vimoire: home" })
+  vim.keymap.set("n", keymaps.views.home, ":Home<CR>", { desc = "Vimoire: home" })
 end
 if keymaps.views and keymaps.views.focus then
-  vim.keymap.set("n", keymaps.views.focus, ":VimoireFocus<CR>", { desc = "Vimoire: toggle focus mode" })
+  vim.keymap.set("n", keymaps.views.focus, ":Focus<CR>", { desc = "Vimoire: toggle focus mode" })
 end
 
 -- Writing context keymaps
 if keymaps.writing then
   if keymaps.writing.notes then
-    vim.keymap.set("n", keymaps.writing.notes, ":VimoireNotes<CR>", { desc = "Vimoire: open notes" })
+    vim.keymap.set("n", keymaps.writing.notes, ":Notes<CR>", { desc = "Vimoire: open notes" })
   end
   if keymaps.writing.marks then
-    vim.keymap.set("n", keymaps.writing.marks, ":VimoireMarks<CR>", { desc = "Vimoire: browse marks" })
+    vim.keymap.set("n", keymaps.writing.marks, ":Marks<CR>", { desc = "Vimoire: browse marks" })
   end
   if keymaps.writing.toggle_kind then
-    vim.keymap.set("n", keymaps.writing.toggle_kind, ":VimoireToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
+    vim.keymap.set("n", keymaps.writing.toggle_kind, ":ToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
   end
   if keymaps.writing.prose then
-    vim.keymap.set("n", keymaps.writing.prose, ":VimoireProse<CR>", { desc = "Vimoire: jump to prose" })
+    vim.keymap.set("n", keymaps.writing.prose, ":Prose<CR>", { desc = "Vimoire: jump to prose" })
   end
 end
 
 -- Insert keymaps
 if keymaps.insert then
   if keymaps.insert.mark then
-    vim.keymap.set("n", keymaps.insert.mark, ":VimoireInsertMark<CR>", { desc = "Vimoire: insert mark" })
+    vim.keymap.set("n", keymaps.insert.mark, ":InsertMark<CR>", { desc = "Vimoire: insert mark" })
   end
   if keymaps.insert.image then
-    vim.keymap.set("n", keymaps.insert.image, ":VimoireInsertImage<CR>", { desc = "Vimoire: insert image" })
+    vim.keymap.set("n", keymaps.insert.image, ":InsertImage<CR>", { desc = "Vimoire: insert image" })
   end
 end
 
 -- Snippets keymaps
 if keymaps.snippets then
   if keymaps.snippets.insert then
-    vim.keymap.set("n", keymaps.snippets.insert, ":VimoireSnippets<CR>", { desc = "Vimoire: insert snippet" })
+    vim.keymap.set("n", keymaps.snippets.insert, ":Snippets<CR>", { desc = "Vimoire: insert snippet" })
   end
   if keymaps.snippets.extract then
-    vim.keymap.set("v", keymaps.snippets.extract, ":VimoireSnippetExtract<CR>", { desc = "Vimoire: extract snippet" })
+    vim.keymap.set("v", keymaps.snippets.extract, ":SnippetExtract<CR>", { desc = "Vimoire: extract snippet" })
   end
 end
 

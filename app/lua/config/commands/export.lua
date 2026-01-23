@@ -8,7 +8,7 @@ local function open_file(path)
   end
 end
 
-vim.api.nvim_create_user_command("VimoireExportConfig", function(opts)
+vim.api.nvim_create_user_command("ExportConfig", function(opts)
   local state = require("vimoire.state")
   local config = require("vimoire.export.config")
   local Path = require("plenary.path")
@@ -34,7 +34,7 @@ vim.api.nvim_create_user_command("VimoireExportConfig", function(opts)
   vim.cmd("edit " .. config_path)
 end, { nargs = "?", desc = "Generate or update export config" })
 
-vim.api.nvim_create_user_command("VimoireExport", function(opts)
+vim.api.nvim_create_user_command("Export", function(opts)
   local state = require("vimoire.state")
   local export = require("vimoire.export")
   local config_mod = require("vimoire.config")
@@ -56,7 +56,7 @@ vim.api.nvim_create_user_command("VimoireExport", function(opts)
   local config_path = state.manuscript.root .. "/exports/configs/" .. name .. ".yml"
 
   if not Path:new(config_path):exists() then
-    vim.notify("Config not found. Run :VimoireExportConfig " .. name .. " first", vim.log.levels.ERROR)
+    vim.notify("Config not found. Run :ExportConfig " .. name .. " first", vim.log.levels.ERROR)
     return
   end
 
