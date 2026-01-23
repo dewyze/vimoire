@@ -24,7 +24,7 @@ vim.api.nvim_create_user_command("Snippets", function()
     return first_line
   end
 
-  local function build_preview(snippet)
+  local function build_preview_text(snippet)
     local parts = { snippet.text }
     if snippet.description then
       table.insert(parts, "\n\n------\n\n" .. snippet.description)
@@ -37,26 +37,14 @@ vim.api.nvim_create_user_command("Snippets", function()
     table.insert(picker_items, {
       text = truncate(snippet.text, 50),
       snippet = snippet,
-      preview_text = build_preview(snippet),
+      preview = { text = build_preview_text(snippet), ft = "markdown" },
     })
   end
 
   Snacks.picker({
     title = "Snippets",
     items = picker_items,
-    preview = function(ctx)
-      if ctx.item and ctx.item.preview_text then
-        local lines = vim.split(ctx.item.preview_text, "\n")
-        vim.bo[ctx.buf].modifiable = true
-        vim.api.nvim_buf_set_lines(ctx.buf, 0, -1, false, lines)
-        vim.bo[ctx.buf].modifiable = false
-        vim.bo[ctx.buf].filetype = "markdown"
-        vim.wo[ctx.win].wrap = true
-        vim.wo[ctx.win].linebreak = true
-        vim.wo[ctx.win].list = false
-      end
-      return true
-    end,
+    preview = "preview",
     format = function(item)
       return { { item.text, "Normal" } }
     end,

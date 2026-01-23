@@ -2,6 +2,7 @@
 require("config.commands.export")
 require("config.commands.snippets")
 require("config.commands.navigation")
+require("config.commands.palette")
 
 -- Focus commands
 vim.api.nvim_create_user_command("Focus", function()
