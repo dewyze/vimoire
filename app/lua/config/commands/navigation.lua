@@ -173,6 +173,56 @@ vim.api.nvim_create_user_command("VimoireNavigate", function()
   })
 end, { desc = "Browse all entries" })
 
+vim.api.nvim_create_user_command("VimoirePlanning", function()
+  local Snacks = require("snacks")
+  local finder = require("vimoire.finder")
+  local open = require("vimoire.navigation.open")
+  local state = require("vimoire.state")
+  local vimoire_config = require("vimoire.config")
+
+  local entries = finder.build_all_planning_entries()
+  local preview_enabled = vimoire_config.get("finder.preview")
+
+  Snacks.picker({
+    title = "Planning",
+    items = vim.tbl_map(function(entry)
+      return {
+        text = entry.name,
+        entry = entry,
+        file = entry.path,
+      }
+    end, entries),
+    format = function(item)
+      return { { item.text, "Normal" } }
+    end,
+    preview = preview_enabled and "file" or false,
+    confirm = function(picker, selected)
+      if selected and selected.entry.id then
+        picker:close()
+        local item = state.items[selected.entry.id]
+        if item then
+          open.open_item(item)
+        end
+      end
+    end,
+  })
+end, { desc = "Browse planning (characters, settings, reference)" })
+
+vim.api.nvim_create_user_command("VimoireProse", function()
+  local state = require("vimoire.state")
+  local item_id = vim.b.vimoire_item_id
+  if not item_id then return end
+
+  local item = state.items[item_id]
+  if not item then return end
+
+  local prose_path = item:text_path()
+  if not prose_path then return end
+
+  vim.cmd("edit " .. prose_path)
+  vim.b.vimoire_item_id = item.id
+end, { desc = "Jump to prose for current entry" })
+
 vim.api.nvim_create_user_command("VimoireExports", function()
   local Snacks = require("snacks")
   local finder = require("vimoire.finder")

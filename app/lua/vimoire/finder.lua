@@ -53,12 +53,8 @@ function M.build_planning_entries(planning_key)
   return entries
 end
 
-function M.build_all_entries()
+function M.build_all_planning_entries()
   local entries = {}
-
-  for _, entry in ipairs(M.build_manuscript_entries()) do
-    table.insert(entries, entry)
-  end
 
   for _, entry in ipairs(M.build_planning_entries("characters")) do
     entry.name = "Characters > " .. entry.name
@@ -72,6 +68,20 @@ function M.build_all_entries()
 
   for _, entry in ipairs(M.build_planning_entries("reference")) do
     entry.name = "Reference > " .. entry.name
+    table.insert(entries, entry)
+  end
+
+  return entries
+end
+
+function M.build_all_entries()
+  local entries = {}
+
+  for _, entry in ipairs(M.build_manuscript_entries()) do
+    table.insert(entries, entry)
+  end
+
+  for _, entry in ipairs(M.build_all_planning_entries()) do
     table.insert(entries, entry)
   end
 

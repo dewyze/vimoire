@@ -4,38 +4,42 @@ M.defaults = {
   colorscheme = "vimoire-inkwell",
   keymaps = {
     finder = {
-      navigate = "<leader>ff",
+      smart = "<leader>ff",
+      smart_alt = "<C-p>",
       manuscript = "<leader>fm",
-      characters = "<leader>fc",
-      settings = "<leader>fp",
-      reference = "<leader>fr",
+      planning = "<leader>fp",
+      snippets = "<leader>fs",
       exports = "<leader>fe",
     },
     navigator = {
-      toggle = "<LocalLeader>nt",
-      reveal = "<LocalLeader>nf",
-      manuscript = "gvm",
-      export = "gve",
+      toggle = "<leader>nt",
+      reveal = "<leader>nf",
+      manuscript = "<leader>nm",
+      export = "<leader>ne",
     },
     views = {
-      home = "gvh",
-      focus = "gvf",
+      home = "<leader>vh",
+      focus = "<leader>vf",
+    },
+    writing = {
+      notes = "<leader>wn",
+      marks = "<leader>wm",
+      toggle_kind = "<leader>wk",
+      prose = "<leader>ww",
+    },
+    insert = {
+      mark = "<leader>im",
+      image = "<leader>ii",
     },
     snippets = {
-      browse = "<leader>fs",
-      extract = "<leader>xs",
+      insert = "<leader>si",
+      extract = "<leader>sx",
     },
-    buffer = {
-      notes = "<leader>N",
-      marks = "<leader>M",
-      toggle_kind = "<leader>T",
-      insert_mark = "<leader>im",
-    },
-    images = {
-      insert = "<leader>fi",
-    },
-    editing = {
-      append_display_line = "gA",
+    misc = {
+      clear_highlight = "<Esc><Esc>",
+      save = "<D-s>",
+      copy = "<D-c>",
+      paste = "<D-v>",
     },
   },
   ui = {
