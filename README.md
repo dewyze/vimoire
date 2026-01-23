@@ -3,7 +3,7 @@
 **Vim + Grimoire.** A magical tome for crafting stories.
 
 <p align="center">
-  <img src="assets/icon.png" width="256">
+  <img src="assets/icon.png" width="384">
 </p>
 
 Vimoire is a standalone Neovim app for writing long-form fiction. Modal editing, manuscript structure, and export to real formats—without the cruft of an IDE or the mouse-dependency of traditional writing software.
