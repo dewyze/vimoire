@@ -1,7 +1,6 @@
 local setup = {}
 local state = require("vimoire.state")
 local recent = require("vimoire.core.recent")
-local preferences = require("vimoire.core.preferences")
 local statusline = require("vimoire.statusline")
 local autosave = require("vimoire.autosave")
 local focus = require("vimoire.focus")
@@ -50,9 +49,7 @@ function setup.on_manuscript_loaded()
         vim.b.vimoire_display_name = item:display_name_for_path(args.file)
 
         -- Store as last edited for this manuscript
-        local last_edited = preferences.get("last_edited") or {}
-        last_edited[state.manuscript.id] = item.id
-        preferences.set("last_edited", last_edited)
+        recent.set_last_edited(state.manuscript.root, item.id)
       end
     end
   })
@@ -61,8 +58,7 @@ function setup.on_manuscript_loaded()
     require("neo-tree.command").execute({ source = "manuscript" })
 
     -- Restore last edited file for this manuscript
-    local last_edited = preferences.get("last_edited") or {}
-    local item_id = last_edited[state.manuscript.id]
+    local item_id = recent.get_last_edited(state.manuscript.root)
     if item_id then
       local item = state.items[item_id]
       if item and item.text_path then

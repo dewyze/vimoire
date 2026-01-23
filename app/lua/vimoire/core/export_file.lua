@@ -20,6 +20,10 @@ function ExportFile:display_name()
   return self.name
 end
 
+function ExportFile:display_name_for_path(_filepath)
+  return self.name
+end
+
 function ExportFile:text_path()
   return self.path
 end

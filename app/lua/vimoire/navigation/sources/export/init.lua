@@ -38,7 +38,7 @@ local function run_export_picker()
 
   vim.ui.select(configs, { prompt = "Select config:" }, function(choice)
     if choice then
-      vim.cmd("VimoireExport " .. choice)
+      vim.cmd("Export " .. choice)
       state:rebuild()
       local manager = require("neo-tree.sources.manager")
       manager.refresh("export")
@@ -59,7 +59,7 @@ end
 local function generate_config_action()
   vim.ui.input({ prompt = "Config name: ", default = "default" }, function(name)
     if not name or name:match("^%s*$") then return end
-    vim.cmd("VimoireExportConfig " .. name)
+    vim.cmd("ExportConfig " .. name)
     state:rebuild()
     local manager = require("neo-tree.sources.manager")
     manager.refresh("export")
@@ -77,7 +77,7 @@ local function build_action_nodes()
   }
 end
 
-local function build_items_nodes(items)
+local function build_items_nodes(items, expanded_ids)
   local nodes = {}
   for _, item_data in ipairs(items) do
     local item = state.items[item_data.id]
@@ -86,9 +86,9 @@ local function build_items_nodes(items)
     else
       local node = node_from_item(item)
       if item.items then
-        node.children = #item.items > 0 and build_items_nodes(item.items) or {}
+        table.insert(expanded_ids, item.id)
+        node.children = #item.items > 0 and build_items_nodes(item.items, expanded_ids) or {}
         node.loaded = true
-        node.expanded = true
       end
       table.insert(nodes, node)
     end
@@ -105,16 +105,17 @@ function M.navigate(state_param, path, path_to_reveal, callback)
   state_param.path = path or state.manuscript.root
 
   local ok, err = pcall(function()
+    local expanded_ids = { "export", "export_templates", "export_configs", "export_output" }
+
     local export_node = node_from_item(state.items["export"])
     local action_nodes = build_action_nodes()
-    local folder_nodes = build_items_nodes(state.items["export"].items)
+    local folder_nodes = build_items_nodes(state.items["export"].items, expanded_ids)
 
     -- Action nodes at top, then folders
     export_node.children = vim.list_extend(action_nodes, folder_nodes)
     export_node.loaded = true
-    export_node.expanded = true
 
-    state_param.default_expanded_nodes = { "export", "export_templates", "export_configs", "export_output" }
+    state_param.default_expanded_nodes = expanded_ids
 
     local renderer = require("neo-tree.ui.renderer")
     renderer.show_nodes({ export_node }, state_param)

@@ -32,7 +32,7 @@ local function node_from_item(item)
   }
 end
 
-local function build_items_nodes(items)
+local function build_items_nodes(items, expanded_ids)
   local nodes = {}
   for _, item_data in ipairs(items) do
     local item = state.items[item_data.id]
@@ -41,9 +41,9 @@ local function build_items_nodes(items)
     else
       local node = node_from_item(item)
       if item.items then
-        node.children = #item.items > 0 and build_items_nodes(item.items) or {}
+        table.insert(expanded_ids, item.id)
+        node.children = #item.items > 0 and build_items_nodes(item.items, expanded_ids) or {}
         node.loaded = true
-        node.expanded = true
       end
       table.insert(nodes, node)
     end
@@ -60,19 +60,19 @@ function M.navigate(state_param, path, path_to_reveal, callback)
   state_param.path = path or state.manuscript.root
 
   local ok, err = pcall(function()
+    local expanded_ids = { "manuscript", "planning", "characters", "settings", "reference" }
+
     local book_node = node_from_item(state.items["book"])
 
     local manuscript_node = node_from_item(state.items["manuscript"])
-    manuscript_node.children = build_items_nodes(state.manuscript.items or {})
+    manuscript_node.children = build_items_nodes(state.manuscript.items or {}, expanded_ids)
     manuscript_node.loaded = true
-    manuscript_node.expanded = true
 
     local planning_node = node_from_item(state.items["planning"])
-    planning_node.children = build_items_nodes(state.items["planning"].items)
+    planning_node.children = build_items_nodes(state.items["planning"].items, expanded_ids)
     planning_node.loaded = true
-    planning_node.expanded = true
 
-    state_param.default_expanded_nodes = { "manuscript", "planning", "characters", "settings", "reference" }
+    state_param.default_expanded_nodes = expanded_ids
 
     local renderer = require("neo-tree.ui.renderer")
     renderer.show_nodes({ book_node, manuscript_node, planning_node }, state_param)

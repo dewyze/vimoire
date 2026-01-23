@@ -6,7 +6,7 @@ Package vimoire as a macOS application with its own dock icon, installable via h
 
 ## Prerequisites
 
-- **Neovide** must be installed (GUI for neovim)
+- **Neovide** with `--icon` support (available in nightly builds, expected in next stable release after 0.15.2)
 - Neovim itself (neovide depends on it)
 - Vimoire lua code installed to `~/.config/vimoire/` (via NVIM_APPNAME)
 
@@ -18,23 +18,22 @@ macOS requires a `.app` bundle for proper dock integration. A CLI tool alone won
 - Have a custom icon
 - Appear in Launchpad
 
-## Options for .app Bundle Creation
+Additionally, when a launcher script spawns neovide, neovide becomes the GUI process—so its icon and app name show in the dock/menu bar, not the launcher's.
 
-### 1. Platypus (Recommended?)
-[Platypus](https://sveinbjorn.org/platypus) creates native Mac apps from scripts.
-- GUI and CLI interfaces
-- Handles icons
-- Can run as "faceless" background app or normal app
-- Mature, well-maintained
+## Solution: Manual Bundle + `--icon` Flag
 
-### 2. appify-new
-[appify-new](https://github.com/Tacolizard/appify-new) generates .app bundles from bash scripts.
-- Supports custom icons
-- Built-in homebrew dependency checking
-- Simpler than Platypus
+**Tested and working.** Neovide's `--icon` flag (merged in [PR #3272](https://github.com/neovide/neovide/pull/3272), October 2025) allows custom dock icons. Combined with a manual `.app` bundle, we get full branding:
 
-### 3. Manual Bundle
-Create structure directly:
+| What | How | Result |
+|------|-----|--------|
+| App name | `CFBundleName` in `Info.plist` | "Vimoire" |
+| Menu bar (top-level) | `Info.plist` | "Vimoire" |
+| Dock icon | `--icon` flag | Custom icon |
+| Window title | Already handled in `setup.lua` | "Vimoire — {book title}" |
+| Menu items inside | Hardcoded in neovide | "neovide" (acceptable) |
+
+### Bundle Structure
+
 ```
 Vimoire.app/
   Contents/
@@ -45,16 +44,43 @@ Vimoire.app/
       vimoire.icns
 ```
 
-The script would be something like:
-```bash
-#!/bin/bash
-NVIM_APPNAME=vimoire /usr/local/bin/neovide "$@"
+### Info.plist
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>Vimoire</string>
+    <key>CFBundleDisplayName</key>
+    <string>Vimoire</string>
+    <key>CFBundleIdentifier</key>
+    <string>dev.vimoire.app</string>
+    <key>CFBundleVersion</key>
+    <string>0.1.0</string>
+    <key>CFBundleExecutable</key>
+    <string>vimoire</string>
+    <key>CFBundleIconFile</key>
+    <string>vimoire</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+</dict>
+</plist>
 ```
 
-### 4. Automator
-Apple's built-in tool. Create Application → Run Shell Script.
-- Simple but less customizable
-- No CLI automation
+### Launcher Script
+
+```bash
+#!/bin/bash
+NVIM_APPNAME=vimoire /opt/homebrew/bin/neovide --icon /path/to/vimoire.icns "$@"
+```
+
+## Rejected Approaches
+
+- **Platypus / appify-new** — Overkill for a 2-line launcher script
+- **Automator** — Can't automate creation, icons are a pain
+- **Bundling neovide binary inside .app** — Unnecessary now that `--icon` exists
 
 ## Installation via Homebrew
 
@@ -100,10 +126,13 @@ Script would:
 
 ## Icon
 
-Need to create:
-- `vimoire.icns` — macOS icon format
-- Multiple sizes (16x16 to 1024x1024)
-- Can convert from PNG using `iconutil` or online tools
+Source icon lives at `assets/icon.png`. To regenerate the `.icns` after updating the source:
+
+```bash
+bin/build-icon
+```
+
+This creates `platform/macos/Vimoire.app/Contents/Resources/vimoire.icns` with all required sizes (16x16 to 1024x1024).
 
 ## Open Questions
 
@@ -118,9 +147,11 @@ Need to create:
 
 3. Should we support running without neovide (terminal mode)?
 
+4. Wait for neovide stable release with `--icon`, or require nightly for now?
+
 ## References
 
-- [Platypus](https://sveinbjorn.org/platypus)
-- [appify-new](https://github.com/Tacolizard/appify-new)
+- [Neovide --icon PR #3272](https://github.com/neovide/neovide/pull/3272)
+- [Neovide dock icon issue #2929](https://github.com/neovide/neovide/issues/2929)
 - [Create MacOS App Bundle from Script](https://relentlesscoding.com/posts/create-macos-app-bundle-from-script/)
 - [Homebrew Cask Cookbook](https://docs.brew.sh/Cask-Cookbook)

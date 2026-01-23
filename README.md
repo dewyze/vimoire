@@ -3,7 +3,7 @@
 **Vim + Grimoire.** A magical tome for crafting stories.
 
 <p align="center">
-  <InsertImageHere:logo-dark-and-light-versions-grimoire-book-with-vim-motif>
+  <img src="assets/icon.png">
 </p>
 
 Vimoire is a Neovim-powered writing environment for long-form fiction. It's not a plugin you bolt onto your dev setup—it's a standalone app with its own config, themes, and keybindings, all designed for authors who want modal editing without the cruft of an IDE.
@@ -11,7 +11,7 @@ Vimoire is a Neovim-powered writing environment for long-form fiction. It's not 
 Think of it as Scrivener for people who think Scrivener has too many buttons and not enough `:wq`.
 
 <p align="center">
-  <InsertImageHere:screenshot-of-dashboard-showing-stars-and-recent-projects>
+  <img src="assets/dashboard.png">
 </p>
 
 ## Why?
@@ -27,7 +27,7 @@ Vimoire takes that muscle memory and wraps it in an environment built for storie
 ### Your Manuscript, Organized
 
 <p align="center">
-  <InsertImageHere:screenshot-of-neo-tree-navigator-showing-manuscript-structure>
+  <img src="assets/navigator-manuscript.png">
 </p>
 
 Structure your book with **chapters**, **pages**, and **sections**:
@@ -51,7 +51,7 @@ All searchable, all a keystroke away with `<leader>fp`.
 ### Prose-First Editing
 
 <p align="center">
-  <InsertImageHere:screenshot-of-prose-editing-with-focus-mode-showing-soft-wrapped-text>
+  <img src="assets/prose.png">
 </p>
 
 Vimoire knows you're writing paragraphs, not code. In prose buffers:
