@@ -16,3 +16,4 @@ vim.o.textwidth = editor.textwidth
 vim.o.undofile = true
 vim.o.wildignore = ".git,*.swp,*.tmp"
 vim.o.wrap = editor.wrap
+vim.o.termguicolors = editor.termguicolors

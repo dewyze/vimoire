@@ -55,6 +55,7 @@ M.defaults = {
     visual_line_navigation = true,
     autosave = false,
     focus_mode = true,
+    termguicolors = true,
   },
   finder = {
     preview = true,

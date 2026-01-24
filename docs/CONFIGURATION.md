@@ -66,6 +66,7 @@ return {
     visual_line_navigation = true,
     autosave = false,
     focus_mode = true,
+    termguicolors = true,
   },
 
   finder = {
@@ -212,6 +213,7 @@ Settings applied to prose and notes buffers.
 | `visual_line_navigation` | `true` | Map j/k to gj/gk |
 | `autosave` | `false` | Auto-save on cursor hold and buffer leave |
 | `focus_mode` | `true` | Enable focus mode by default |
+| `termguicolors` | `true` | Enable 24-bit RGB colors (required for accurate theme colors in terminal) |
 
 ---
 
