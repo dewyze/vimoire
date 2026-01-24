@@ -1,10 +1,11 @@
 local config = require("vimoire.config")
 local keymaps = config.get("keymaps")
 
--- Command palette
+-- Command palette (Neovide-only: Cmd+Shift+P always available)
 vim.keymap.set({ "n", "i", "v" }, "<D-S-p>", "<Cmd>Palette<CR>", { desc = "Command palette" })
-vim.keymap.set("n", "<leader>p", ":Palette<CR>", { desc = "Command palette" })
-vim.keymap.set("v", "<leader>p", "<Cmd>Palette<CR>", { desc = "Command palette" })
+if keymaps.palette then
+  vim.keymap.set({ "n", "v" }, keymaps.palette, "<Cmd>Palette<CR>", { desc = "Command palette" })
+end
 
 -- Finder keymaps
 if keymaps.finder.smart then
@@ -92,14 +93,5 @@ end
 if keymaps.misc then
   if keymaps.misc.clear_highlight then
     vim.keymap.set("n", keymaps.misc.clear_highlight, ":noh<CR>", { desc = "Clear search highlight" })
-  end
-  if keymaps.misc.save then
-    vim.keymap.set({ "n", "i" }, keymaps.misc.save, "<Cmd>w<CR>", { desc = "Save" })
-  end
-  if keymaps.misc.copy then
-    vim.keymap.set("v", keymaps.misc.copy, '"+y', { desc = "Copy" })
-  end
-  if keymaps.misc.paste then
-    vim.keymap.set({ "n", "i" }, keymaps.misc.paste, '<Cmd>set paste<CR><C-r>+<Cmd>set nopaste<CR>', { desc = "Paste" })
   end
 end

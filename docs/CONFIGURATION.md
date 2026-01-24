@@ -12,6 +12,7 @@ return {
   colorscheme = "inkwell",
 
   keymaps = {
+    palette = "<leader>p",
     finder = {
       smart = "<leader>ff",
       smart_alt = "<C-p>",
@@ -46,9 +47,6 @@ return {
     },
     misc = {
       clear_highlight = "<Esc><Esc>",
-      save = "<D-s>",
-      copy = "<D-c>",
-      paste = "<D-v>",
     },
   },
 
@@ -123,6 +121,12 @@ You can also change themes at runtime with `:Theme`.
 
 All keymaps use `<leader>` with mnemonic prefixes. Set any key to `false` to disable it.
 
+### keymaps.palette
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `palette` | `<leader>p` | Open command palette |
+
 ### keymaps.finder
 
 Pickers for navigating your manuscript.
@@ -184,9 +188,6 @@ Buffer-level actions for prose files.
 | Key | Default | Description |
 |-----|---------|-------------|
 | `clear_highlight` | `<Esc><Esc>` | Clear search highlight |
-| `save` | `<D-s>` | Save (Cmd+S on macOS) |
-| `copy` | `<D-c>` | Copy (Cmd+C on macOS) |
-| `paste` | `<D-v>` | Paste (Cmd+V on macOS) |
 
 ---
 
@@ -273,3 +274,18 @@ These keymaps are active when focused on the manuscript tree. They are not confi
 | `n` | Open notes |
 | `J` / `K` | Reorder down/up |
 | `T` | Toggle chapter/page |
+
+---
+
+## Neovide Keymaps
+
+These keymaps use macOS Cmd key and only work in Neovide. They are not configurable.
+
+| Key | Action |
+|-----|--------|
+| `Cmd+S` | Save |
+| `Cmd+C` | Copy (visual mode) |
+| `Cmd+X` | Cut (visual mode) |
+| `Cmd+V` | Paste |
+| `Cmd+Shift+P` | Open command palette |
+| `Cmd+Q` | Quit (built-in to Neovide) |

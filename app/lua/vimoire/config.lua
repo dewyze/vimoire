@@ -35,11 +35,9 @@ M.defaults = {
       insert = "<leader>si",
       extract = "<leader>sx",
     },
+    palette = "<leader>p",
     misc = {
       clear_highlight = "<Esc><Esc>",
-      save = "<D-s>",
-      copy = "<D-c>",
-      paste = "<D-v>",
     },
   },
   ui = {

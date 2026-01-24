@@ -1,12 +1,14 @@
 local config = require("vimoire.config")
 local neovide = config.get("neovide")
 
-vim.keymap.set('n', '<D-s>', ':w<CR>')
-vim.keymap.set('v', '<D-c>', '"+y')
-vim.keymap.set('n', '<D-v>', '"+P')
-vim.keymap.set('v', '<D-v>', '"+P')
-vim.keymap.set('c', '<D-v>', '<C-R>+')
-vim.keymap.set('i', '<D-v>', '<C-R>+')
+-- Standard macOS keymaps (Neovide doesn't provide these)
+vim.keymap.set({ "n", "i" }, "<D-s>", "<Cmd>w<CR>", { desc = "Save" })
+vim.keymap.set("v", "<D-c>", '"+y', { desc = "Copy" })
+vim.keymap.set("v", "<D-x>", '"+d', { desc = "Cut" })
+vim.keymap.set("n", "<D-v>", '"+P', { desc = "Paste" })
+vim.keymap.set("v", "<D-v>", '"+P', { desc = "Paste" })
+vim.keymap.set("c", "<D-v>", "<C-R>+", { desc = "Paste" })
+vim.keymap.set("i", "<D-v>", "<C-R>+", { desc = "Paste" })
 
 vim.opt.guifont = neovide.font
 vim.opt.linespace = neovide.linespace
