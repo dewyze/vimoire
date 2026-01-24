@@ -241,6 +241,7 @@ end
 -- Generic folder browser with contextual action
 -- opts.action_label: function(path) -> string or nil (nil = no action available)
 -- opts.on_action: function(path) -> called when action is selected
+-- opts.bundle_behavior: "open" to show .tome bundles as openable, nil to hide them
 local function browse_folders(start_path, opts)
   local function show_picker(path)
     path = vim.fn.fnamemodify(path, ":p"):gsub("/$", "")
@@ -261,11 +262,19 @@ local function browse_folders(start_path, opts)
     -- Subdirectories
     for _, dir in ipairs(get_subdirs(path)) do
       local name = vim.fn.fnamemodify(dir, ":t")
-      local marker = ""
-      if is_vimoire_project(dir) then
-        marker = " ★"
+      local is_bundle = name:match("%.tome$")
+
+      if is_bundle then
+        if opts.bundle_behavior == "open" and is_vimoire_project(dir) then
+          table.insert(items, { type = "action", path = dir, display = name .. " ★" })
+        end
+      else
+        local marker = ""
+        if is_vimoire_project(dir) then
+          marker = " ★"
+        end
+        table.insert(items, { type = "nav", path = dir, display = name .. "/" .. marker })
       end
-      table.insert(items, { type = "nav", path = dir, display = name .. "/" .. marker })
     end
 
     vim.ui.select(items, {
@@ -301,6 +310,7 @@ end
 
 local function browse_project()
   browse_folders(default_browse_path(), {
+    bundle_behavior = "open",
     action_label = function(path)
       if is_vimoire_project(path) then
         return "[Open this project]"

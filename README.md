@@ -167,6 +167,13 @@ See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 
 Vimoire is almost entirely vibe-coded—built with heavy LLM assistance to scratch a personal itch. This means there are likely bugs, antipatterns, or rough edges I haven't caught. If you spot something off, please open an issue. Feedback genuinely welcome.
 
+## Acknowledgments
+
+Vimoire is built on the shoulders of giants:
+
+- [Neovim](https://neovim.io) — the engine that makes modal prose editing possible
+- [Neovide](https://neovide.dev) — the GUI that makes it feel like a native app
+
 ## License
 
 MIT

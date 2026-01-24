@@ -1,14 +1,14 @@
-# .vimoire Bundle Format
+# .tome Bundle Format
 
 ## Summary
 
-Create a `.vimoire` bundle format (like `.docx`) that packages a complete manuscript project. Double-clicking opens it in Vimoire.
+Create a `.tome` bundle format (like `.docx`) that packages a complete manuscript project. Double-clicking opens it in Vimoire.
 
 ## What's Inside
 
-A `.vimoire` bundle is the entire project folder:
+A `.tome` bundle is the entire project folder:
 ```
-MyNovel.vimoire/
+MyNovel.tome/
   manuscript.json
   book.yml
   entries/
@@ -37,7 +37,7 @@ In the Vimoire.app's `Info.plist`, add:
     <string>Vimoire Manuscript</string>
     <key>CFBundleTypeExtensions</key>
     <array>
-      <string>vimoire</string>
+      <string>tome</string>
     </array>
     <key>CFBundleTypeRole</key>
     <string>Editor</string>
@@ -45,7 +45,7 @@ In the Vimoire.app's `Info.plist`, add:
     <true/>
     <key>LSItemContentTypes</key>
     <array>
-      <string>com.vimoire.manuscript</string>
+      <string>dev.vimoire.manuscript</string>
     </array>
   </dict>
 </array>
@@ -54,7 +54,7 @@ In the Vimoire.app's `Info.plist`, add:
 <array>
   <dict>
     <key>UTTypeIdentifier</key>
-    <string>com.vimoire.manuscript</string>
+    <string>dev.vimoire.manuscript</string>
     <key>UTTypeDescription</key>
     <string>Vimoire Manuscript</string>
     <key>UTTypeConformsTo</key>
@@ -84,15 +84,15 @@ Key parts:
 - You see meaningful diffs for text changes
 - Standard git workflow works
 
-No special git configuration needed. The `.vimoire` directory is just a directory to git.
+No special git configuration needed. The `.tome` directory is just a directory to git.
 
 ## Linux Compatibility
 
-**Linux has no package concept.** The `.vimoire` extension would just be a regular directory.
+**Linux has no package concept.** The `.tome` extension would just be a regular directory.
 
 Options:
-1. **Accept it** — on Linux, `MyNovel.vimoire` is a folder, users `cd` into it
-2. **Zip archive mode** — support `.vimoire` as zip file (like `.docx` actually is)
+1. **Accept it** — on Linux, `MyNovel.tome` is a folder, users `cd` into it
+2. **Zip archive mode** — support `.tome` as zip file (like `.docx` actually is)
 3. **Different extension on Linux** — just use the folder without extension
 
 Recommendation: Start with option 1. Linux users are comfortable with directories. If demand exists, add zip support later.
@@ -100,7 +100,7 @@ Recommendation: Start with option 1. Linux users are comfortable with directorie
 ## Double-Click to Open
 
 Once the UTI is registered, macOS will:
-1. Associate `.vimoire` with Vimoire.app
+1. Associate `.tome` with Vimoire.app
 2. Pass the path to the app when double-clicked
 3. Vimoire opens with that manuscript loaded
 
@@ -115,20 +115,20 @@ And the neovim startup needs to detect and load the manuscript path.
 ## Creating New Manuscripts
 
 Options:
-1. **From app** — File → New Manuscript → choose location, creates `.vimoire` folder
-2. **CLI** — `vimoire new MyNovel` creates `MyNovel.vimoire/` with scaffold
-3. **Template** — copy a starter `.vimoire` bundle
+1. **From app** — File → New Manuscript → choose location, creates `.tome` folder
+2. **CLI** — `vimoire new MyNovel` creates `MyNovel.tome/` with scaffold
+3. **Template** — copy a starter `.tome` bundle
 
 ## Migration
 
 Existing projects (plain folders) can become bundles by:
-1. Adding `.vimoire` extension to folder name
+1. Adding `.tome` extension to folder name
 2. That's it — contents unchanged
 
 ## Open Questions
 
 1. Should we support zip-based bundles for portability/email?
-2. Icon for `.vimoire` files in Finder — need to create `.icns`
+2. Icon for `.tome` files in Finder — need to create `.icns`
 3. Quick Look preview support — show book title/word count?
 
 ## References

@@ -1,5 +1,9 @@
 math.randomseed(os.time() + os.clock() * 1000)
 
+-- Disable netrw immediately to prevent flash when opening directories
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 require("config.lazy")
 require("config.defaults")
 require("vimoire.highlights").setup()

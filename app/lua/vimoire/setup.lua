@@ -69,10 +69,36 @@ function setup.on_manuscript_loaded()
   end)
 end
 
+local function resolve_project_path(path)
+  path = vim.fn.expand(path):gsub("/$", "")
+
+  if path:match("manuscript%.json$") then
+    path = vim.fn.fnamemodify(path, ":h")
+  end
+
+  if vim.fn.filereadable(path .. "/manuscript.json") == 1 then
+    return path
+  end
+
+  return nil
+end
+
 function setup.load_manuscript()
-  vim.schedule(function()
-    require("vimoire.ui.dashboard").show()
-  end)
+  local args = vim.fn.argv()
+
+  -- Clear args so Neo-tree's hijack_netrw doesn't try to handle them
+  if #args > 0 then
+    vim.cmd("argdelete *")
+
+    local project_path = resolve_project_path(args[1])
+    if project_path then
+      state:load(project_path)
+      vim.api.nvim_exec_autocmds("User", { pattern = "VimoireProjectLoaded" })
+      return
+    end
+  end
+
+  require("vimoire.ui.dashboard").show()
 end
 
 function setup.show_dashboard()

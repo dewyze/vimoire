@@ -19,6 +19,9 @@ return {
     end
 
     require("neo-tree").setup({
+      filesystem = {
+        hijack_netrw_behavior = "disabled",
+      },
       use_default_mappings = false,
       sources = {
         "vimoire.navigation.sources.manuscript",

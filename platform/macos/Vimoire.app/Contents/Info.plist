@@ -16,5 +16,46 @@
     <string>vimoire</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Vimoire Manuscript</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>tome</string>
+            </array>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSTypeIsPackage</key>
+            <true/>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>dev.vimoire.manuscript</string>
+            </array>
+        </dict>
+    </array>
+
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>dev.vimoire.manuscript</string>
+            <key>UTTypeDescription</key>
+            <string>Vimoire Manuscript</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>com.apple.package</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>tome</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
 </dict>
 </plist>
