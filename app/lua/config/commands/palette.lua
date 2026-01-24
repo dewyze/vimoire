@@ -86,7 +86,10 @@ vim.api.nvim_create_user_command("Palette", function()
     confirm = function(picker, selected)
       if selected then
         picker:close()
-        vim.cmd(selected.cmd)
+        vim.schedule(function()
+          vim.cmd(selected.cmd)
+          vim.cmd("startinsert")
+        end)
       end
     end,
     win = {

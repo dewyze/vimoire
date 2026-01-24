@@ -124,6 +124,7 @@ local THEMES = {
   { name = "tempest", desc = "Dark — Storm Grays" },
   { name = "hearth", desc = "Dark — Firelight Reds" },
   { name = "nebula", desc = "Dark — Cosmic Purples" },
+  { name = "frost", desc = "Dark — Arctic Blues" },
   -- Light
   { name = "parchment", desc = "Light — Warm Cream" },
   { name = "vellum", desc = "Light — Aged Sepia" },

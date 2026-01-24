@@ -74,7 +74,7 @@ Pandoc-powered export to **EPUB** and **DOCX**. Chapter numbering, scene breaks,
 
 ### Themes
 
-Eleven moods for writing. Switch with `:Theme` or set in config.
+Twelve moods for writing. Switch with `:Theme` or set in config.
 
 |   |   |   |
 |:---:|:---:|:---:|
@@ -83,8 +83,8 @@ Eleven moods for writing. Switch with `:Theme` or set in config.
 | Inkwell · *Warm candlelight* | Umbra · *High contrast* | Abyss · *Ocean blues* |
 | ![Hollow](assets/themes/hollow.png) | ![Dusk](assets/themes/dusk.png) | ![Tempest](assets/themes/tempest.png) |
 | Hollow · *Forest greens* | Dusk · *Twilight purples* | Tempest · *Storm grays* |
-| ![Hearth](assets/themes/hearth.png) | ![Nebula](assets/themes/nebula.png) | |
-| Hearth · *Firelight reds* | Nebula · *Cosmic purples* | |
+| ![Hearth](assets/themes/hearth.png) | ![Nebula](assets/themes/nebula.png) | ![Frost](assets/themes/frost.png) |
+| Hearth · *Firelight reds* | Nebula · *Cosmic purples* | Frost · *Arctic blues* |
 | **Light** | | |
 | ![Parchment](assets/themes/parchment.png) | ![Vellum](assets/themes/vellum.png) | ![Lumen](assets/themes/lumen.png) |
 | Parchment · *Warm cream* | Vellum · *Aged sepia* | Lumen · *High contrast* |

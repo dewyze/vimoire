@@ -107,6 +107,7 @@ Available themes:
 - `tempest` — storm grays
 - `hearth` — firelight reds
 - `nebula` — cosmic purples
+- `frost` — arctic blues
 
 **Light:**
 - `parchment` — warm cream
