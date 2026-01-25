@@ -144,6 +144,9 @@ Customize via `~/.vimoire/config.lua`:
 ```lua
 return {
   colorscheme = "parchment",
+  plugins = {
+    { "tpope/vim-surround" },
+  },
 }
 ```
 

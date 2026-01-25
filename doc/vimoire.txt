@@ -1050,6 +1050,31 @@ BASIC EXAMPLE ~
       },
     }
 <
+PLUGINS ~
+                                                     *vimoire-config-plugins*
+Vimoire supports adding custom plugins via the `plugins` key in your config.
+Plugins are specified using lazy.nvim spec format.
+
+>lua
+    return {
+      plugins = {
+        { "tpope/vim-surround" },
+        { "github/copilot.vim" },
+        {
+          "some/plugin",
+          opts = { ... },
+          config = function() ... end,
+        },
+      },
+    }
+<
+Plugins are loaded via lazy.nvim alongside Vimoire's built-in plugins.
+Standard lazy.nvim options work: `opts`, `config`, `lazy`, `event`, etc.
+
+Note: Adding plugins may affect Vimoire's behavior or performance. Plugins
+that override keymaps, colorschemes, or UI elements may conflict with
+Vimoire's built-in functionality. You're on your own for compatibility.
+
 CONFIGURATION OPTIONS ~
                                                      *vimoire-config-options*
 All options and their defaults:

@@ -91,6 +91,30 @@ return {
 
 ---
 
+## plugins
+
+Add custom plugins using lazy.nvim spec format:
+
+```lua
+return {
+  plugins = {
+    { "tpope/vim-surround" },
+    { "github/copilot.vim" },
+    {
+      "some/plugin",
+      opts = { ... },
+      config = function() ... end,
+    },
+  },
+}
+```
+
+Standard lazy.nvim options work: `opts`, `config`, `lazy`, `event`, `keys`, etc. See [lazy.nvim docs](https://lazy.folke.io/spec) for full spec format.
+
+**Note:** Adding plugins may affect Vimoire's behavior. Plugins that override keymaps, colorschemes, or UI elements may conflict with built-in functionality.
+
+---
+
 ## colorscheme
 
 Default: `"inkwell"`
