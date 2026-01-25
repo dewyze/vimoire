@@ -1,0 +1,1475 @@
+*vimoire.txt*    Vimoire: A manuscript editor for Neovim
+
+CONTENTS                                             *vimoire-contents*
+
+    1. Quickstart ............................ |vimoire-quickstart|
+    2. Concepts .............................. |vimoire-concepts|
+    3. Keymaps ............................... |vimoire-keymaps|
+    4. Commands .............................. |vimoire-commands|
+    5. Navigation ............................ |vimoire-navigation|
+    6. Editing ............................... |vimoire-editing|
+    7. Export ................................ |vimoire-export|
+    8. Configuration ......................... |vimoire-configuration|
+    9. Troubleshooting ....................... |vimoire-troubleshooting|
+
+==============================================================================
+1. QUICKSTART                                        *vimoire-quickstart*
+
+REQUIREMENTS ~
+                                                     *vimoire-requirements*
+- Neovim 0.10+
+- Pandoc (https://pandoc.org) — required for export
+- Neovide (https://neovide.dev) — optional but recommended for GUI experience
+- A Nerd Font (https://www.nerdfonts.com) — for navigator icons
+
+INSTALLATION ~
+                                                     *vimoire-installation*
+>bash
+    # Clone the repository
+    git clone https://github.com/dewyze/vimoire ~/dev/vimoire
+
+    # Symlink the app directory
+    ln -s ~/dev/vimoire/app ~/.config/vimoire
+
+    # Add alias to your shell config (~/.bashrc, ~/.zshrc)
+    alias vimoire='NVIM_APPNAME=vimoire nvim'
+    # or with Neovide (recommended)
+    alias vimoire='NVIM_APPNAME=vimoire neovide'
+<
+
+FILE LOCATIONS ~
+                                                     *vimoire-locations*
+App code             `~/.config/vimoire/`      (symlinked from repository)
+User config          `~/.vimoire/config.lua`   (see |vimoire-configuration|)
+Recent projects      `~/.vimoire/recent.json`  (managed automatically)
+
+Each manuscript is a self-contained directory:
+>
+    my-novel/
+      book.yml              user-facing book metadata
+      manuscript.json       structural state (managed by app)
+      entries/              chapters and pages (prose.md, notes.md)
+      planning/             characters, settings, reference
+      snippets/             extracted text snippets
+      assets/images/        book images, cover
+      exports/
+        templates/          pandoc templates (epub.css, etc.)
+        configs/            export configuration YAML
+        output/             generated EPUB/DOCX
+      spell/en.add          book-local dictionary
+<
+
+OPENING A MANUSCRIPT ~
+                                                     *vimoire-open*
+From the command line:
+>bash
+    vimoire ~/Documents/my-novel
+<
+Or launch Vimoire without arguments to see the dashboard, which shows
+recent projects. Use `j`/`k` to select, `<CR>` to open, or `b` to browse.
+
+CREATING A NEW MANUSCRIPT ~
+                                                     *vimoire-new*
+From the dashboard:
+
+1. Press `n` for new project
+2. Browse to your desired parent folder
+3. Select "[Create project here]"
+4. Enter a project name
+
+Vimoire creates a manuscript with starter content: a dedication page,
+first chapter, protagonist character, and research notes.
+
+BASIC WORKFLOW ~
+                                                     *vimoire-workflow*
+Write → Organize → Export
+
+1. WRITE
+   Open chapters from the navigator (`<leader>nt`) or finder (`<leader>ff`).
+   Edit prose.md files. Notes.md is scratch space per entry.
+
+2. ORGANIZE
+   In the navigator: `a` to add chapters/pages/sections, `K`/`J` to reorder,
+   `d` to delete, `r` to rename. Sections group entries without exporting.
+
+3. EXPORT
+   Run `:Export` to produce EPUB or DOCX. Pandoc handles chapter numbering,
+   scene breaks, and formatting. Output lands in `exports/output/`.
+
+DASHBOARD KEYS ~
+                                                     *vimoire-dashboard*
+    j/k or arrows     Move selection
+    <CR>              Open selected project
+    n                 New project
+    b                 Browse for project
+    c                 Open config file
+    q                 Quit
+
+==============================================================================
+2. CONCEPTS                                          *vimoire-concepts*
+
+MANUSCRIPT STRUCTURE ~
+                                                     *vimoire-manuscript*
+A manuscript is a self-contained directory with your book's content and
+metadata. The structure is tracked in `manuscript.json` (managed by Vimoire—
+don't edit directly).
+
+Entries                                              *vimoire-entries*
+
+Entries are your prose content, stored in `entries/<id>/`:
+- `prose.md` — the actual text
+- `notes.md` — scratch space for that entry
+
+Two kinds of entries:
+
+CHAPTERS                                             *vimoire-chapters*
+Numbered entries that export as "Chapter 1: Title", etc. Use for main
+narrative content. Toggle between chapter/page with |:Toggle| or `<leader>wk`.
+
+PAGES                                                *vimoire-pages*
+Unnumbered entries for title pages, interludes, appendices, epigraphs.
+Pages export with just their title, no chapter number.
+
+Sections                                             *vimoire-sections*
+
+Sections group entries without creating files. Use them for "Part I",
+"Part II", etc. They're containers only—no prose, no export, just organization
+in the navigator tree. Section names appear in the tree but not in exports.
+
+PLANNING SYSTEM ~
+                                                     *vimoire-planning*
+Planning materials live in `planning/<id>/text.md`. Three built-in categories:
+
+CHARACTERS                                           *vimoire-characters*
+    Character sheets, backstories, arcs.
+
+SETTINGS                                             *vimoire-settings*
+    Locations, worldbuilding, maps.
+
+REFERENCE                                            *vimoire-reference*
+    Research notes, timelines, outlines. Reference supports subfolders
+    for deeper organization (e.g., "Research > Historical", "Research > Tech").
+
+ORPHANED NOTES                                       *vimoire-orphaned*
+    When you delete a chapter or page, its notes.md content is preserved
+    here automatically. Review and clean up periodically.
+
+Access planning via the navigator (`<leader>nm`) or finder (`<leader>fp`).
+
+EXPORT SYSTEM ~
+                                                     *vimoire-export-concepts*
+Vimoire exports manuscripts to EPUB or DOCX via Pandoc.
+
+Configs (exports/configs/)                           *vimoire-export-configs*
+    YAML files that define which entries to export and in what format.
+    Generated via |:ExportConfig|. Comment out entries with `# -` to exclude
+    them. See |vimoire-export| for details.
+
+Templates (exports/templates/)                       *vimoire-export-templates*
+    `epub.css` — stylesheet for EPUB output
+    `reference.docx` — Word template for DOCX styling
+    Customize these to control export appearance.
+
+Output (exports/output/)                             *vimoire-export-output*
+    Generated files land here. Vimoire auto-opens after export by default.
+
+FOCUS MODE ~
+                                                     *vimoire-focus*
+Focus mode centers your prose by creating empty margin windows on left and
+right. This removes visual clutter and keeps text at a comfortable reading
+width (80 columns by default, matching `textwidth`).
+
+Toggle with |:Focus| or `<leader>vf`.
+
+Focus mode:
+- Closes split windows (except neo-tree)
+- Adapts when neo-tree opens/closes
+- Redistributes margins on window resize
+- Skips margin windows when navigating with `<C-h>`/`<C-l>`
+
+==============================================================================
+3. KEYMAPS                                           *vimoire-keymaps*
+
+Vimoire's keymaps are organized by domain. The leader key is space (default).
+All keymaps can be customized via |vimoire-configuration|.
+
+FINDER                                               *vimoire-keymaps-finder*
+
+Navigate and search your manuscript using Snacks picker.
+
+    <leader>ff        Smart finder (all entries)
+    <C-p>             Smart finder (alternative)
+    <leader>fm        Manuscript entries only
+    <leader>fp        Planning entries (characters, settings, reference)
+    <leader>fs        Snippets
+    <leader>fe        Exports (configs, templates, output)
+
+NAVIGATOR                                            *vimoire-keymaps-navigator*
+
+Control the Neo-tree sidebar. See |vimoire-navigation| for tree keymaps.
+
+    <leader>nt        Toggle navigator
+    <leader>nf        Reveal current file in navigator
+    <leader>nm        Switch to manuscript view
+    <leader>ne        Switch to export view
+
+VIEWS                                                *vimoire-keymaps-views*
+
+    <leader>vh        Home dashboard
+    <leader>vf        Toggle focus mode (see |vimoire-focus|)
+
+WRITING                                              *vimoire-keymaps-writing*
+
+    <leader>wn        Open notes for current entry
+    <leader>wm        Browse marks in buffer
+    <leader>wk        Toggle chapter/page kind
+    <leader>ww        Jump to prose (from notes)
+
+INSERT                                               *vimoire-keymaps-insert*
+
+    <leader>im        Insert mark at cursor
+    <leader>ii        Insert image
+
+SNIPPETS                                             *vimoire-keymaps-snippets*
+
+    <leader>si        Browse and insert snippet
+    <leader>sx        Extract selection to snippet (visual mode)
+
+MISC                                                 *vimoire-keymaps-misc*
+
+    <leader>p         Command palette
+    <D-S-p>           Command palette (Neovide: Cmd+Shift+P)
+    <Esc><Esc>        Clear search highlight
+
+NEOVIDE (macOS)                                      *vimoire-keymaps-neovide*
+
+Standard macOS shortcuts when running in Neovide.
+
+    <D-s>             Save (:w)
+    <D-c>             Copy to system clipboard (visual mode)
+    <D-x>             Cut to system clipboard (visual mode)
+    <D-v>             Paste from system clipboard
+
+NAVIGATOR TREE                                       *vimoire-keymaps-tree*
+
+Keymaps active in the Neo-tree navigator window.
+
+Manuscript view:                                     *vimoire-keymaps-tree-ms*
+
+    <CR>, o           Open entry
+    s                 Open in horizontal split
+    v                 Open in vertical split
+    t                 Toggle fold
+    C                 Close node
+    z                 Close all nodes
+    e                 Expand all nodes
+    a                 Add (chapter, page, section)
+    d                 Delete entry
+    r                 Rename entry
+    n                 Open entry's notes
+    m                 Move entry to different location
+    J                 Move entry down in list
+    K                 Move entry up in list
+    T                 Toggle chapter/page kind
+    R                 Refresh tree
+    q                 Close navigator
+    ?                 Show help
+
+Export view:                                         *vimoire-keymaps-tree-ex*
+
+    <CR>, o           Open file
+    s                 Open in horizontal split
+    v                 Open in vertical split
+    t                 Toggle fold
+    C                 Close node
+    z                 Close all nodes
+    e                 Expand all nodes
+    d                 Delete file
+    R                 Refresh tree
+    q                 Close navigator
+    ?                 Show help
+
+Mouse support depends on `ui.mouse_mode` config:
+- "single_click": Click to open
+- "double_click": Double-click to open (default vim behavior)
+
+DISPLAY LINE NAVIGATION                              *vimoire-keymaps-display*
+
+In prose buffers, Vimoire inverts vim's default line navigation. This makes
+writing long-form prose more intuitive—cursor movement follows visual lines.
+Enabled by `editor.visual_line_navigation` (default: true).
+
+    j                 Down by display line (like vim's gj)
+    k                 Up by display line (like vim's gk)
+    gj                Down by buffer line (like vim's j)
+    gk                Up by buffer line (like vim's k)
+    $                 End of display line
+    0                 Start of display line
+    g$                End of buffer line
+    g0                Start of buffer line
+    A                 Append at display line end
+    I                 Insert at display line start
+    gA                Append at buffer line end
+    gI                Insert at buffer line start
+
+SENTENCE NAVIGATION                                  *vimoire-keymaps-sentence*
+
+In prose buffers, Vimoire adjusts sentence navigation for single-spaced prose
+(period + space + capital letter).
+
+    )                 Next sentence
+    (                 Previous sentence
+
+==============================================================================
+4. COMMANDS                                          *vimoire-commands*
+
+All commands are accessible via the command palette (|:Palette| or `<leader>p`).
+
+FINDING COMMANDS ~
+                                                     *vimoire-commands-find*
+These commands open Snacks pickers to browse and open content.
+
+:Navigate                                            *:Navigate*
+    Browse all manuscript and planning entries in one list. Smart finder
+    that searches everything.
+
+:Manuscript                                          *:Manuscript*
+    Browse manuscript entries only (chapters and pages). Shows chapter
+    numbers inline.
+
+:Planning                                            *:Planning*
+    Browse all planning entries (characters, settings, reference).
+
+:Characters                                          *:Characters*
+    Browse character entries only.
+
+:Settings                                            *:Settings*
+    Browse settings/locations entries only.
+
+:Reference                                           *:Reference*
+    Browse reference entries only (includes subfolders).
+
+:Exports                                             *:Exports*
+    Browse export files (configs, templates, output).
+
+:Snippets                                            *:Snippets*
+    Browse saved snippets. Press `<CR>` to insert (consumes snippet),
+    `<C-e>` to edit, `<C-d>` to delete.
+
+VIEW COMMANDS ~
+                                                     *vimoire-commands-view*
+:Home                                                *:Home*
+    Return to the Vimoire dashboard. See |vimoire-dashboard|.
+
+:Focus                                               *:Focus*
+    Toggle focus mode—adds empty margin windows to center prose.
+    See |vimoire-focus|.
+
+:Theme                                               *:Theme*
+    Open theme picker with live preview. Selection is saved to preferences.
+    Available themes:
+
+    Dark:     Inkwell, Umbra, Abyss, Hollow, Dusk, Tempest, Hearth,
+              Nebula, Frost
+    Light:    Parchment, Vellum, Lumen
+
+:Palette                                             *:Palette*
+    Open command palette showing all Vimoire commands with keybindings.
+
+WRITING COMMANDS ~
+                                                     *vimoire-commands-writing*
+These commands operate on the current buffer.
+
+:Notes                                               *:Notes*
+    Open the notes file for the current entry. Each chapter/page has
+    a paired notes.md for scratch content that doesn't export.
+
+:Prose                                               *:Prose*
+    Jump to the prose file for the current entry. Useful when viewing
+    notes to return to the main text.
+
+:ToggleKind                                          *:ToggleKind*
+    Toggle the current entry between chapter and page. Chapters export
+    with numbers ("Chapter 1: Title"), pages export with just the title.
+
+:Marks                                               *:Marks*
+    Browse marks in the current buffer. Marks are inline annotations
+    using `{{mark:text}}` syntax. Jump to selected mark.
+
+INSERT COMMANDS ~
+                                                     *vimoire-commands-insert*
+These commands insert content at the cursor position.
+
+:InsertMark                                          *:InsertMark*
+    Insert a mark placeholder `{{mark:}}` and enter insert mode between
+    the colons. Marks are visible while editing but stripped on export.
+
+:InsertImage                                         *:InsertImage*
+    Insert an image. Choose "From file" to import a new image into
+    assets/images/, or "From assets" to use an existing image. Prompts
+    for alt text. Within the assets picker: `<C-d>` deletes, `<C-r>` renames.
+
+:InsertPageBreak                                     *:InsertPageBreak*
+    Insert `\newpage` — forces a page break in PDF/DOCX output.
+
+:InsertRule                                          *:InsertRule*
+    Insert `---` — a horizontal rule/thematic break, often used as
+    a scene separator.
+
+:InsertDiv                                           *:InsertDiv*
+    Insert a fenced div block for custom styling:
+>
+        ::: classname
+
+        :::
+<
+    Use for epigraphs, callouts, or any content needing special CSS.
+
+:InsertComment                                       *:InsertComment*
+    Insert `<!--  -->` — an HTML comment that won't appear in output.
+    Useful for notes-to-self that should stay in the source.
+
+SNIPPET COMMANDS ~
+                                                     *vimoire-commands-snippets*
+:Snippets                                            *:Snippets*
+    Browse and insert snippets. See |vimoire-commands-find|.
+
+:SnippetExtract                                      *:SnippetExtract*
+    Extract visual selection as a snippet. The selected text is removed
+    from the buffer and saved to the snippet editor where you can add
+    a description. Use for "killed darlings" or text you might reuse.
+
+    Example: Select text, run `:SnippetExtract` or use `<leader>sx`.
+
+EXPORT COMMANDS ~
+                                                     *vimoire-commands-export*
+:ExportConfig [name]                                 *:ExportConfig*
+    Generate or update an export configuration file. Default name is
+    "default" if not specified. Creates `exports/configs/{name}.yml`.
+
+    If the config already exists, updates it with any new entries while
+    preserving your comments and exclusions.
+
+    Example:
+>
+        :ExportConfig           " creates default.yml
+        :ExportConfig ebook     " creates ebook.yml
+<
+
+:Export [name] [--no-open]                           *:Export*
+    Run export using the specified config (default: "default"). Generates
+    EPUB or DOCX based on the config's format setting.
+
+    Options:
+        name        Config name (without .yml extension)
+        --no-open   Don't auto-open the output file
+
+    Example:
+>
+        :Export                 " use default.yml
+        :Export ebook           " use ebook.yml
+        :Export --no-open       " export without opening result
+<
+    Output goes to `exports/output/`. See |vimoire-export| for config format.
+
+==============================================================================
+5. NAVIGATION                                        *vimoire-navigation*
+
+Vimoire provides two navigation systems: the Navigator sidebar (a Neo-tree
+tree view) and Pickers (fuzzy finders via Snacks).
+
+THE NAVIGATOR ~
+                                                     *vimoire-navigator*
+The navigator is a sidebar that displays your manuscript as a tree. Toggle
+it with `<leader>nt` or reveal the current file with `<leader>nf`.
+
+Two views are available:
+
+MANUSCRIPT VIEW                                      *vimoire-navigator-ms*
+
+Switch with `<leader>nm`. Displays:
+
+    Book (root)
+    ├── Manuscript
+    │   ├── Dedication (page)
+    │   ├── Part One (section)
+    │   │   ├── Chapter 1: The Beginning
+    │   │   └── Chapter 2: Rising Action
+    │   └── Part Two (section)
+    │       └── Chapter 3: Climax
+    └── Planning
+        ├── Characters/
+        ├── Settings/
+        ├── Reference/
+        └── Orphaned Notes/
+
+The manuscript shows your narrative structure. Sections are containers that
+don't export—use them for organizing parts, acts, or arcs. Chapters export
+with numbers; pages export with just their title.
+
+Planning folders contain your worldbuilding materials. The "Orphaned Notes"
+folder collects notes.md content from deleted entries so nothing is lost.
+
+Tree actions (see |vimoire-keymaps-tree-ms| for all keymaps):
+
+ADD (`a`)                                            *vimoire-navigator-add*
+    Context-sensitive. On the manuscript: add chapter, page, or section.
+    On a section: add chapter or page inside it. On planning folders:
+    add a new item of that type. Reference folder also supports subfolders.
+
+DELETE (`d`)                                         *vimoire-navigator-delete*
+    Deletes the entry and its files. If notes.md has content, it's moved
+    to Orphaned Notes. Sections with children prompt for handling: keep
+    contents (flatten up) or delete everything.
+
+REORDER (`J`/`K`)                                    *vimoire-navigator-reorder*
+    Move entries up/down within their sibling list. Moving past the first
+    or last sibling moves the entry into the adjacent section.
+
+TOGGLE KIND (`T`)                                    *vimoire-navigator-toggle*
+    Switch an entry between chapter (numbered) and page (unnumbered).
+    Same as |:ToggleKind|.
+
+NOTES (`n`)                                          *vimoire-navigator-notes*
+    Open the notes file for the selected entry. Every entry has a paired
+    notes.md for scratch content that doesn't export.
+
+EXPORT VIEW                                          *vimoire-navigator-ex*
+
+Switch with `<leader>ne`. Displays:
+
+    Export
+    ├── [ Generate Config ]     (action)
+    ├── [ Run Export ]          (action)
+    ├── Templates/
+    │   ├── epub.css
+    │   └── reference.docx
+    ├── Configs/
+    │   └── default.yml
+    └── Output/
+        └── my-novel.epub
+
+The export view shows your export configuration and output. The two action
+items at the top are shortcuts:
+
+- "Generate Config" prompts for a name and creates a new export config
+- "Run Export" shows a picker of available configs and runs the selected one
+
+Edit template files (epub.css, reference.docx) to customize export styling.
+See |vimoire-export| for details on the export system.
+
+PICKERS ~
+                                                     *vimoire-pickers*
+Pickers are fuzzy finders for quick navigation. They show a searchable list
+with file preview (toggle preview in config, see |vimoire-configuration|).
+
+:Navigate (`<leader>ff` or `<C-p>`)                  *vimoire-picker-navigate*
+    The "smart finder"—shows all manuscript entries AND all planning items
+    in one searchable list. This is your go-to for jumping anywhere.
+
+    Entries display with chapter numbers (e.g., "Chapter 3: The Escape").
+    Planning items show their folder path (e.g., "Characters > Alice").
+
+:Manuscript (`<leader>fm`)                           *vimoire-picker-manuscript*
+    Manuscript entries only—chapters and pages. Useful when you know you're
+    looking for narrative content.
+
+:Planning (`<leader>fp`)                             *vimoire-picker-planning*
+    All planning items across all categories. Shows folder breadcrumbs.
+
+:Characters, :Settings, :Reference                   *vimoire-picker-planning-cat*
+    Browse a single planning category. Reference includes subfolders.
+
+:Exports (`<leader>fe`)                              *vimoire-picker-exports*
+    Browse export files—configs, templates, and generated output. External
+    files (epub, docx, pdf) open in your system's default application.
+
+:Snippets (`<leader>fs`)                             *vimoire-picker-snippets*
+    Browse saved snippets. In this picker:
+    - `<CR>` inserts the snippet at cursor (and deletes the snippet file)
+    - `<C-e>` opens the snippet for editing
+    - `<C-d>` deletes the snippet
+
+All pickers support standard Snacks keymaps: type to filter, `<CR>` to
+select, `<Esc>` to close, `<C-/>` for help.
+
+REVEAL AND FOCUS ~
+                                                     *vimoire-reveal*
+The reveal command (`<leader>nf`) finds your current buffer in the navigator
+and expands the tree to show it. Vimoire automatically detects the correct
+view:
+
+- Files in `exports/` folder → switches to export view
+- Everything else → switches to manuscript view
+
+This is useful for orienting yourself after jumping around with pickers.
+
+MOVING BETWEEN RELATED FILES ~
+                                                     *vimoire-move-between*
+Every entry has paired files (prose.md and notes.md). Jump between them:
+
+- |:Notes| (`<leader>wn`) — open notes for current entry
+- |:Prose| (`<leader>ww`) — jump back to prose from notes
+
+These commands work from any buffer that belongs to an entry.
+
+==============================================================================
+6. EDITING                                           *vimoire-editing*
+
+Vimoire configures prose buffers for comfortable long-form writing. This
+section covers prose-specific behaviors, marks for inline annotations,
+snippets for extracted text, and image management.
+
+PROSE BEHAVIORS ~
+                                                     *vimoire-prose-behaviors*
+Vimoire uses custom filetypes to apply different settings:
+
+`prose.md` files (vimoire_prose)                     *vimoire-prose-filetype*
+    Soft wrap enabled with word boundaries
+    Spell checking ON with book-local dictionary
+    Display line navigation (see |vimoire-keymaps-display|)
+    Sentence navigation (see |vimoire-keymaps-sentence|)
+
+`notes.md` and `text.md` files (vimoire_markdown)    *vimoire-markdown-filetype*
+    Soft wrap enabled with word boundaries
+    Spell checking OFF
+    Display line navigation only
+    2-space indentation
+
+Spell Checking                                       *vimoire-spell*
+
+Prose files have spell checking enabled. The spellfile is stored per-book
+at `spell/en.add` so each manuscript has its own custom dictionary.
+
+Standard vim spell commands work:
+    `]s`              Next misspelling
+    `[s`              Previous misspelling
+    `zg`              Add word to dictionary
+    `zw`              Mark word as bad
+    `z=`              Show suggestions
+
+MARKS ~
+                                                     *vimoire-marks*
+Marks are inline annotations visible while editing but stripped from exports.
+Use them for TODO notes, placeholders, or revision markers.
+
+Syntax:
+>
+    {{mark:fix this later}}
+    {{mark:RESEARCH: verify date}}
+    {{mark}}
+<
+The text after the colon is optional—`{{mark}}` creates an empty marker.
+
+Commands:
+    |:InsertMark| (`<leader>im`)    Insert mark and enter insert mode
+    |:Marks| (`<leader>wm`)         Browse marks in current buffer
+
+The marks picker shows all marks with their line numbers. Press `<CR>` to
+jump to a mark's location.
+
+During export (|vimoire-export|), marks are automatically stripped. They
+won't appear in your EPUB or DOCX output.
+
+SNIPPETS ~
+                                                     *vimoire-snippets*
+Snippets are extracted text fragments stored for later reuse. They're ideal
+for "killed darlings"—passages you've cut but might want to restore, or
+prose you want to use elsewhere.
+
+Snippets are stored in `snippets/<id>.md` with this format:
+>
+    The extracted text goes here.
+    Multiple lines are preserved.
+    ------
+    Optional description of what this snippet contains
+<
+Creating Snippets                                    *vimoire-snippets-create*
+
+1. Select text in visual mode
+2. Run |:SnippetExtract| or press `<leader>sx`
+3. The selection is removed from the buffer
+4. A snippet editor opens for adding a description
+
+The snippet editor is a floating window. Edit the text above the separator,
+add a description below it, then save and close (`:wq`).
+
+Using Snippets                                       *vimoire-snippets-use*
+
+Run |:Snippets| or press `<leader>si` to browse snippets.
+
+Picker actions:
+    `<CR>`            Insert at cursor AND delete the snippet
+    `<C-e>`           Open snippet for editing
+    `<C-d>`           Delete snippet without inserting
+
+Note: Inserting a snippet consumes it—the snippet file is deleted. This
+prevents accidental reuse. If you need to insert the same text multiple
+times, edit the snippet instead and copy from there.
+
+IMAGES ~
+                                                     *vimoire-images*
+Images are stored in `assets/images/` and inserted using markdown syntax.
+Vimoire handles importing, organizing, and generating the markdown.
+
+Supported formats: png, jpg, jpeg, gif, webp, svg
+
+Inserting Images                                     *vimoire-images-insert*
+
+Run |:InsertImage| or press `<leader>ii`. Choose a source:
+
+"From file"                                          *vimoire-images-file*
+    Browse your filesystem for an image. Vimoire starts in ~/Pictures
+    or ~/Downloads. Navigate with the picker, select an image, and it's
+    copied to `assets/images/`. If a file with that name exists, you can
+    overwrite, rename, or cancel.
+
+"From assets"                                        *vimoire-images-assets*
+    Pick from images already in your `assets/images/` folder.
+
+    Picker actions:
+        `<CR>`        Select image and prompt for alt text
+        `<C-d>`       Delete image from assets
+        `<C-r>`       Rename image file
+
+After selecting an image, you're prompted for alt text. The markdown is
+inserted at the cursor:
+>
+    ![Alt text](assets/images/filename.png)
+<
+Managing Images                                      *vimoire-images-manage*
+
+Images live in `assets/images/` and persist across exports. To remove an
+image, either use `<C-d>` in the assets picker or delete the file directly.
+
+Tip: Keep image filenames descriptive. When you insert from assets, you'll
+only see the filename, not a preview.
+
+==============================================================================
+7. EXPORT                                            *vimoire-export*
+
+Vimoire exports manuscripts to EPUB or DOCX via Pandoc. The export system
+handles chapter numbering, scene breaks, and formatting automatically.
+
+REQUIREMENTS ~
+                                                     *vimoire-export-requirements*
+Pandoc must be installed:
+>bash
+    # macOS
+    brew install pandoc
+
+    # Linux (Debian/Ubuntu)
+    apt install pandoc
+<
+Vimoire checks for pandoc availability before export and shows an error with
+installation instructions if not found.
+
+BASIC WORKFLOW ~
+                                                     *vimoire-export-workflow*
+1. Run |:ExportConfig| to generate a config file
+2. Edit the config to adjust format and exclude entries
+3. Run |:Export| to produce output
+
+The quickest path: `:ExportConfig` then `:Export`. Output lands in
+`exports/output/` and auto-opens by default.
+
+CONFIG FILE FORMAT ~
+                                                     *vimoire-config-format*
+Export configs are YAML files in `exports/configs/`. Generate one with
+|:ExportConfig|:
+>yaml
+    # Supported formats: epub, docx
+    format: epub
+
+    # output: My_Novel.epub    # optional custom filename
+
+    entries:
+      - abc123  # Dedication (page)
+      - def456  # The Beginning (chapter 1)
+      - ghi789  # Rising Action (chapter 2)
+      # - jkl012  # Commented out = excluded
+<
+Fields:
+
+format                                               *vimoire-config-format-field*
+    Required. Either `epub` or `docx`.
+
+output                                               *vimoire-config-output*
+    Optional. Custom output filename. Defaults to sanitized book title
+    with the format extension (e.g., `My_Novel.epub`).
+
+entries                                              *vimoire-config-entries*
+    List of entry IDs to include, in order. IDs are auto-generated 6-char
+    alphanumeric strings—don't memorize them, just use |:ExportConfig| to
+    manage the list.
+
+    To exclude an entry, comment it out with `# -`:
+>yaml
+        entries:
+          - abc123  # Included
+          # - def456  # Excluded
+<
+    When you run |:ExportConfig| on an existing config, it:
+    - Preserves your format and output settings
+    - Adds new entries that weren't in the config
+    - Keeps commented-out entries commented
+
+SUPPORTED FORMATS ~
+                                                     *vimoire-formats*
+EPUB                                                 *vimoire-format-epub*
+
+Electronic publication format for e-readers. Uses:
+- `epub.css` for styling (see |vimoire-template-css|)
+- `--epub-cover-image` if cover is set in book.yml
+- `--split-level=1` to split chapters into separate XHTML files
+
+DOCX                                                 *vimoire-format-docx*
+
+Microsoft Word format. Uses:
+- `reference.docx` as a style template (see |vimoire-template-docx|)
+- A Lua filter to convert `\newpage` commands to Word page breaks
+
+For DOCX, chapters are separated by page breaks. The Lua filter handles
+the conversion automatically.
+
+TEMPLATE CUSTOMIZATION ~
+                                                     *vimoire-templates*
+Templates live in `exports/templates/`. Vimoire copies defaults when you
+create a new project. Edit them to customize export appearance.
+
+epub.css                                             *vimoire-template-css*
+
+    Stylesheet for EPUB output. Controls:
+    - Typography (font, line height, text alignment)
+    - Chapter headings (size, spacing, page breaks)
+    - Paragraph formatting (indentation, margins)
+    - Scene breaks (`---` renders as centered `* * *`)
+    - Fenced divs (`.letter`, `.epigraph`, custom classes)
+
+    Example customizations:
+>css
+        /* Larger chapter headings */
+        h1 { font-size: 2.2em; }
+
+        /* No paragraph indent (use blank lines instead) */
+        p { text-indent: 0; margin-bottom: 1em; }
+
+        /* Custom div for letters */
+        .letter {
+          font-family: "Courier New", monospace;
+          border: 1px solid #ccc;
+          padding: 1em;
+        }
+<
+reference.docx                                       *vimoire-template-docx*
+
+    Word template for DOCX output. Pandoc applies styles from this document
+    to your export. To customize:
+
+    1. Export once to get a DOCX file
+    2. Open it in Word and modify the styles (Heading 1, Body Text, etc.)
+    3. Save as `exports/templates/reference.docx`
+
+    Your style changes apply to all future DOCX exports.
+
+chapter.md                                           *vimoire-template-chapter*
+
+    Template for chapter openings. Uses `{{placeholder}}` syntax:
+>markdown
+        # Chapter {{num}}: {{title}}
+
+<
+    Available placeholders:
+    - `{{num}}` — chapter number (auto-calculated from order)
+    - `{{title}}` — chapter title (from entry name or frontmatter)
+
+    Only applies to chapters, not pages. Pages export with just their
+    title as a heading.
+
+    Example without "Chapter" prefix:
+>markdown
+        # {{num}}. {{title}}
+
+<
+    Example with decorative separator:
+>markdown
+        # {{title}}
+
+        —— {{num}} ——
+
+<
+BOOK METADATA ~
+                                                     *vimoire-book-metadata*
+Book metadata comes from `book.yml` in your project root:
+>yaml
+    title: "My Novel"
+    author: "Jane Author"
+    description: "A gripping tale..."
+    language: en
+    cover: assets/images/cover.jpg
+<
+Fields used in export:
+
+title       Embedded in output metadata and used for filename
+author      Embedded in output metadata
+language    Language code for reader software (en, fr, es, etc.)
+cover       Path to cover image, relative to project root (EPUB only)
+
+The cover image appears as the book cover in e-readers. Recommended size
+is at least 1600x2400 pixels.
+
+PROSE FRONTMATTER ~
+                                                     *vimoire-prose-frontmatter*
+Individual prose files can include YAML frontmatter to override defaults:
+>markdown
+    ---
+    title: The Real Chapter Title
+    ---
+
+    Chapter content here...
+<
+Currently supported:
+
+title       Overrides the entry name in chapter headings
+
+This is useful when your navigator entry is short ("Ch 1") but you want
+a longer title in export ("The Journey Begins").
+
+PROCESSING PIPELINE ~
+                                                     *vimoire-export-pipeline*
+During export, Vimoire processes each entry:
+
+1. Strips marks (`{{mark:...}}`) — they're for editing, not output
+2. Strips leading tab indentation (from `prose.md` formatting)
+3. Renders chapter template for numbered entries
+4. Converts single newlines to paragraph breaks
+
+Marks (see |vimoire-marks|) are completely removed. Use them freely for
+TODO notes, revision markers, or placeholders—they won't appear in output.
+
+Single newlines become paragraph breaks because prose is typically written
+with hard wraps. A line like:
+>
+    First sentence ends here.
+    Second sentence on new line.
+<
+Becomes two separate paragraphs in the output.
+
+SCENE BREAKS AND PAGE BREAKS ~
+                                                     *vimoire-breaks*
+In your prose:
+
+`---`                                                *vimoire-scene-break*
+    Horizontal rule. Renders as `* * *` in EPUB (via CSS) or a
+    centered line in DOCX. Use for scene breaks within a chapter.
+
+`\newpage`                                           *vimoire-page-break*
+    Forces a page break. Works in both EPUB and DOCX. Insert with
+    |:InsertPageBreak|.
+
+FENCED DIVS ~
+                                                     *vimoire-fenced-divs*
+Pandoc's fenced div syntax applies CSS classes to blocks:
+>markdown
+    ::: epigraph
+    "All happy families are alike..."
+    — Leo Tolstoy
+    :::
+<
+The default `epub.css` includes styles for `.epigraph` and `.letter`.
+Add your own classes to the CSS for custom styling.
+
+Insert a div skeleton with |:InsertDiv|.
+
+CONFIGURATION ~
+                                                     *vimoire-export-config*
+User config options in `~/.vimoire/config.lua`:
+
+export.auto_open                                     *vimoire-export-auto-open*
+    Default: `true`
+
+    Automatically open the exported file after successful export.
+    Set to `false` to disable:
+>lua
+        export = {
+          auto_open = false,
+        }
+<
+    Or use the `--no-open` flag for a single export: `:Export --no-open`
+
+TROUBLESHOOTING EXPORT ~
+                                                     *vimoire-export-trouble*
+Export failed                                        *vimoire-export-failed*
+
+    Check `exports/output/export.log` for Pandoc's error output. Common
+    issues:
+    - Missing pandoc installation
+    - Invalid markdown syntax
+    - Missing image files referenced in prose
+
+No entries in config                                 *vimoire-export-no-entries*
+
+    The config file exists but has no entries listed. Run |:ExportConfig|
+    to regenerate with current manuscript entries.
+
+Entry IDs don't match                                *vimoire-export-id-mismatch*
+
+    If you manually edited entry IDs in the config and they don't match
+    your manuscript, those entries are silently skipped. Run |:ExportConfig|
+    to update the config with current entry IDs.
+
+Output opens in wrong app                            *vimoire-export-open*
+
+    Vimoire uses your system's default application for EPUB/DOCX.
+    Change the default in your OS settings, or set `export.auto_open = false`
+    and open files manually.
+
+==============================================================================
+8. CONFIGURATION                                     *vimoire-configuration*
+
+User configuration lives at `~/.vimoire/config.lua`. This file returns a Lua
+table that is merged with defaults—only specify options you want to change.
+
+Note: This is separate from `~/.config/vimoire/` (app code via NVIM_APPNAME).
+Your personal config lives in `~/.vimoire/`.
+
+BASIC EXAMPLE ~
+                                                     *vimoire-config-example*
+>lua
+    -- ~/.vimoire/config.lua
+    return {
+      colorscheme = "umbra",
+      editor = {
+        textwidth = 100,
+        autosave = true,
+      },
+      keymaps = {
+        finder = {
+          snippets = false,  -- disable this keymap
+        },
+      },
+    }
+<
+CONFIGURATION OPTIONS ~
+                                                     *vimoire-config-options*
+All options and their defaults:
+
+COLORSCHEME                                          *vimoire-config-colorscheme*
+
+    Default: `"inkwell"`
+
+    Set the startup colorscheme. See |vimoire-colorschemes| for available
+    themes. Can also be changed at runtime via |:Theme|.
+>lua
+        colorscheme = "inkwell"
+<
+EDITOR OPTIONS                                       *vimoire-config-editor*
+
+editor.textwidth                                     *vimoire-config-textwidth*
+    Default: `86`
+    Text width for formatting. Also sets focus mode content width.
+
+editor.scrolloff                                     *vimoire-config-scrolloff*
+    Default: `5`
+    Minimum lines to keep visible above/below cursor.
+
+editor.tabstop                                       *vimoire-config-tabstop*
+    Default: `4`
+    Tab display width.
+
+editor.shiftwidth                                    *vimoire-config-shiftwidth*
+    Default: `4`
+    Indent width for shifting operations.
+
+editor.wrap                                          *vimoire-config-wrap*
+    Default: `true`
+    Soft wrap long lines (no hard breaks inserted).
+
+editor.linebreak                                     *vimoire-config-linebreak*
+    Default: `true`
+    Wrap at word boundaries, not mid-word.
+
+editor.visual_line_navigation                        *vimoire-config-visual-nav*
+    Default: `true`
+    Swap j/k with gj/gk for display line navigation. See |vimoire-keymaps-display|.
+
+editor.autosave                                      *vimoire-config-autosave*
+    Default: `false`
+    Auto-save on CursorHold, InsertLeave, and BufLeave events.
+
+editor.focus_mode                                    *vimoire-config-focus-mode*
+    Default: `true`
+    Enable focus mode on startup. See |vimoire-focus|.
+
+editor.termguicolors                                 *vimoire-config-termguicolors*
+    Default: `true`
+    Enable 24-bit RGB colors. Required for accurate theme colors in terminal.
+
+UI OPTIONS                                           *vimoire-config-ui*
+
+ui.mouse_mode                                        *vimoire-config-mouse*
+    Default: `"single_click"`
+    Controls how Neo-tree opens files on click.
+    Values: `"single_click"` or `"double_click"`
+
+FINDER OPTIONS                                       *vimoire-config-finder*
+
+finder.preview                                       *vimoire-config-preview*
+    Default: `true`
+    Show file preview in pickers.
+
+EXPORT OPTIONS                                       *vimoire-config-export*
+
+export.auto_open                                     *vimoire-config-export-open*
+    Default: `true`
+    Automatically open exported file after successful export.
+    Override per-export with `:Export --no-open`.
+
+NEOVIDE OPTIONS                                      *vimoire-config-neovide*
+
+These options only apply when running in Neovide (ignored in terminal).
+
+neovide.font                                         *vimoire-config-font*
+    Default: `"Iosevka Term Slab:h16"`
+    Font family and size.
+
+neovide.linespace                                    *vimoire-config-linespace*
+    Default: `8`
+    Extra space between lines (pixels).
+
+neovide.padding                                      *vimoire-config-padding*
+    Default: `{ top = 20, left = 20, right = 20, bottom = 20 }`
+    Window padding in pixels.
+
+neovide.scroll_animation_length                      *vimoire-config-scroll*
+    Default: `0.3`
+    Scroll animation duration in seconds.
+
+COLORSCHEMES ~
+                                                     *vimoire-colorschemes*
+Available themes. Set via `colorscheme` config or |:Theme| command.
+
+Dark themes:                                         *vimoire-themes-dark*
+    `inkwell`     Warm candlelight (default)
+    `umbra`       High contrast monochrome
+    `abyss`       Ocean blues
+    `hollow`      Forest greens
+    `dusk`        Twilight purples
+    `tempest`     Storm grays
+    `hearth`      Firelight reds
+    `nebula`      Cosmic purples
+    `frost`       Arctic blues
+
+Light themes:                                        *vimoire-themes-light*
+    `parchment`   Warm cream
+    `vellum`      Aged sepia
+    `lumen`       High contrast monochrome
+
+Theme Precedence                                     *vimoire-theme-precedence*
+
+    1. User config (`~/.vimoire/config.lua` colorscheme setting)
+    2. Preferences (`~/.vimoire/preferences.json`, set by |:Theme|)
+    3. Default (inkwell)
+
+User config always wins. If you want the |:Theme| picker selection to persist,
+don't set `colorscheme` in your config.
+
+KEYMAP CUSTOMIZATION ~
+                                                     *vimoire-keymaps-custom*
+Override any keymap by specifying a new binding. Set to `false` to disable.
+Keymaps are organized by domain matching the |vimoire-keymaps| structure.
+
+>lua
+    return {
+      keymaps = {
+        palette = "<leader>P",       -- change palette keymap
+        finder = {
+          smart = "<leader>o",       -- change smart finder
+          snippets = false,          -- disable snippets finder
+        },
+        navigator = {
+          toggle = "<C-n>",          -- change navigator toggle
+        },
+      },
+    }
+<
+KEYMAP DEFAULTS                                      *vimoire-keymaps-defaults*
+
+All keymap options and their defaults:
+>lua
+    keymaps = {
+      palette = "<leader>p",
+      finder = {
+        smart = "<leader>ff",
+        smart_alt = "<C-p>",
+        manuscript = "<leader>fm",
+        planning = "<leader>fp",
+        snippets = "<leader>fs",
+        exports = "<leader>fe",
+      },
+      navigator = {
+        toggle = "<leader>nt",
+        reveal = "<leader>nf",
+        manuscript = "<leader>nm",
+        export = "<leader>ne",
+      },
+      views = {
+        home = "<leader>vh",
+        focus = "<leader>vf",
+      },
+      writing = {
+        notes = "<leader>wn",
+        marks = "<leader>wm",
+        toggle_kind = "<leader>wk",
+        prose = "<leader>ww",
+      },
+      insert = {
+        mark = "<leader>im",
+        image = "<leader>ii",
+      },
+      snippets = {
+        insert = "<leader>si",
+        extract = "<leader>sx",
+      },
+      misc = {
+        clear_highlight = "<Esc><Esc>",
+      },
+    }
+<
+Navigator tree keymaps (|vimoire-keymaps-tree|) are not configurable.
+
+FULL DEFAULT CONFIG ~
+                                                     *vimoire-config-full*
+For reference, all defaults:
+>lua
+    return {
+      colorscheme = "inkwell",
+
+      keymaps = {
+        -- see |vimoire-keymaps-defaults|
+      },
+
+      ui = {
+        mouse_mode = "single_click",
+      },
+
+      editor = {
+        textwidth = 86,
+        scrolloff = 5,
+        tabstop = 4,
+        shiftwidth = 4,
+        wrap = true,
+        linebreak = true,
+        visual_line_navigation = true,
+        autosave = false,
+        focus_mode = true,
+        termguicolors = true,
+      },
+
+      finder = {
+        preview = true,
+      },
+
+      export = {
+        auto_open = true,
+      },
+
+      neovide = {
+        font = "Iosevka Term Slab:h16",
+        linespace = 8,
+        padding = {
+          top = 20,
+          left = 20,
+          right = 20,
+          bottom = 20,
+        },
+        scroll_animation_length = 0.3,
+      },
+    }
+<
+==============================================================================
+9. TROUBLESHOOTING                                   *vimoire-troubleshooting*
+
+This section covers common issues, diagnostic tools, and how to report bugs.
+
+LOG LOCATIONS ~
+                                                     *vimoire-logs*
+Vimoire notifications                                *vimoire-messages*
+
+    All Vimoire messages go through vim.notify with a `[vimoire]` prefix.
+    View recent messages with:
+>vim
+        :messages
+<
+    Messages are categorized by level: DEBUG, INFO, WARN, ERROR.
+
+Neovim log file                                      *vimoire-nvim-log*
+
+    Because Vimoire uses `NVIM_APPNAME=vimoire`, Neovim's log lives at:
+>
+        ~/.local/state/vimoire/log
+<
+    Useful for low-level debugging (plugin errors, startup issues).
+    View with `:edit ~/.local/state/vimoire/log` or tail from terminal.
+
+Export log                                           *vimoire-export-log*
+
+    When export fails, Pandoc's error output is written to:
+>
+        exports/output/export.log
+<
+    This file only exists after a failed export. Check it for Pandoc errors
+    like invalid markdown syntax or missing files.
+
+COMMON ISSUES ~
+                                                     *vimoire-issues*
+Vimoire won't start                                  *vimoire-wont-start*
+
+    1. Verify Neovim 0.10+ is installed:
+>bash
+           nvim --version
+<
+    2. Check the symlink exists:
+>bash
+           ls -la ~/.config/vimoire
+<
+       Should point to `~/dev/vimoire/app` (or wherever you cloned).
+
+    3. Check the alias is correct:
+>bash
+           which vimoire        # should show alias
+           alias vimoire        # should show NVIM_APPNAME=vimoire ...
+<
+    4. If using Neovide, verify it's installed and in PATH.
+
+Export fails                                         *vimoire-export-fail*
+
+    1. Check `exports/output/export.log` for Pandoc's error message.
+
+    2. Verify Pandoc is installed:
+>bash
+           pandoc --version
+<
+       If missing, install with:
+>bash
+           brew install pandoc      # macOS
+           apt install pandoc       # Linux
+<
+    3. Common Pandoc errors:
+       - Invalid markdown syntax (unmatched fences, broken links)
+       - Missing image files referenced in prose
+       - Invalid YAML frontmatter
+
+    See also: |vimoire-export-trouble|
+
+No entries in export config                          *vimoire-no-entries*
+
+    The config file exists but has no entries. This happens when:
+    - You manually emptied the entries list
+    - The config was created before any chapters existed
+
+    Fix: Run |:ExportConfig| to regenerate with current manuscript entries.
+
+Icons not displaying                                 *vimoire-icons*
+
+    Vimoire uses Nerd Font icons for the navigator. If you see boxes or
+    question marks instead of icons:
+
+    1. Install a Nerd Font: https://www.nerdfonts.com
+    2. Set it as your terminal font (for terminal Neovim)
+    3. Or set it in Neovide config (for GUI):
+>lua
+           neovide = {
+             font = "JetBrainsMono Nerd Font:h14",
+           }
+<
+Colors look wrong                                    *vimoire-colors*
+
+    If themes look washed out or wrong in terminal:
+
+    1. Ensure `termguicolors` is enabled (default: true):
+>lua
+           editor = {
+             termguicolors = true,
+           }
+<
+    2. Verify your terminal supports 24-bit color. Most modern terminals do
+       (iTerm2, Alacritty, Kitty, Windows Terminal). Check your terminal's
+       documentation.
+
+    3. If using tmux, add to `~/.tmux.conf`:
+>
+           set -g default-terminal "tmux-256color"
+           set -ag terminal-overrides ",*:RGB"
+<
+Config not loading                                   *vimoire-config-fail*
+
+    If your `~/.vimoire/config.lua` changes aren't applying:
+
+    1. Check for Lua syntax errors. The file must return a valid table:
+>lua
+           return {
+             colorscheme = "parchment",
+           }
+<
+    2. Verify the file location: `~/.vimoire/config.lua`
+       NOT `~/.config/vimoire/config.lua` (that's app code).
+
+    3. Restart Vimoire—config is loaded once at startup.
+
+    4. Check `:messages` for any load errors.
+
+Manuscript not found                                 *vimoire-ms-not-found*
+
+    When opening a project, Vimoire looks for `manuscript.json` in the
+    directory. If this file is missing or corrupted:
+
+    1. The dashboard won't show it as a valid project
+    2. Navigation commands won't work
+
+    Don't edit `manuscript.json` directly—it's managed by Vimoire.
+    If corrupted, restore from version control or recreate the project.
+
+Neovide-specific issues                              *vimoire-neovide-issues*
+
+    Font not applying
+        Ensure the font is installed system-wide, not just for one user.
+        On macOS, install to `/Library/Fonts/` or `~/Library/Fonts/`.
+
+    Startup flash
+        Vimoire handles this, but if you see a white flash on startup,
+        the colorscheme may not be loading. Check `:messages` for errors.
+
+    Copy/paste not working
+        Standard macOS shortcuts (`Cmd+C`, `Cmd+V`) require Neovide-specific
+        keymaps. These are enabled by default. If broken, check your config
+        isn't overriding them.
+
+DIAGNOSTIC COMMANDS ~
+                                                     *vimoire-diagnostics*
+Useful built-in commands for debugging:
+
+>vim
+    :messages           " View recent notifications
+    :checkhealth        " Run Neovim health checks
+    :scriptnames        " List all loaded scripts
+    :version            " Show Neovim version and build info
+<
+REPORTING BUGS ~
+                                                     *vimoire-bugs*
+Report issues at: https://github.com/dewyze/vimoire/issues
+
+When reporting, please include:
+
+1. What you were trying to do
+2. What happened instead
+3. Steps to reproduce
+4. Relevant output from:
+   - `:messages`
+   - `exports/output/export.log` (for export issues)
+   - `~/.local/state/vimoire/log` (for startup/crash issues)
+5. Your OS and Neovim version (`:version`)
+6. Whether you're using Neovide or terminal Neovim
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:
