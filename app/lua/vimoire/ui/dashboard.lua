@@ -199,7 +199,7 @@ local function create_project_at(parent_path)
     if not name or name == "" then
       return
     end
-    local project_path = parent_path .. "/" .. name
+    local project_path = parent_path .. "/" .. name .. ".tome"
     scaffold.create(project_path, name)
     open_project(project_path)
   end)
