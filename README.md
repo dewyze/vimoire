@@ -120,7 +120,16 @@ Your prose lives in plain markdown files—readable anywhere, forever.
 
 ## Installation
 
-> **Note:** Distribution is in progress. For now, clone and symlink manually.
+### Homebrew (macOS)
+
+```bash
+brew tap dewyze/vimoire
+brew install --cask vimoire
+```
+
+This installs `Vimoire.app` to `/Applications/` and the configuration to `~/.config/vimoire/`.
+
+### Manual
 
 ```bash
 # Clone the repo

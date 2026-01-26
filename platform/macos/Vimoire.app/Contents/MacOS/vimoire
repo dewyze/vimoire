@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
-# TODO: Uncomment --icon once neovide stable includes it (after 0.15.2)
+# TODO: Switch to homebrew once neovide stable includes --icon (after 0.15.2)
 # Requires: https://github.com/neovide/neovide/pull/3272
-NVIM_APPNAME=vimoire /opt/homebrew/bin/neovide "$@"
-# NVIM_APPNAME=vimoire /opt/homebrew/bin/neovide --icon "$DIR/Resources/vimoire.icns" "$@"
+# NVIM_APPNAME=vimoire /opt/homebrew/bin/neovide "$@"
+NVIM_APPNAME=vimoire /Applications/Neovide.app/Contents/MacOS/neovide --icon "$DIR/Resources/vimoire.icns" "$@"

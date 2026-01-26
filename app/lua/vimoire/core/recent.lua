@@ -78,4 +78,8 @@ function M.set_last_edited(path, item_id)
   end
 end
 
+function M.clear()
+  preferences.set("recent_projects", {})
+end
+
 return M

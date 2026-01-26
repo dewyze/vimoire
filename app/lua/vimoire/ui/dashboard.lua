@@ -136,6 +136,7 @@ local function render()
     { key = "n", desc = "New project" },
     { key = "b", desc = "Browse for project" },
     { key = "c", desc = "Config" },
+    { key = "x", desc = "Clear recents" },
     { key = "q", desc = "Quit" },
   }
 
@@ -358,6 +359,11 @@ local function setup_keymaps()
   vim.keymap.set("n", "n", new_project, opts)
   vim.keymap.set("n", "b", browse_project, opts)
   vim.keymap.set("n", "c", open_config, opts)
+  vim.keymap.set("n", "x", function()
+    recent.clear()
+    M.selected_index = 1
+    render()
+  end, opts)
   vim.keymap.set("n", "q", function()
     vim.cmd("quit")
   end, opts)
