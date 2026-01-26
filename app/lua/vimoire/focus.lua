@@ -25,6 +25,22 @@ local function is_neotree_buffer(bufnr)
   return vim.bo[bufnr].filetype == "neo-tree"
 end
 
+local function is_prose_window(winid)
+  local bufnr = vim.api.nvim_win_get_buf(winid)
+  local ft = vim.bo[bufnr].filetype
+  return ft == "vimoire_prose" or ft == "vimoire_markdown"
+end
+
+local function find_prose_windows()
+  local prose_wins = {}
+  for _, winid in ipairs(vim.api.nvim_list_wins()) do
+    if is_prose_window(winid) then
+      table.insert(prose_wins, winid)
+    end
+  end
+  return prose_wins
+end
+
 local function create_margin_buffer()
   local buf = vim.api.nvim_create_buf(false, true)
   vim.bo[buf].buftype = "nofile"
@@ -44,18 +60,17 @@ local function setup_margin_window(winid)
   vim.wo[winid].fillchars = "eob: "
 end
 
-local function create_margin_window(position, width)
+local function create_margin_window(position, width, relative_to)
   if width <= 0 then
     return nil, nil
   end
 
-  local split_cmd = position == "left" and "aboveleft vsplit" or "belowright vsplit"
   local bufnr = create_margin_buffer()
-
-  vim.cmd(split_cmd)
-  local winid = vim.api.nvim_get_current_win()
-  vim.api.nvim_win_set_buf(winid, bufnr)
-  vim.api.nvim_win_set_width(winid, width)
+  local winid = vim.api.nvim_open_win(bufnr, false, {
+    split = position,
+    win = relative_to,
+    width = width,
+  })
 
   setup_margin_window(winid)
   vim.w[winid].margins_role = position
@@ -132,11 +147,9 @@ local function create_margin_windows()
 
   state.content_winid = vim.api.nvim_get_current_win()
 
-  state.left_winid, state.left_bufnr = create_margin_window("left", left_width)
-  vim.api.nvim_set_current_win(state.content_winid)
-
-  state.right_winid, state.right_bufnr = create_margin_window("right", right_width)
-  vim.api.nvim_set_current_win(state.content_winid)
+  -- nvim_open_win with enter=false keeps focus on content window
+  state.left_winid, state.left_bufnr = create_margin_window("left", left_width, state.content_winid)
+  state.right_winid, state.right_bufnr = create_margin_window("right", right_width, state.content_winid)
 
   return true
 end
@@ -225,6 +238,17 @@ end
 function M.enable()
   if state.active then
     return
+  end
+
+  -- If in neotree, find a prose window to focus instead
+  local current_buf = vim.api.nvim_win_get_buf(vim.api.nvim_get_current_win())
+  if is_neotree_buffer(current_buf) then
+    local prose_wins = find_prose_windows()
+    if #prose_wins == 1 then
+      vim.api.nvim_set_current_win(prose_wins[1])
+    else
+      return
+    end
   end
 
   close_other_windows()
