@@ -174,6 +174,75 @@ vim.api.nvim_create_user_command("Theme", function()
   })
 end, { desc = "Select and save Vimoire colorscheme" })
 
+-- Comments
+local comments = require("vimoire.comments")
+
+vim.api.nvim_create_user_command("CommentCreate", function(opts)
+  local start_line, start_col, end_line, end_col
+  if opts.range == 2 then
+    start_line = opts.line1 - 1
+    end_line = opts.line2 - 1
+    local start_pos = vim.fn.getpos("'<")
+    local end_pos = vim.fn.getpos("'>")
+    start_col = start_pos[3] - 1
+    end_col = end_pos[3]
+  else
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    start_line = cursor[1] - 1
+    start_col = 0
+    end_line = start_line
+    end_col = #vim.api.nvim_get_current_line()
+  end
+
+  vim.ui.input({ prompt = "Comment: " }, function(text)
+    if text and text ~= "" then
+      comments.create(text, start_line, start_col, end_line, end_col)
+    end
+  end)
+end, { range = true, desc = "Create comment at selection or line" })
+
+vim.api.nvim_create_user_command("CommentEdit", function()
+  local at_cursor = comments.get_at_cursor()
+  if not at_cursor then
+    vim.notify("No comment at cursor", vim.log.levels.WARN)
+    return
+  end
+
+  vim.ui.input({ prompt = "Comment: ", default = at_cursor.text }, function(text)
+    if text and text ~= "" then
+      comments.edit(text)
+    end
+  end)
+end, { desc = "Edit comment at cursor" })
+
+vim.api.nvim_create_user_command("CommentDelete", function()
+  comments.delete()
+end, { desc = "Delete comment at cursor" })
+
+vim.api.nvim_create_user_command("CommentView", function()
+  comments.view()
+end, { desc = "View comment at cursor" })
+
+vim.api.nvim_create_user_command("CommentToggle", function()
+  comments.toggle_visibility()
+end, { desc = "Toggle comment visibility" })
+
+vim.api.nvim_create_user_command("CommentNext", function()
+  comments.next()
+end, { desc = "Jump to next comment" })
+
+vim.api.nvim_create_user_command("CommentPrev", function()
+  comments.prev()
+end, { desc = "Jump to previous comment" })
+
+vim.api.nvim_create_user_command("CommentList", function()
+  comments.list()
+end, { desc = "List comments in buffer" })
+
+vim.api.nvim_create_user_command("CommentsClear", function()
+  comments.clear_all()
+end, { desc = "Clear all comments in buffer" })
+
 -- Images
 vim.api.nvim_create_user_command("InsertImage", function()
   local state = require("vimoire.state")

@@ -30,6 +30,17 @@ local COMMANDS = {
   { cmd = "Snippets", display = "Snippets > Browse" },
   { cmd = "SnippetExtract", display = "Snippets > Extract Selection" },
 
+  -- Comments
+  { cmd = "CommentCreate", display = "Comments > Create" },
+  { cmd = "CommentEdit", display = "Comments > Edit" },
+  { cmd = "CommentDelete", display = "Comments > Delete" },
+  { cmd = "CommentView", display = "Comments > View" },
+  { cmd = "CommentToggle", display = "Comments > Toggle Visibility" },
+  { cmd = "CommentList", display = "Comments > List All" },
+  { cmd = "CommentNext", display = "Comments > Next" },
+  { cmd = "CommentPrev", display = "Comments > Previous" },
+  { cmd = "CommentsClear", display = "Comments > Clear All" },
+
   -- Export
   { cmd = "Export", display = "Export > Run Export" },
   { cmd = "ExportConfig", display = "Export > Generate Config" },

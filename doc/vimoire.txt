@@ -235,6 +235,17 @@ SNIPPETS                                             *vimoire-keymaps-snippets*
     <leader>si        Browse and insert snippet
     <leader>sx        Extract selection to snippet (visual mode)
 
+COMMENTS                                             *vimoire-keymaps-comments*
+
+    <leader>cc        Create comment (normal/visual)
+    <leader>ce        Edit comment at cursor
+    <leader>cd        Delete comment at cursor
+    <leader>cv, K     View comment at cursor
+    <leader>ct        Toggle comment visibility
+    <leader>cl        List all comments
+    ]c                Next comment
+    [c                Previous comment
+
 MISC                                                 *vimoire-keymaps-misc*
 
     <leader>p         Command palette
@@ -706,6 +717,80 @@ Picker actions:
 Note: Inserting a snippet consumes it—the snippet file is deleted. This
 prevents accidental reuse. If you need to insert the same text multiple
 times, edit the snippet instead and copy from there.
+
+COMMENTS ~
+                                                     *vimoire-comments*
+Comments are range-based annotations attached to prose text. They're stored
+per-entry in `comments.json` and persist across sessions.
+
+Unlike marks (inline annotations that export), comments are editor-only
+metadata—notes to yourself about the text that won't appear in output.
+
+Creating Comments                                    *vimoire-comments-create*
+
+1. Select text in visual mode (or position cursor on a line)
+2. Run |:CommentCreate| or press `<leader>cc`
+3. Enter your comment text in the prompt
+
+The commented range is highlighted and a sign appears in the gutter.
+
+Viewing and Editing                                  *vimoire-comments-edit*
+
+    `K`               View comment at cursor (popup)
+    `<leader>cv`      View comment at cursor (popup)
+    `<leader>ce`      Edit comment at cursor
+    `<leader>cd`      Delete comment at cursor
+
+Navigation                                           *vimoire-comments-nav*
+
+    `]c`              Jump to next comment
+    `[c`              Jump to previous comment
+    `<leader>cl`      List all comments (picker)
+
+The picker shows the commented text on the left and the comment itself in
+the preview pane.
+
+Visibility                                           *vimoire-comments-toggle*
+
+    `<leader>ct`      Toggle comment visibility
+
+When hidden, comments are preserved but highlights and signs are removed.
+Comments save with the buffer regardless of visibility state.
+
+Storage                                              *vimoire-comments-storage*
+
+Comments are saved to `entries/<id>/comments.json` when the prose file is
+written. The file format is:
+>json
+    {
+      "version": 1,
+      "comments": [
+        {
+          "id": "abc123",
+          "start_line": 10,
+          "start_col": 5,
+          "end_line": 10,
+          "end_col": 25,
+          "text": "Rephrase this",
+          "created_at": "2026-01-27T10:30:00Z"
+        }
+      ]
+    }
+<
+Comment positions are tracked via extmarks, so they follow the text as you
+edit. Positions are updated in the JSON on each save.
+
+Commands                                             *vimoire-comments-commands*
+
+    |:CommentCreate|   Create comment at selection or line
+    |:CommentEdit|     Edit comment at cursor
+    |:CommentDelete|   Delete comment at cursor
+    |:CommentView|     View comment popup at cursor
+    |:CommentToggle|   Toggle visibility
+    |:CommentNext|     Jump to next comment
+    |:CommentPrev|     Jump to previous comment
+    |:CommentList|     List all comments in picker
+    |:CommentsClear|   Clear all comments (escape hatch)
 
 IMAGES ~
                                                      *vimoire-images*
@@ -1256,6 +1341,16 @@ All keymap options and their defaults:
         insert = "<leader>si",
         extract = "<leader>sx",
       },
+      comments = {
+        create = "<leader>cc",
+        edit = "<leader>ce",
+        delete = "<leader>cd",
+        view = { "<leader>cv", "K" },
+        toggle = "<leader>ct",
+        list = "<leader>cl",
+        next = "]c",
+        prev = "[c",
+      },
       misc = {
         clear_highlight = { "<Esc><Esc>", "<leader>nh" },
       },
@@ -1297,6 +1392,11 @@ For reference, all defaults:
 
       export = {
         auto_open = true,
+      },
+
+      comments = {
+        visible = true,
+        sign = "●",
       },
 
       neovide = {

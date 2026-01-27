@@ -59,6 +59,18 @@ if keymaps.snippets then
   set("v", keymaps.snippets.extract, ":SnippetExtract<CR>", { desc = "Vimoire: extract snippet" })
 end
 
+-- Comments keymaps
+if keymaps.comments then
+  set({ "n", "v" }, keymaps.comments.create, ":CommentCreate<CR>", { desc = "Vimoire: create comment" })
+  set("n", keymaps.comments.edit, ":CommentEdit<CR>", { desc = "Vimoire: edit comment" })
+  set("n", keymaps.comments.delete, ":CommentDelete<CR>", { desc = "Vimoire: delete comment" })
+  set("n", keymaps.comments.view, ":CommentView<CR>", { desc = "Vimoire: view comment" })
+  set("n", keymaps.comments.toggle, ":CommentToggle<CR>", { desc = "Vimoire: toggle comments" })
+  set("n", keymaps.comments.list, ":CommentList<CR>", { desc = "Vimoire: list comments" })
+  set("n", keymaps.comments.next, ":CommentNext<CR>", { desc = "Vimoire: next comment" })
+  set("n", keymaps.comments.prev, ":CommentPrev<CR>", { desc = "Vimoire: prev comment" })
+end
+
 -- Misc keymaps
 if keymaps.misc then
   set("n", keymaps.misc.clear_highlight, ":noh<CR>", { desc = "Clear search highlight" })

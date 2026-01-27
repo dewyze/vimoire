@@ -44,6 +44,16 @@ return {
       insert = "<leader>si",
       extract = "<leader>sx",
     },
+    comments = {
+      create = "<leader>cc",
+      edit = "<leader>ce",
+      delete = "<leader>cd",
+      view = { "<leader>cv", "K" },
+      toggle = "<leader>ct",
+      list = "<leader>cl",
+      next = "]c",
+      prev = "[c",
+    },
     misc = {
       clear_highlight = { "<Esc><Esc>", "<leader>nh" },
     },
@@ -72,6 +82,11 @@ return {
 
   export = {
     auto_open = true,
+  },
+
+  comments = {
+    visible = true,
+    sign = "●",
   },
 
   neovide = {
@@ -213,6 +228,19 @@ Buffer-level actions for prose files.
 | `insert` | `<leader>si` | normal | Browse and insert snippets |
 | `extract` | `<leader>sx` | visual | Cut selection to snippet |
 
+### keymaps.comments
+
+| Key | Default | Mode | Description |
+|-----|---------|------|-------------|
+| `create` | `<leader>cc` | normal, visual | Create comment at selection or line |
+| `edit` | `<leader>ce` | normal | Edit comment at cursor |
+| `delete` | `<leader>cd` | normal | Delete comment at cursor |
+| `view` | `{ "<leader>cv", "K" }` | normal | View comment at cursor |
+| `toggle` | `<leader>ct` | normal | Toggle comment visibility |
+| `list` | `<leader>cl` | normal | List all comments in buffer |
+| `next` | `]c` | normal | Jump to next comment |
+| `prev` | `[c` | normal | Jump to previous comment |
+
 ### keymaps.misc
 
 | Key | Default | Description |
@@ -263,6 +291,15 @@ Settings applied to prose and notes buffers.
 | `auto_open` | `true` | Open exported file after successful export |
 
 Use `--no-open` flag to skip auto-open for a single export: `:Export --no-open`
+
+---
+
+## comments
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `visible` | `true` | Show comments by default when opening prose files |
+| `sign` | `nil` | Sign column symbol for commented lines (`nil` uses theme-specific sign) |
 
 ---
 

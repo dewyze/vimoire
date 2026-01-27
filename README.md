@@ -103,6 +103,8 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
   <img src="assets/marks.png">
 </p>
 
+**Comments** — attach notes to any text range for self-editing and review. Select text, `<leader>cc` to annotate, `K` to view, `]c`/`[c` to navigate. Perfect for marking sections that need work, tracking revision notes, or beta reader feedback. Each theme uses a unique sign in the gutter.
+
 **Notes** — per-chapter scratch space, spellcheck-free.
 
 **Book-local dictionary** — teach it your character names once.

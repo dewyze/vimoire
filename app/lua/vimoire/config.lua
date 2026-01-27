@@ -34,6 +34,16 @@ M.defaults = {
       insert = "<leader>si",
       extract = "<leader>sx",
     },
+    comments = {
+      create = "<leader>cc",
+      edit = "<leader>ce",
+      delete = "<leader>cd",
+      view = { "<leader>cv", "K" },
+      toggle = "<leader>ct",
+      list = "<leader>cl",
+      next = "]c",
+      prev = "[c",
+    },
     palette = "<leader>p",
     misc = {
       clear_highlight = { "<Esc><Esc>", "<leader>nh" },
@@ -59,6 +69,10 @@ M.defaults = {
   },
   export = {
     auto_open = true,
+  },
+  comments = {
+    visible = true,
+    sign = nil, -- nil uses theme sign, set to override (e.g., "●")
   },
   neovide = {
     font = "Iosevka Term Slab:h16",

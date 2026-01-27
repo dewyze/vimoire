@@ -23,7 +23,7 @@ local function setup_display_line_navigation()
   vim.keymap.set("n", "g0", "0", { buffer = true, desc = "Start of buffer line" })
 
   -- Insert/Append
-  vim.keymap.set("n", "A", "g$i", { buffer = true, desc = "Append at display line end" })
+  vim.keymap.set("n", "A", "g$a", { buffer = true, desc = "Append at display line end" })
   vim.keymap.set("n", "I", "g^i", { buffer = true, desc = "Insert at display line start" })
   vim.keymap.set("n", "gA", "A", { buffer = true, desc = "Append at buffer line end" })
   vim.keymap.set("n", "gI", "I", { buffer = true, desc = "Insert at buffer line start" })
@@ -62,6 +62,7 @@ local function setup_prose_buffer()
   vim.wo.breakindent = false
   vim.bo.textwidth = 0
   vim.wo.cursorline = true
+  vim.wo.signcolumn = "yes"
 
   vim.bo.autoindent = true
 

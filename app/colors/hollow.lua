@@ -58,6 +58,10 @@ local c = {
   spell_bad = "#c08070",
   spell_cap = "#d0a048",
   spell_rare = "#88a088",
+
+  -- Comments
+  comment_bg = "#1c241c",
+  comment_sign = "#90b078",
 }
 
 local hl = vim.api.nvim_set_hl
@@ -183,3 +187,8 @@ hl(0, "VimoireStatusExport", { fg = c.export, bg = c.status_export })
 -- Snacks picker (match Normal background, not NormalFloat)
 hl(0, "SnacksPickerList", { fg = c.fg, bg = c.bg })
 hl(0, "SnacksPickerListCursorLine", { bg = c.cursor_line })
+
+-- Comments
+hl(0, "VimoireComment", { bg = c.comment_bg })
+hl(0, "VimoireCommentSign", { fg = c.comment_sign })
+vim.g.vimoire_comment_sign = "❧"
