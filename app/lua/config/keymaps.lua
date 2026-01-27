@@ -36,6 +36,8 @@ if keymaps.views then
   set("n", keymaps.views.home, ":Home<CR>", { desc = "Vimoire: home" })
   set("n", keymaps.views.focus, ":Focus<CR>", { desc = "Vimoire: toggle focus mode" })
 end
+vim.keymap.set("n", "<C-\\>", "<Cmd>Focus<CR>", { desc = "Vimoire: toggle focus mode" })
+vim.keymap.set("n", "<D-d>", "<Cmd>Focus<CR>", { desc = "Vimoire: toggle focus mode" })
 
 -- Writing context keymaps
 if keymaps.writing then
