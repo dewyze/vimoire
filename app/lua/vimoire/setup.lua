@@ -70,7 +70,7 @@ function setup.on_manuscript_loaded()
 end
 
 local function resolve_project_path(path)
-  path = vim.fn.expand(path):gsub("/$", "")
+  path = vim.fn.fnamemodify(vim.fn.expand(path), ":p"):gsub("/$", "")
 
   if path:match("manuscript%.json$") then
     path = vim.fn.fnamemodify(path, ":h")
