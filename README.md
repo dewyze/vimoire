@@ -120,17 +120,6 @@ Your prose lives in plain markdown files—readable anywhere, forever.
 
 ## Installation
 
-### Homebrew (macOS)
-
-```bash
-brew tap dewyze/vimoire
-brew install --cask vimoire
-```
-
-This installs `Vimoire.app` to `/Applications/` and the configuration to `~/.config/vimoire/`.
-
-### Manual
-
 ```bash
 # Clone the repo
 git clone https://github.com/dewyze/vimoire ~/dev/vimoire
@@ -138,10 +127,16 @@ git clone https://github.com/dewyze/vimoire ~/dev/vimoire
 # Symlink the app directory
 ln -s ~/dev/vimoire/app ~/.config/vimoire
 
-# Add an alias to your shell config
-alias vimoire='NVIM_APPNAME=vimoire nvim'
-# or with Neovide (recommended)
-alias vimoire='NVIM_APPNAME=vimoire neovide'
+# Add bin to your PATH, or symlink the launcher
+ln -s ~/dev/vimoire/bin/vimoire /usr/local/bin/vimoire
+```
+
+Then run `vimoire` to launch.
+
+By default, Vimoire uses [Neovide](https://neovide.dev) (recommended for the best experience). To use terminal Neovim instead:
+
+```bash
+export VIMOIRE_EDITOR=nvim
 ```
 
 User configuration lives in `~/.vimoire/` (created automatically on first launch).

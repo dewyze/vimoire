@@ -1,0 +1,2 @@
+#!/bin/bash
+NVIM_APPNAME=vimoire ${VIMOIRE_EDITOR:-neovide} "$@"
