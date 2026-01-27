@@ -45,7 +45,7 @@ return {
       extract = "<leader>sx",
     },
     misc = {
-      clear_highlight = "<Esc><Esc>",
+      clear_highlight = { "<Esc><Esc>", "<leader>nh" },
     },
   },
 
@@ -217,7 +217,7 @@ Buffer-level actions for prose files.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `clear_highlight` | `<Esc><Esc>` | Clear search highlight |
+| `clear_highlight` | `{ "<Esc><Esc>", "<leader>nh" }` | Clear search highlight |
 
 ---
 

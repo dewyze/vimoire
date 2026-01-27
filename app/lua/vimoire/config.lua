@@ -36,7 +36,7 @@ M.defaults = {
     },
     palette = "<leader>p",
     misc = {
-      clear_highlight = "<Esc><Esc>",
+      clear_highlight = { "<Esc><Esc>", "<leader>nh" },
     },
   },
   ui = {

@@ -1257,7 +1257,7 @@ All keymap options and their defaults:
         extract = "<leader>sx",
       },
       misc = {
-        clear_highlight = "<Esc><Esc>",
+        clear_highlight = { "<Esc><Esc>", "<leader>nh" },
       },
     }
 <
