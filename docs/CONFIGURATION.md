@@ -14,8 +14,7 @@ return {
   keymaps = {
     palette = "<leader>p",
     finder = {
-      smart = "<leader>ff",
-      smart_alt = "<C-p>",
+      smart = { "<leader>ff", "<C-p>" },
       manuscript = "<leader>fm",
       planning = "<leader>fp",
       snippets = "<leader>fs",
@@ -143,7 +142,15 @@ You can also change themes at runtime with `:Theme`.
 
 ## keymaps
 
-All keymaps use `<leader>` with mnemonic prefixes. Set any key to `false` to disable it.
+All keymaps use `<leader>` with mnemonic prefixes. Set any key to `false` to disable it, or use an array to bind multiple keys to the same action:
+
+```lua
+keymaps = {
+  misc = {
+    clear_highlight = { "<Esc><Esc>", "<leader>nh" },  -- both work
+  },
+}
+```
 
 ### keymaps.palette
 
@@ -157,8 +164,7 @@ Pickers for navigating your manuscript.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `smart` | `<leader>ff` | Context-aware: all items |
-| `smart_alt` | `<C-p>` | Alternate binding for smart finder |
+| `smart` | `{ "<leader>ff", "<C-p>" }` | Context-aware: all items |
 | `manuscript` | `<leader>fm` | Manuscript entries only |
 | `planning` | `<leader>fp` | All planning items |
 | `snippets` | `<leader>fs` | Browse snippets |

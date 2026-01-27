@@ -1202,6 +1202,7 @@ don't set `colorscheme` in your config.
 KEYMAP CUSTOMIZATION ~
                                                      *vimoire-keymaps-custom*
 Override any keymap by specifying a new binding. Set to `false` to disable.
+Use an array to bind multiple keys to the same action.
 Keymaps are organized by domain matching the |vimoire-keymaps| structure.
 
 >lua
@@ -1209,7 +1210,7 @@ Keymaps are organized by domain matching the |vimoire-keymaps| structure.
       keymaps = {
         palette = "<leader>P",       -- change palette keymap
         finder = {
-          smart = "<leader>o",       -- change smart finder
+          smart = { "<leader>o", "<C-p>" },  -- multiple bindings
           snippets = false,          -- disable snippets finder
         },
         navigator = {
@@ -1225,8 +1226,7 @@ All keymap options and their defaults:
     keymaps = {
       palette = "<leader>p",
       finder = {
-        smart = "<leader>ff",
-        smart_alt = "<C-p>",
+        smart = { "<leader>ff", "<C-p>" },
         manuscript = "<leader>fm",
         planning = "<leader>fp",
         snippets = "<leader>fs",
