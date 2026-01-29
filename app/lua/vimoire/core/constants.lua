@@ -20,6 +20,8 @@ M.ICONS = {
   EXPORT_FOLDER = icon("0xf07c"),
   EXPORT_FILE = icon("0xf15c"),
   ACTION = icon("0xf0da"),  -- caret-right, like a "run" indicator
+  PLOTTING = icon("0xf1de"),  -- grid/table icon
+  PLOTTING_BOARD = icon("0xeb5e"),  -- spreadsheet icon
 }
 
 M.HIGHLIGHTS = {
@@ -35,6 +37,8 @@ M.HIGHLIGHTS = {
   EXPORT_FOLDER = "VimoireExportFolder",
   EXPORT_FILE = "VimoireExportFile",
   ACTION = "VimoireActionButton",
+  PLOTTING = "VimoirePlotting",
+  PLOTTING_BOARD = "VimoirePlottingBoard",
 }
 
 return M

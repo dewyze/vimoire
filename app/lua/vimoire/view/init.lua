@@ -68,6 +68,14 @@ local view_properties = {
     icon = constants.ICONS.ACTION,
     highlight = constants.HIGHLIGHTS.ACTION,
   },
+  plotting = {
+    icon = constants.ICONS.PLOTTING,
+    highlight = constants.HIGHLIGHTS.PLOTTING,
+  },
+  plotting_board = {
+    icon = constants.ICONS.PLOTTING_BOARD,
+    highlight = constants.HIGHLIGHTS.PLOTTING_BOARD,
+  },
 }
 
 function M.icon_for(kind)

@@ -13,6 +13,7 @@ local PlanningSection = require("vimoire.core.planning_section")
 local PlanningItem = require("vimoire.core.planning_item")
 local Folder = require("vimoire.core.folder")
 local ExportFile = require("vimoire.core.export_file")
+local Board = require("vimoire.plotting.board")
 local add_options = require("vimoire.core.add_options")
 
 function state:load(manuscript_path)
@@ -122,6 +123,38 @@ function state:rebuild()
   self.items["export_templates"] = Folder.new("export_templates", "Templates", "export_folder", templates_items)
   self.items["export_configs"] = Folder.new("export_configs", "Configs", "export_folder", configs_items)
   self.items["export_output"] = Folder.new("export_output", "Output", "export_folder", output_items)
+
+  -- Plotting section (filesystem-backed)
+  local function scan_plotting_dir(dir_path)
+    local items = {}
+    local handle = vim.loop.fs_scandir(dir_path)
+    if handle then
+      while true do
+        local name, type = vim.loop.fs_scandir_next(handle)
+        if not name then
+          break
+        end
+        if type == "file" and name:match("%.json$") then
+          local file_path = dir_path .. "/" .. name
+          local board = Board.load(file_path)
+          if board then
+            board.parent_items = items
+            self.items[board.id] = board
+            table.insert(items, { id = board.id })
+          end
+        end
+      end
+    end
+    table.sort(items, function(a, b)
+      return a.id < b.id
+    end)
+    return items
+  end
+
+  local plotting_items = scan_plotting_dir(root .. "/plotting")
+  self.items["plotting"] = Folder.new("plotting", "Plotting", "plotting", plotting_items, {
+    add_options = { add_options.PLOTTING_BOARD },
+  })
 
   -- Process manuscript entries
   local function process_items(items, parent_section)

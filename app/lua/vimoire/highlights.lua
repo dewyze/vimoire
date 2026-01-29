@@ -22,6 +22,10 @@ local function apply_defaults()
   default_link("VimoireExportFolder", "Directory")
   default_link("VimoireExportFile", "Normal")
   default_link("VimoireActionButton", "PmenuSel")
+  default_link("VimoirePlotting", "Special")
+  default_link("VimoirePlottingBoard", "Function")
+  default_link("VimoirePlottingHeader", "Function")
+  default_link("VimoirePlottingBorder", "Comment")
   default_link("VimoireWinbar", "Title")
 
   -- Start screen groups

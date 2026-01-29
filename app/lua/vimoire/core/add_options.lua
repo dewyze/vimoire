@@ -58,6 +58,14 @@ M.SUBFOLDER = {
   end,
 }
 
+M.PLOTTING_BOARD = {
+  label = "Board",
+  execute = function(state, name, parent_items, at_index)
+    local Board = require("vimoire.plotting.board")
+    return Board.create(state, name, parent_items, at_index)
+  end,
+}
+
 function M.labels(options)
   return vim.tbl_map(function(o) return o.label end, options)
 end
