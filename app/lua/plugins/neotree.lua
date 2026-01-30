@@ -19,6 +19,7 @@ return {
     end
 
     require("neo-tree").setup({
+      default_source = "manuscript",
       filesystem = {
         hijack_netrw_behavior = "disabled",
       },
@@ -28,7 +29,7 @@ return {
         "vimoire.navigation.sources.export",
       },
       source_selector = {
-        winbar = true,
+        winbar = false,
         sources = {
           { source = "manuscript", display_name = "󱓷 Manuscript" },
           { source = "export", display_name = "󰈙 Export" },

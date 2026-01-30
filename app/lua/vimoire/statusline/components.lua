@@ -6,8 +6,8 @@ local colors = require("vimoire.statusline.colors")
 
 local SEPARATOR = " › "
 
--- Cached git branch (refreshed on BufEnter)
-local cached_branch = nil
+-- Cached book word count (refreshed on save)
+local cached_book_word_count = nil
 
 -- Determine context type from item kind and file path
 function M.get_context(item, filepath)
@@ -48,7 +48,13 @@ function M.context_path(item, filepath)
   return display
 end
 
+-- Format number with commas
+local function format_number(n)
+  return tostring(n):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
+end
+
 -- Current buffer word count (for prose files)
+-- Returns raw number string, formatted with commas
 function M.word_count()
   local ft = vim.bo.filetype
   if ft ~= "vimoire_prose" and ft ~= "vimoire_markdown" then
@@ -57,7 +63,7 @@ function M.word_count()
 
   local wc = vim.fn.wordcount()
   local words = wc.visual_words or wc.words or 0
-  return tostring(words) .. "w"
+  return format_number(words)
 end
 
 -- Cursor location (line:col)
@@ -67,29 +73,60 @@ function M.location()
   return string.format("%d:%d", line, col)
 end
 
--- Git branch name (cached)
-function M.branch()
-  return cached_branch or ""
+-- Book word count (cached, formatted with commas)
+-- Returns raw number string
+function M.book_word_count()
+  if not cached_book_word_count then
+    return ""
+  end
+  return format_number(cached_book_word_count)
 end
 
--- Refresh git branch via git command
-function M.refresh_branch()
+-- Count words in a file
+local function count_file_words(filepath)
+  local file = io.open(filepath, "r")
+  if not file then
+    return 0
+  end
+  local content = file:read("*a")
+  file:close()
+  if not content or content == "" then
+    return 0
+  end
+  -- Count words by matching sequences of non-whitespace
+  local count = 0
+  for _ in content:gmatch("%S+") do
+    count = count + 1
+  end
+  return count
+end
+
+-- Refresh book word count by scanning all prose files
+function M.refresh_book_word_count()
   local root = state.manuscript and state.manuscript.root
   if not root then
-    cached_branch = nil
+    cached_book_word_count = nil
     return
   end
 
-  local result = vim.fn.system("git -C " .. vim.fn.shellescape(root) .. " branch --show-current 2>/dev/null")
-  result = vim.trim(result)
+  local entries_dir = root .. "/entries"
+  local total = 0
 
-  if vim.v.shell_error ~= 0 or result == "" then
-    -- Not a git repo or error - try for detached HEAD
-    result = vim.fn.system("git -C " .. vim.fn.shellescape(root) .. " rev-parse --short HEAD 2>/dev/null")
-    result = vim.trim(result)
+  local handle = vim.loop.fs_scandir(entries_dir)
+  if handle then
+    while true do
+      local name, type = vim.loop.fs_scandir_next(handle)
+      if not name then
+        break
+      end
+      if type == "directory" then
+        local prose_path = entries_dir .. "/" .. name .. "/prose.md"
+        total = total + count_file_words(prose_path)
+      end
+    end
   end
 
-  cached_branch = (vim.v.shell_error == 0 and result ~= "") and result or nil
+  cached_book_word_count = total
 end
 
 return M
