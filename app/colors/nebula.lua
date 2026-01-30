@@ -62,6 +62,10 @@ local c = {
   -- Comments
   comment_bg = "#1c1824",
   comment_sign = "#9080b0",
+
+  -- Plotting
+  plotting_header_bg = "#12121c",
+  plotting_border = "#404058",
 }
 
 local hl = vim.api.nvim_set_hl
@@ -192,3 +196,19 @@ hl(0, "SnacksPickerListCursorLine", { bg = c.cursor_line })
 hl(0, "VimoireComment", { bg = c.comment_bg })
 hl(0, "VimoireCommentSign", { fg = c.comment_sign })
 vim.g.vimoire_comment_sign = "✧"
+
+-- Plotting boards
+hl(0, "VimoirePlottingHeader", { fg = c.header, bg = c.plotting_header_bg, bold = true })
+hl(0, "VimoirePlottingBorder", { fg = c.plotting_border })
+
+-- CSS (for epub.css readability)
+hl(0, "cssProp", { fg = c.chapter })
+hl(0, "cssAttr", { fg = c.chapter })
+hl(0, "cssClassName", { fg = c.header })
+hl(0, "cssClassNameDot", { fg = c.header })
+hl(0, "cssIdentifier", { fg = c.header })
+hl(0, "cssTagName", { fg = c.section })
+hl(0, "cssColor", { fg = c.page })
+hl(0, "cssValueLength", { fg = c.page })
+hl(0, "cssValueNumber", { fg = c.page })
+hl(0, "cssUnitDecorators", { fg = c.fg_muted })

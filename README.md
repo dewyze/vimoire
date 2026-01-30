@@ -93,6 +93,11 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 
 **Plotting boards** — grid-based planning for plot threads, character arcs, or any tabular structure. Navigate with `hjkl`, edit cells in popups.
 
+<p align="center">
+  <img src="assets/plotting.png">
+  <br><em>TODO: Add plotting board screenshot</em>
+</p>
+
 **Snippets** — extract text to reuse anywhere.
 
 <p align="center">
