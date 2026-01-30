@@ -102,11 +102,11 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 **Snippets** — extract text to reuse anywhere.
 
 <p align="center">
-  <img src="assets/snippets_extract.png">
+  <img src="assets/snippet_extract.png">
 </p>
 
 <p align="center">
-  <img src="assets/snippets_insert.png">
+  <img src="assets/snippet_insert.png">
 </p>
 
 **Marks** — inline annotations that don't export.
