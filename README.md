@@ -97,13 +97,16 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 
 <p align="center">
   <img src="assets/plotting.png">
-  <br><em>TODO: Add plotting board screenshot</em>
 </p>
 
 **Snippets** — extract text to reuse anywhere.
 
 <p align="center">
-  <img src="assets/snippets.png">
+  <img src="assets/snippets_extract.png">
+</p>
+
+<p align="center">
+  <img src="assets/snippets_insert.png">
 </p>
 
 **Marks** — inline annotations that don't export.
