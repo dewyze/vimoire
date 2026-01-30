@@ -63,7 +63,9 @@ vim.api.nvim_create_user_command("Marks", function()
   local marks = require("vimoire.marks")
   local Snacks = require("snacks")
 
-  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filepath = vim.api.nvim_buf_get_name(bufnr)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local content = table.concat(lines, "\n")
   local mark_list = marks.parse(content)
 
@@ -81,6 +83,8 @@ vim.api.nvim_create_user_command("Marks", function()
 
     table.insert(picker_items, {
       text = display,
+      file = filepath,
+      pos = { mark.line, mark.col - 1 },
       mark = mark,
     })
   end
@@ -91,6 +95,7 @@ vim.api.nvim_create_user_command("Marks", function()
     format = function(item)
       return { { item.text, "Normal" } }
     end,
+    preview = "file",
     confirm = function(picker, selected)
       if selected and selected.mark then
         picker:close()
@@ -102,8 +107,9 @@ end, { desc = "Browse marks in current buffer" })
 
 vim.api.nvim_create_user_command("InsertMark", function()
   vim.api.nvim_put({ "{{mark:}}" }, "c", true, true)
-  local pos = vim.api.nvim_win_get_cursor(0)
-  vim.api.nvim_win_set_cursor(0, { pos[1], pos[2] - 2 })
+  -- Search backward for :}} and position after the colon
+  vim.fn.search(":}}", "b")
+  vim.cmd("normal! l")
   vim.cmd("startinsert")
 end, { desc = "Insert mark at cursor" })
 
