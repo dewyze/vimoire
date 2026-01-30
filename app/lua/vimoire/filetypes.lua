@@ -70,6 +70,8 @@ local function setup_prose_buffer()
   vim.bo.spelllang = "en"
   vim.bo.spellfile = state.manuscript.root .. "/spell/en.add"
 
+  require("vimoire.typewriter").apply()
+
   setup_display_line_navigation()
   setup_sentence_navigation()
 end

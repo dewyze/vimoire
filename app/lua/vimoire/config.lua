@@ -60,9 +60,13 @@ M.defaults = {
     wrap = true,
     linebreak = true,
     visual_line_navigation = true,
+    typewriter_scrolling = false,
     autosave = false,
     focus_mode = true,
     termguicolors = true,
+  },
+  stats = {
+    reading_wpm = 250,
   },
   finder = {
     preview = true,

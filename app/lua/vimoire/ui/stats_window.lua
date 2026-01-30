@@ -61,6 +61,18 @@ local function build_content(width)
   local total_line = "  " .. total_label .. string.rep(" ", inner_width - #total_label - #total_value) .. total_value
   table.insert(lines, total_line)
 
+  -- Reading time
+  local reading = stats.reading_time()
+  local reading_label = "Reading Time"
+  local reading_value
+  if reading.hours > 0 then
+    reading_value = reading.hours .. "h " .. reading.minutes .. "m"
+  else
+    reading_value = reading.minutes .. " min"
+  end
+  local reading_line = "  " .. reading_label .. string.rep(" ", inner_width - #reading_label - #reading_value) .. reading_value
+  table.insert(lines, reading_line)
+
   -- Progress (if goal set)
   local progress = stats.progress()
   if progress then

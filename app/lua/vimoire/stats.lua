@@ -146,4 +146,21 @@ function M.estimated_pages()
   return math.floor(M.calculate_book_words() / 250)
 end
 
+-- Estimated reading time in minutes
+-- Returns: {hours, minutes} or just minutes if under an hour
+function M.reading_time()
+  local config = require("vimoire.config")
+  local wpm = config.get("stats.reading_wpm") or 250
+  local words = M.calculate_book_words()
+  local total_minutes = math.floor(words / wpm)
+
+  if total_minutes >= 60 then
+    local hours = math.floor(total_minutes / 60)
+    local minutes = total_minutes % 60
+    return { hours = hours, minutes = minutes }
+  else
+    return { hours = 0, minutes = total_minutes }
+  end
+end
+
 return M

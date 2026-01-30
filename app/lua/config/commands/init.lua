@@ -9,6 +9,11 @@ vim.api.nvim_create_user_command("Focus", function()
   require("vimoire.focus").toggle()
 end, { desc = "Toggle focus mode (margins)" })
 
+-- Typewriter mode
+vim.api.nvim_create_user_command("Typewriter", function()
+  require("vimoire.typewriter").toggle()
+end, { desc = "Toggle typewriter mode" })
+
 -- Dashboard
 vim.api.nvim_create_user_command("Home", function()
   require("neo-tree.command").execute({ action = "close" })

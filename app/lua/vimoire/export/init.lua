@@ -94,6 +94,17 @@ local function execute(state, entries, cfg, output_filename)
     }
   end
 
+  -- Check for PDF engine if exporting to PDF
+  if cfg.format == "pdf" then
+    local pdf = require("vimoire.export.format.pdf")
+    if not pdf.available() then
+      return {
+        success = false,
+        error = "PDF export requires a LaTeX installation. Install with: brew install --cask mactex (macOS) or apt install texlive-xetex (Linux)",
+      }
+    end
+  end
+
   local files = M.prepare_files(state, entries)
   files = cfg:assemble(files)
   local temp_dir, input_files = M.write_temp_files(files)

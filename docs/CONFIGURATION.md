@@ -71,9 +71,14 @@ return {
     wrap = true,
     linebreak = true,
     visual_line_navigation = true,
+    typewriter_scrolling = false,
     autosave = false,
     focus_mode = true,
     termguicolors = true,
+  },
+
+  stats = {
+    reading_wpm = 250,
   },
 
   finder = {
@@ -270,9 +275,20 @@ Settings applied to prose and notes buffers.
 | `wrap` | `true` | Soft wrap long lines |
 | `linebreak` | `true` | Wrap at word boundaries |
 | `visual_line_navigation` | `true` | Map j/k to gj/gk |
+| `typewriter_scrolling` | `false` | Keep cursor vertically centered while writing |
 | `autosave` | `false` | Auto-save on cursor hold and buffer leave |
 | `focus_mode` | `true` | Enable focus mode by default |
 | `termguicolors` | `true` | Enable 24-bit RGB colors (required for accurate theme colors in terminal) |
+
+Typewriter scrolling can also be toggled at runtime with `:Typewriter`. The setting persists across sessions.
+
+---
+
+## stats
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `reading_wpm` | `250` | Words per minute for reading time estimates |
 
 ---
 

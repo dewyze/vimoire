@@ -70,7 +70,7 @@ When it's time to share your work:
 :Export
 ```
 
-Pandoc-powered export to **EPUB** and **DOCX**. Chapter numbering, scene breaks, and proper formatting—handled.
+Pandoc-powered export to **EPUB**, **DOCX**, and **PDF**. Chapter numbering, scene breaks, and proper formatting—handled.
 
 ### Themes
 
@@ -90,6 +90,8 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 | Parchment · *Warm cream* | Vellum · *Aged sepia* | Lumen · *High contrast* |
 
 ### The Little Things
+
+**Typewriter mode** — keeps the cursor vertically centered while you write. Toggle with `:Typewriter`, persists across sessions.
 
 **Plotting boards** — grid-based planning for plot threads, character arcs, or any tabular structure. Navigate with `hjkl`, edit cells in popups.
 
@@ -116,7 +118,7 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 
 **Book-local dictionary** — teach it your character names once.
 
-**Writing stats** — session word count, book total, chapter breakdown. Set goals in `book.yml` to track progress toward your target.
+**Writing stats** — session word count, book total, reading time, chapter breakdown. Set goals in `book.yml` to track progress toward your target.
 
 ## Quick Start
 
@@ -171,6 +173,7 @@ See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 
 - Neovim 0.10+
 - [Pandoc](https://pandoc.org) (for export)
+- [MacTeX](https://www.tug.org/mactex/) or [TeX Live](https://tug.org/texlive/) (for PDF export)
 - [Neovide](https://neovide.dev) (optional, recommended)
 - A [Nerd Font](https://www.nerdfonts.com) (for navigator icons)
 

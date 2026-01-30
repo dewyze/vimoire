@@ -398,12 +398,18 @@ VIEW COMMANDS ~
     Show book statistics in a floating window. Displays:
     - Session words (delta since project opened)
     - Book total (words and estimated pages)
+    - Reading time (based on `stats.reading_wpm`, default 250 wpm)
     - Progress toward goal (if set in book.yml)
     - Chapter breakdown by section
 
 :Focus                                               *:Focus*
     Toggle focus mode—adds empty margin windows to center prose.
     See |vimoire-focus|.
+
+:Typewriter                                          *:Typewriter*
+    Toggle typewriter mode—keeps the cursor vertically centered while
+    writing. When enabled, the screen scrolls to keep your writing line
+    in the middle of the window. The setting persists across sessions.
 
 :Theme                                               *:Theme*
     Open theme picker with live preview. Selection is saved to preferences.
@@ -906,7 +912,7 @@ only see the filename, not a preview.
 ==============================================================================
 7. EXPORT                                            *vimoire-export*
 
-Vimoire exports manuscripts to EPUB or DOCX via Pandoc. The export system
+Vimoire exports manuscripts to EPUB, DOCX, or PDF via Pandoc. The export system
 handles chapter numbering, scene breaks, and formatting automatically.
 
 REQUIREMENTS ~
@@ -919,8 +925,16 @@ Pandoc must be installed:
     # Linux (Debian/Ubuntu)
     apt install pandoc
 <
-Vimoire checks for pandoc availability before export and shows an error with
-installation instructions if not found.
+For PDF export, a LaTeX installation is also required:
+>bash
+    # macOS
+    brew install --cask mactex
+
+    # Linux (Debian/Ubuntu)
+    apt install texlive-xetex
+<
+Vimoire checks for pandoc (and LaTeX for PDF) before export and shows an
+error with installation instructions if not found.
 
 BASIC WORKFLOW ~
                                                      *vimoire-export-workflow*
@@ -936,7 +950,7 @@ CONFIG FILE FORMAT ~
 Export configs are YAML files in `exports/configs/`. Generate one with
 |:ExportConfig|:
 >yaml
-    # Supported formats: epub, docx
+    # Supported formats: epub, docx, pdf
     format: epub
 
     # output: My_Novel.epub    # optional custom filename
@@ -950,7 +964,7 @@ Export configs are YAML files in `exports/configs/`. Generate one with
 Fields:
 
 format                                               *vimoire-config-format-field*
-    Required. Either `epub` or `docx`.
+    Required. One of `epub`, `docx`, or `pdf`.
 
 output                                               *vimoire-config-output*
     Optional. Custom output filename. Defaults to sanitized book title
@@ -989,6 +1003,17 @@ Microsoft Word format. Uses:
 
 For DOCX, chapters are separated by page breaks. The Lua filter handles
 the conversion automatically.
+
+PDF                                                  *vimoire-format-pdf*
+
+Portable Document Format. Requires a LaTeX installation (MacTeX on macOS,
+texlive on Linux). Uses:
+- xelatex, lualatex, or pdflatex (in order of preference)
+- Pandoc's default LaTeX template for styling
+- A Lua filter to convert `\newpage` commands to LaTeX page breaks
+
+PDF is useful for sharing with beta readers or printing. Chapters are
+separated by page breaks automatically.
 
 TEMPLATE CUSTOMIZATION ~
                                                      *vimoire-templates*
@@ -1291,6 +1316,11 @@ editor.visual_line_navigation                        *vimoire-config-visual-nav*
     Default: `true`
     Swap j/k with gj/gk for display line navigation. See |vimoire-keymaps-display|.
 
+editor.typewriter_scrolling                          *vimoire-config-typewriter*
+    Default: `false`
+    Keep cursor vertically centered while writing. Can also be toggled at
+    runtime with |:Typewriter|. The runtime setting persists via preferences.
+
 editor.autosave                                      *vimoire-config-autosave*
     Default: `false`
     Auto-save on CursorHold, InsertLeave, and BufLeave events.
@@ -1322,6 +1352,12 @@ export.auto_open                                     *vimoire-config-export-open
     Default: `true`
     Automatically open exported file after successful export.
     Override per-export with `:Export --no-open`.
+
+STATS OPTIONS                                        *vimoire-config-stats*
+
+stats.reading_wpm                                    *vimoire-config-reading-wpm*
+    Default: `250`
+    Words per minute used for reading time estimates in |:Stats|.
 
 NEOVIDE OPTIONS                                      *vimoire-config-neovide*
 
@@ -1469,9 +1505,14 @@ For reference, all defaults:
         wrap = true,
         linebreak = true,
         visual_line_navigation = true,
+        typewriter_scrolling = false,
         autosave = false,
         focus_mode = true,
         termguicolors = true,
+      },
+
+      stats = {
+        reading_wpm = 250,
       },
 
       finder = {

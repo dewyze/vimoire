@@ -6,6 +6,7 @@ local M = {}
 local formats = {
   epub = require("vimoire.export.format.epub"),
   docx = require("vimoire.export.format.docx"),
+  pdf = require("vimoire.export.format.pdf"),
 }
 
 function M.for_format(format_name)
@@ -16,7 +17,7 @@ end
 function M.generate(state)
   local entries = collector.collect_entries(state)
   local lines = {
-    "# Supported formats: epub, docx",
+    "# Supported formats: epub, docx, pdf",
     "format: epub",
     "",
     "# output: " .. M._sanitize_filename(state.book.title) .. ".epub",
