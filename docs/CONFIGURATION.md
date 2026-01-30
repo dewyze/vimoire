@@ -356,3 +356,23 @@ These keymaps use macOS Cmd key and only work in Neovide. They are not configura
 | `Cmd+V` | Paste |
 | `Cmd+Shift+P` | Open command palette |
 | `Cmd+Q` | Quit (built-in to Neovide) |
+
+---
+
+## Book Goals (book.yml)
+
+Set optional writing goals in your project's `book.yml`:
+
+```yaml
+title: "My Book"
+author: "Author Name"
+goals:
+  target_words: 80000   # total book word count goal
+  daily_words: 1000     # daily writing session goal
+```
+
+When goals are set:
+- `:Stats` shows progress toward target
+- `:Home` (project dashboard) shows session and total progress
+
+Session tracking resets when you reopen the project.

@@ -14,6 +14,9 @@ description: "A toaster gains sentience and has feelings about bread."
 author: "Author Name"
 language: en
 cover: "assets/images/cover.jpg"  # optional
+goals:                            # optional
+  target_words: 80000             # total book word count goal
+  daily_words: 1000               # daily writing goal
 ```
 
 ---

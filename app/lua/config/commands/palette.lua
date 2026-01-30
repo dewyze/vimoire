@@ -9,6 +9,7 @@ local COMMANDS = {
 
   -- View
   { cmd = "Home", display = "View > Home" },
+  { cmd = "Stats", display = "View > Stats" },
   { cmd = "Focus", display = "View > Focus Mode" },
   { cmd = "Theme", display = "View > Theme" },
 

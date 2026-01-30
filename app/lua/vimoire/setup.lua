@@ -6,6 +6,7 @@ local autosave = require("vimoire.autosave")
 local focus = require("vimoire.focus")
 local comments = require("vimoire.comments")
 local plotting = require("vimoire.plotting")
+local stats = require("vimoire.stats")
 
 local function refresh_neotree()
   local manager = require("neo-tree.sources.manager")
@@ -28,6 +29,7 @@ function setup.on_manuscript_loaded()
   focus.setup()
   comments.setup()
   plotting.setup()
+  stats.init()
 
   local augroup = vim.api.nvim_create_augroup("VimoireSetup", { clear = true })
 
@@ -106,7 +108,11 @@ function setup.load_manuscript()
 end
 
 function setup.show_dashboard()
-  require("vimoire.ui.dashboard").show()
+  if state.manuscript then
+    require("vimoire.ui.project_dashboard").show()
+  else
+    require("vimoire.ui.dashboard").show()
+  end
 end
 
 return setup

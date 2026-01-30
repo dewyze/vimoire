@@ -109,6 +109,8 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 
 **Book-local dictionary** — teach it your character names once.
 
+**Writing stats** — session word count, book total, chapter breakdown. Set goals in `book.yml` to track progress toward your target.
+
 ## Quick Start
 
 1. Launch Vimoire (see [Installation](#installation))

@@ -39,6 +39,7 @@ function Book.new(data, root_path)
   self.isbn = data.isbn
   self.cover = data.cover
   self.root = root_path
+  self.goals = data.goals or {}
   return self
 end
 

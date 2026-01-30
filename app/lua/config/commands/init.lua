@@ -15,6 +15,11 @@ vim.api.nvim_create_user_command("Home", function()
   require("vimoire.setup").show_dashboard()
 end, { desc = "Show Vimoire dashboard" })
 
+-- Stats
+vim.api.nvim_create_user_command("Stats", function()
+  require("vimoire.ui.stats_window").show()
+end, { desc = "Show book statistics" })
+
 -- Item commands
 vim.api.nvim_create_user_command("Notes", function()
   local state = require("vimoire.state")

@@ -370,7 +370,16 @@ These commands open Snacks pickers to browse and open content.
 VIEW COMMANDS ~
                                                      *vimoire-commands-view*
 :Home                                                *:Home*
-    Return to the Vimoire dashboard. See |vimoire-dashboard|.
+    Return to the Vimoire dashboard. If a project is loaded, shows the
+    project dashboard with session stats and quick actions. Otherwise
+    shows the welcome screen with recent projects.
+
+:Stats                                               *:Stats*
+    Show book statistics in a floating window. Displays:
+    - Session words (delta since project opened)
+    - Book total (words and estimated pages)
+    - Progress toward goal (if set in book.yml)
+    - Chapter breakdown by section
 
 :Focus                                               *:Focus*
     Toggle focus mode—adds empty margin windows to center prose.
@@ -992,6 +1001,9 @@ Book metadata comes from `book.yml` in your project root:
     description: "A gripping tale..."
     language: en
     cover: assets/images/cover.jpg
+    goals:
+      target_words: 80000
+      daily_words: 1000
 <
 Fields used in export:
 
@@ -1002,6 +1014,18 @@ cover       Path to cover image, relative to project root (EPUB only)
 
 The cover image appears as the book cover in e-readers. Recommended size
 is at least 1600x2400 pixels.
+
+WRITING GOALS ~
+                                                     *vimoire-goals*
+Optional goals can be set in book.yml:
+
+goals.target_words                                   *vimoire-goal-target*
+    Total word count goal for the book. When set, |:Stats| and the project
+    dashboard (|:Home|) show progress as a percentage.
+
+goals.daily_words                                    *vimoire-goal-daily*
+    Daily writing goal. When set, |:Stats| shows session progress toward
+    the daily target. Resets when you reopen the project.
 
 PROSE FRONTMATTER ~
                                                      *vimoire-prose-frontmatter*
