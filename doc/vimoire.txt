@@ -235,6 +235,26 @@ SNIPPETS                                             *vimoire-keymaps-snippets*
     <leader>si        Browse and insert snippet
     <leader>sx        Extract selection to snippet (visual mode)
 
+PLOTTING BOARDS                                      *vimoire-keymaps-plotting*
+
+Keymaps active when viewing a plotting board. See |vimoire-plotting|.
+
+    h/j/k/l           Move between cells
+    b/w               Move left/right (like word motion)
+    ^/1               First column
+    $/0               Last column
+    gg                First row (header)
+    G                 Last row
+    <CR>/e/a/i        Edit cell (opens popup)
+    K                 View full cell content (read-only)
+    o                 Add row below
+    O                 Add row above
+    I                 Add column at start
+    A                 Add column at end
+    dd                Delete current row
+    dc                Delete current column
+    q                 Close board
+
 COMMENTS                                             *vimoire-keymaps-comments*
 
     <leader>cc        Create comment (normal/visual)
@@ -800,6 +820,50 @@ Commands                                             *vimoire-comments-commands*
     |:CommentPrev|     Jump to previous comment
     |:CommentList|     List all comments in picker
     |:CommentsClear|   Clear all comments (escape hatch)
+
+PLOTTING BOARDS ~
+                                                     *vimoire-plotting*
+Plotting boards are grid-based tools for tracking plot threads, character
+arcs, scene beats, or any tabular planning structure. Think of them like
+a spreadsheet for your story—rows and columns of notes you can navigate
+and edit with vim-style keys.
+
+Inspired by J.K. Rowling's Order of the Phoenix plotting spreadsheet:
+rows are chapters, columns are plot threads (prophecy, romance, etc.),
+and cells contain brief notes about what happens in that intersection.
+
+Creating Boards                                      *vimoire-plotting-create*
+
+In the navigator, select the "Plotting" folder and press `a`. Name your
+board and it opens immediately. Boards are stored as JSON files in the
+`plotting/` directory.
+
+Using Boards                                         *vimoire-plotting-use*
+
+Open a board from the navigator to see its grid. Navigate with `hjkl`,
+edit cells with `<CR>` or `e`. The first row is always the header row.
+
+See |vimoire-keymaps-plotting| for all keymaps.
+
+Cell Editing                                         *vimoire-plotting-edit*
+
+Press `<CR>`, `e`, `a`, or `i` to open a cell in a popup editor. The popup
+supports full markdown editing with word wrap. Save with `<C-s>` or `:w`,
+cancel with `<Esc>`.
+
+Press `K` to view a cell's full content without editing—useful for longer
+notes that are truncated in the grid view.
+
+Grid Structure                                       *vimoire-plotting-grid*
+
+- First row = column headers (editable)
+- Data rows below the header
+- Cells display first few lines; `K` shows full content
+- Empty columns/rows are preserved (unlike some spreadsheets)
+
+You can have multiple boards per project. Each serves a different purpose:
+one for chapter-by-chapter plot threads, another for character relationships,
+another for timeline events.
 
 IMAGES ~
                                                      *vimoire-images*

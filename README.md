@@ -91,6 +91,8 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 
 ### The Little Things
 
+**Plotting boards** — grid-based planning for plot threads, character arcs, or any tabular structure. Navigate with `hjkl`, edit cells in popups.
+
 **Snippets** — extract text to reuse anywhere.
 
 <p align="center">
