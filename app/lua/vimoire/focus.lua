@@ -170,19 +170,16 @@ local function handle_win_enter()
     return
   end
 
-  local role = vim.w[current].margins_role
-  -- Continue in the direction user was traveling
-  -- Left margin: user came from right (prose), continue left toward neotree
-  -- Right margin: user came from left (prose), continue right
-  local direction = role == "left" and "h" or "l"
+  local came_from_content = vim.fn.win_getid(vim.fn.winnr("#")) == state.content_winid
+  if came_from_content then
+    -- Continue through: prose → margin → whatever's beyond
+    local role = vim.w[current].margins_role
+    vim.cmd("wincmd " .. (role == "left" and "h" or "l"))
+  end
 
-  vim.cmd("wincmd " .. direction)
-
-  -- If we're still in a margin (nothing in that direction), bounce back
-  local new_win = vim.api.nvim_get_current_win()
-  if is_margin_window(new_win) then
-    local bounce = direction == "h" and "l" or "h"
-    vim.cmd("wincmd " .. bounce)
+  -- If we're still in a margin (came from outside, or nothing beyond), go to content
+  if is_margin_window(vim.api.nvim_get_current_win()) then
+    vim.api.nvim_set_current_win(state.content_winid)
   end
 end
 
