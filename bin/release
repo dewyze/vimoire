@@ -1,0 +1,26 @@
+#!/bin/bash
+# Release the current app/ to ~/.config/vimoire/ (the stable build).
+# Refuses to run if the working tree is dirty or you're not on main.
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "error: working tree is dirty — commit or stash first" >&2
+  exit 1
+fi
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$branch" != "main" ]]; then
+  echo "error: not on main (currently on '$branch')" >&2
+  exit 1
+fi
+
+sha="$(git rev-parse HEAD)"
+sha_short="$(git rev-parse --short HEAD)"
+
+rsync -a --delete app/ ~/.config/vimoire/
+echo "$sha" > ~/.config/vimoire/.release-sha
+
+echo "Released $sha_short to ~/.config/vimoire/"
