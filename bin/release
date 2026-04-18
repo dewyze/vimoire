@@ -6,8 +6,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-if [[ -n "$(git status --porcelain)" ]]; then
-  echo "error: working tree is dirty — commit or stash first" >&2
+if [[ -n "$(git status --porcelain app/)" ]]; then
+  echo "error: app/ has uncommitted or untracked changes — commit or stash first" >&2
   exit 1
 fi
 

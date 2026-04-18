@@ -30,7 +30,7 @@ After merging work to `main`:
 bin/release
 ```
 
-Refuses to run if the working tree is dirty or the current branch isn't `main`. Rsyncs `app/` → `~/.config/vimoire/` with `--delete` (removes files that no longer exist in source). Writes the current SHA to `~/.config/vimoire/.release-sha`.
+Refuses to run if `app/` has uncommitted or untracked changes, or if the current branch isn't `main`. (Uncommitted changes outside `app/` — docs, PLAN files, etc. — don't block a release.) Rsyncs `app/` → `~/.config/vimoire/` with `--delete` (removes files that no longer exist in source). Writes the current SHA to `~/.config/vimoire/.release-sha`.
 
 Your stable Neovim session won't see the change until you restart it.
 
