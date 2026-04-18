@@ -184,7 +184,7 @@ vim.api.nvim_create_user_command("Theme", function()
       if item then
         picker.preview.state.colorscheme = nil
         vim.cmd.colorscheme(item.text)
-        require("vimoire.core.preferences").set("colorscheme", item.text)
+        require("vimoire.preferences").set("colorscheme", item.text)
       end
     end,
   })

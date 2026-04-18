@@ -9,7 +9,7 @@ describe("config", function()
 
   before_each(function()
     package.loaded["vimoire.config"] = nil
-    package.loaded["vimoire.core.preferences"] = nil
+    package.loaded["vimoire.preferences"] = nil
 
     prefs_dir = helpers.temp_dir()
     user_config_dir = helpers.temp_dir()
@@ -43,7 +43,7 @@ describe("config", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
         colorscheme = "parchment",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
+      package.loaded["vimoire.preferences"] = nil
 
       assert.equals("parchment", config.effective_colorscheme())
     end)
@@ -55,7 +55,7 @@ describe("config", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
         colorscheme = "parchment",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
+      package.loaded["vimoire.preferences"] = nil
 
       assert.equals("umbra", config.effective_colorscheme())
     end)
@@ -67,7 +67,7 @@ describe("config", function()
       helpers.write_file(prefs_dir .. "/preferences.json", vim.json.encode({
         colorscheme = "vellum",
       }))
-      package.loaded["vimoire.core.preferences"] = nil
+      package.loaded["vimoire.preferences"] = nil
 
       assert.equals("vellum", config.effective_colorscheme())
     end)

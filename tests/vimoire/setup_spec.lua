@@ -25,7 +25,7 @@ describe("Setup", function()
     end)
 
     it("adds to recent projects", function()
-      local recent = require("vimoire.core.recent")
+      local recent = require("vimoire.recent")
       state:load(fixture_path)
       setup.on_manuscript_loaded()
       local projects = recent.list()

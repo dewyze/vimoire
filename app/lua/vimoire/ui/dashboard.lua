@@ -1,5 +1,5 @@
-local recent = require("vimoire.core.recent")
-local scaffold = require("vimoire.core.scaffold")
+local recent = require("vimoire.recent")
+local scaffold = require("vimoire.scaffold")
 
 local M = {}
 

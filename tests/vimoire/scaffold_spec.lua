@@ -7,8 +7,8 @@ describe("scaffold", function()
   local temp_dir
 
   before_each(function()
-    package.loaded["vimoire.core.scaffold"] = nil
-    scaffold = require("vimoire.core.scaffold")
+    package.loaded["vimoire.scaffold"] = nil
+    scaffold = require("vimoire.scaffold")
     temp_dir = helpers.temp_dir()
   end)
 

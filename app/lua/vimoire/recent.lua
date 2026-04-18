@@ -1,5 +1,5 @@
 local Path = require("plenary.path")
-local preferences = require("vimoire.core.preferences")
+local preferences = require("vimoire.preferences")
 
 local M = {}
 

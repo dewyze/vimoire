@@ -1,6 +1,6 @@
 local assert = require("luassert")
 local helpers = require("tests.helpers")
-local preferences = require("vimoire.core.preferences")
+local preferences = require("vimoire.preferences")
 
 describe("preferences", function()
   local prefs_dir

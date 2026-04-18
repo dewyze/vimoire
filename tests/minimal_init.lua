@@ -37,3 +37,13 @@ package.path = package.path .. ";app/lua/?.lua;app/lua/?/init.lua"
 
 -- Add app to runtimepath so nvim_get_runtime_file() can find templates
 vim.opt.rtp:prepend("app")
+
+-- Prevent plugin-provided tests/helpers.lua (e.g. telescope's) from shadowing
+-- ours via the runtimepath loader. Insert a high-priority searcher that
+-- resolves tests.helpers to our file. Lazy (deferred) so the file's own
+-- requires resolve when a spec first calls it, not at init time.
+table.insert(package.loaders, 1, function(modname)
+  if modname == "tests.helpers" then
+    return loadfile(vim.fn.getcwd() .. "/tests/helpers.lua")
+  end
+end)

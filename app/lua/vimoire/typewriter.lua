@@ -4,7 +4,7 @@
 local M = {}
 
 local config = require("vimoire.config")
-local preferences = require("vimoire.core.preferences")
+local preferences = require("vimoire.preferences")
 
 local PREF_KEY = "typewriter_scrolling"
 

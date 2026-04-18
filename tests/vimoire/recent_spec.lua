@@ -1,7 +1,7 @@
 local assert = require("luassert")
 local helpers = require("tests.helpers")
-local preferences = require("vimoire.core.preferences")
-local recent = require("vimoire.core.recent")
+local preferences = require("vimoire.preferences")
+local recent = require("vimoire.recent")
 
 describe("recent", function()
   local prefs_dir

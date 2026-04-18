@@ -1,7 +1,7 @@
 local M = {}
 
 local state = require("vimoire.state")
-local preferences = require("vimoire.core.preferences")
+local preferences = require("vimoire.preferences")
 local Path = require("plenary.path")
 
 -- Use temp directory for preferences during tests
@@ -52,6 +52,11 @@ end
 function M.reset_state()
   state.manuscript = nil
   state.items = {}
+end
+
+function M.reset()
+  M.reset_state()
+  M.reset_preferences()
 end
 
 return M

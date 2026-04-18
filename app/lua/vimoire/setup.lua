@@ -1,6 +1,6 @@
 local setup = {}
 local state = require("vimoire.state")
-local recent = require("vimoire.core.recent")
+local recent = require("vimoire.recent")
 local statusline = require("vimoire.statusline")
 local autosave = require("vimoire.autosave")
 local focus = require("vimoire.focus")

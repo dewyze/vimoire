@@ -10,11 +10,11 @@ describe("typewriter", function()
 
     -- Clear package cache
     package.loaded["vimoire.typewriter"] = nil
-    package.loaded["vimoire.core.preferences"] = nil
+    package.loaded["vimoire.preferences"] = nil
     package.loaded["vimoire.config"] = nil
 
     -- Setup preferences with temp directory
-    preferences = require("vimoire.core.preferences")
+    preferences = require("vimoire.preferences")
     preferences.set_directory(helpers.temp_dir())
 
     config = require("vimoire.config")
