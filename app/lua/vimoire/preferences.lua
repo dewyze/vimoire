@@ -2,7 +2,7 @@ local Path = require("plenary.path")
 
 local M = {}
 
-local DEFAULT_PREFS_DIR = vim.fn.expand("~/.vimoire")
+local DEFAULT_PREFS_DIR = vim.fn.expand("~/." .. (vim.env.NVIM_APPNAME or "vimoire"))
 local _prefs_dir = DEFAULT_PREFS_DIR
 local _cache = nil
 
