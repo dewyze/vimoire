@@ -36,14 +36,15 @@ function state:save()
   self:rebuild()
 end
 
-local function register_path(state, item)
+function state:register(item)
+  self.items[item.id] = item
   local text_path = item:text_path()
   if text_path then
-    state.paths[vim.fn.fnamemodify(text_path, ":p")] = item
+    self.paths[vim.fn.fnamemodify(text_path, ":p")] = item
   end
   local notes_path = item:notes_path()
   if notes_path then
-    state.paths[vim.fn.fnamemodify(notes_path, ":p")] = item
+    self.paths[vim.fn.fnamemodify(notes_path, ":p")] = item
   end
 end
 
@@ -99,8 +100,7 @@ function state:rebuild()
           local file_path = dir_path .. "/" .. name
           local file = ExportFile.new(file_id, name, file_path)
           file.parent_items = items
-          self.items[file_id] = file
-          register_path(self, file)
+          self:register(file)
           table.insert(items, { id = file_id })
         end
       end
@@ -162,8 +162,7 @@ function state:rebuild()
       local item = Entry.build(item_data, root)
       item.parent_items = items
       item.parent_section = parent_section
-      self.items[item.id] = item
-      register_path(self, item)
+      self:register(item)
 
       if item.items then
         process_items(item.items, item)
@@ -186,8 +185,7 @@ function state:rebuild()
         item = PlanningItem.new(data, root)
       end
       item.parent_items = parent_items
-      self.items[data.id] = item
-      register_path(self, item)
+      self:register(item)
 
       if data.items then
         process_planning(data.items, data.items)
