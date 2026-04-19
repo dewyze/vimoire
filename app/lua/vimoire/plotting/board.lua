@@ -225,4 +225,30 @@ function Board:_all_ids()
   return ids
 end
 
+function Board.scan_folder(state, dir_path)
+  local items = {}
+  local handle = vim.loop.fs_scandir(dir_path)
+  if handle then
+    while true do
+      local name, type = vim.loop.fs_scandir_next(handle)
+      if not name then
+        break
+      end
+      if type == "file" and name:match("%.json$") then
+        local file_path = dir_path .. "/" .. name
+        local board = Board.load(file_path)
+        if board then
+          board.parent_items = items
+          state.items[board.id] = board
+          table.insert(items, { id = board.id })
+        end
+      end
+    end
+  end
+  table.sort(items, function(a, b)
+    return a.id < b.id
+  end)
+  return items
+end
+
 return Board

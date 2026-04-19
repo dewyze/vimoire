@@ -56,4 +56,29 @@ function ExportFile:category()
   return "export"
 end
 
+function ExportFile.scan_folder(state, folder_id, dir_path)
+  local items = {}
+  local handle = vim.loop.fs_scandir(dir_path)
+  if handle then
+    while true do
+      local name, type = vim.loop.fs_scandir_next(handle)
+      if not name then
+        break
+      end
+      if type == "file" then
+        local file_id = folder_id .. ":" .. name
+        local file_path = dir_path .. "/" .. name
+        local file = ExportFile.new(file_id, name, file_path)
+        file.parent_items = items
+        state:register(file)
+        table.insert(items, { id = file_id })
+      end
+    end
+  end
+  table.sort(items, function(a, b)
+    return a.id < b.id
+  end)
+  return items
+end
+
 return ExportFile

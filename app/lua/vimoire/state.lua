@@ -86,34 +86,9 @@ function state:rebuild()
   self.items["orphaned_notes"] = Folder.new("orphaned_notes", "Orphaned Notes", "orphaned_notes", self.manuscript.orphaned_notes or {})
 
   -- Export section (filesystem-backed)
-  local function scan_export_dir(folder_id, dir_path)
-    local items = {}
-    local handle = vim.loop.fs_scandir(dir_path)
-    if handle then
-      while true do
-        local name, type = vim.loop.fs_scandir_next(handle)
-        if not name then
-          break
-        end
-        if type == "file" then
-          local file_id = folder_id .. ":" .. name
-          local file_path = dir_path .. "/" .. name
-          local file = ExportFile.new(file_id, name, file_path)
-          file.parent_items = items
-          self:register(file)
-          table.insert(items, { id = file_id })
-        end
-      end
-    end
-    table.sort(items, function(a, b)
-      return a.id < b.id
-    end)
-    return items
-  end
-
-  local templates_items = scan_export_dir("export_templates", root .. "/exports/templates")
-  local configs_items = scan_export_dir("export_configs", root .. "/exports/configs")
-  local output_items = scan_export_dir("export_output", root .. "/exports/output")
+  local templates_items = ExportFile.scan_folder(self, "export_templates", root .. "/exports/templates")
+  local configs_items = ExportFile.scan_folder(self, "export_configs", root .. "/exports/configs")
+  local output_items = ExportFile.scan_folder(self, "export_output", root .. "/exports/output")
 
   self.items["export"] = Folder.new("export", "Export", "export", {
     { id = "export_templates" },
@@ -125,33 +100,7 @@ function state:rebuild()
   self.items["export_output"] = Folder.new("export_output", "Output", "export_folder", output_items)
 
   -- Plotting section (filesystem-backed)
-  local function scan_plotting_dir(dir_path)
-    local items = {}
-    local handle = vim.loop.fs_scandir(dir_path)
-    if handle then
-      while true do
-        local name, type = vim.loop.fs_scandir_next(handle)
-        if not name then
-          break
-        end
-        if type == "file" and name:match("%.json$") then
-          local file_path = dir_path .. "/" .. name
-          local board = Board.load(file_path)
-          if board then
-            board.parent_items = items
-            self.items[board.id] = board
-            table.insert(items, { id = board.id })
-          end
-        end
-      end
-    end
-    table.sort(items, function(a, b)
-      return a.id < b.id
-    end)
-    return items
-  end
-
-  local plotting_items = scan_plotting_dir(root .. "/plotting")
+  local plotting_items = Board.scan_folder(self, root .. "/plotting")
   self.items["plotting"] = Folder.new("plotting", "Plotting", "plotting", plotting_items, {
     add_options = { add_options.PLOTTING_BOARD },
   })
