@@ -17,9 +17,34 @@ describe("State", function()
 
   it("creates items map with entries, sections, folders, and planning items", function()
     state:load(fixture_path)
-    -- 1 book + 6 folders + 9 entries + 2 sections + 8 planning items + 1 subfolder = 27
-    -- + 4 export folders + 5 export files = 36
-    assert.equals(36, vim.tbl_count(state.items))
+
+    local by_kind = {}
+    for _, item in pairs(state.items) do
+      by_kind[item.kind] = (by_kind[item.kind] or 0) + 1
+    end
+
+    assert.same({
+      -- Manuscript content
+      book = 1,
+      chapter = 6,
+      page = 3,
+      section = 2,
+      -- Planning
+      planning_item = 8,
+      subfolder = 1,
+      -- Exports scanned from disk
+      export_file = 5,
+      -- Synthetic folders (one per kind)
+      manuscript = 1,
+      planning = 1,
+      characters = 1,
+      settings = 1,
+      reference = 1,
+      orphaned_notes = 1,
+      plotting = 1,
+      export = 1,
+      export_folder = 3,
+    }, by_kind)
   end)
 
   it("can rebuild indexes", function()
@@ -56,9 +81,26 @@ describe("State", function()
 
   it("loads flat manuscripts correctly", function()
     state:load("tests/fixtures/flat")
-    -- 1 book + 6 folders + 3 entries + 0 sections + 0 planning = 10
-    -- + 4 export folders = 14
-    assert.equals(14, vim.tbl_count(state.items))
+
+    local by_kind = {}
+    for _, item in pairs(state.items) do
+      by_kind[item.kind] = (by_kind[item.kind] or 0) + 1
+    end
+
+    assert.same({
+      book = 1,
+      chapter = 2,
+      page = 1,
+      manuscript = 1,
+      planning = 1,
+      characters = 1,
+      settings = 1,
+      reference = 1,
+      orphaned_notes = 1,
+      plotting = 1,
+      export = 1,
+      export_folder = 3,
+    }, by_kind)
 
     local entry = state.items["ch002"]
     assert.equals(2, entry.chapter_index)

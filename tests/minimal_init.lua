@@ -24,6 +24,14 @@ require("lazy").setup({
   install = { colorscheme = { "habamax" } },
 })
 
+-- In --headless mode, lazy.nvim doesn't eagerly load `lazy = false` plugins
+-- (VimEnter doesn't fire early enough). Manually add snacks to rtp so
+-- require("snacks") resolves when vimoire.comments imports it.
+local snacks_dir = vim.fn.stdpath("data") .. "/lazy/snacks.nvim"
+if (vim.uv or vim.loop).fs_stat(snacks_dir) then
+  vim.opt.rtp:append(snacks_dir)
+end
+
 -- Disable netrw during tests
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1

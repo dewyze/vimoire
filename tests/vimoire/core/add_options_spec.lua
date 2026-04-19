@@ -1,7 +1,7 @@
 local assert = require("luassert")
 local helpers = require("tests.helpers")
 local state = require("vimoire.state")
-local add_options = require("vimoire.core:add_options()")
+local add_options = require("vimoire.core.add_options")
 
 describe("add_options", function()
   local fixture_path = "tests/fixtures/standard"

@@ -230,9 +230,9 @@ describe("Board", function()
       assert.equal("My Board", board:display_name())
     end)
 
-    it("text_path returns nil", function()
+    it("text_path returns buffer URI", function()
       local board = Board.new("test", "My Board", root .. "/test.json")
-      assert.is_nil(board:text_path())
+      assert.equal("vimoire://plotting/test", board:text_path())
     end)
 
     it("category returns plotting", function()
