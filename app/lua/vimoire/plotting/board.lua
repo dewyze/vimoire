@@ -1,5 +1,6 @@
 local persistence = require("vimoire.plotting.persistence")
 local id_util = require("vimoire.util.id")
+local scandir = require("plenary.scandir")
 
 local Board = {}
 Board.__index = Board
@@ -227,22 +228,19 @@ end
 
 function Board.scan_folder(state, dir_path)
   local items = {}
-  local handle = vim.loop.fs_scandir(dir_path)
-  if handle then
-    while true do
-      local name, type = vim.loop.fs_scandir_next(handle)
-      if not name then
-        break
-      end
-      if type == "file" and name:match("%.json$") then
-        local file_path = dir_path .. "/" .. name
-        local board = Board.load(file_path)
-        if board then
-          board.parent_items = items
-          state.items[board.id] = board
-          table.insert(items, { id = board.id })
-        end
-      end
+  local paths = scandir.scan_dir(dir_path, {
+    depth = 1,
+    add_dirs = false,
+    hidden = true,
+    search_pattern = "%.json$",
+    silent = true,
+  })
+  for _, file_path in ipairs(paths) do
+    local board = Board.load(file_path)
+    if board then
+      board.parent_items = items
+      state.items[board.id] = board
+      table.insert(items, { id = board.id })
     end
   end
   table.sort(items, function(a, b)
