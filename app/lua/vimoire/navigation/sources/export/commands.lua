@@ -28,14 +28,14 @@ end
 function M.open(state)
   local node = state.tree:get_node()
 
-  -- Items with a path use neo-tree's open (handles window management)
-  if node.path then
-    cc.open(state, cc.toggle_node)
+  -- Items with a custom action handle their own open (e.g., external opener for binaries)
+  if node.extra and node.extra.action and node.extra.action() then
     return
   end
 
-  -- Items without a path run their custom action (e.g., action items)
-  if node.extra and node.extra.action and node.extra.action() then
+  -- Items with a path fall through to neo-tree's open (handles window management)
+  if node.path then
+    cc.open(state, cc.toggle_node)
     return
   end
 

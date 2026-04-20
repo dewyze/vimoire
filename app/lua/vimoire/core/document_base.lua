@@ -44,8 +44,7 @@ function DocumentBase:display_name()
 end
 
 function DocumentBase:action()
-  vim.cmd.edit(self:text_path())
-  return true
+  return false
 end
 
 function DocumentBase:display_name_for_path(filepath)

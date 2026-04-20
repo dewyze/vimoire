@@ -8,13 +8,7 @@ Large refactor applying "composition over classification" (see `.claude/CLAUDE.m
 
 **The idea:** replace vimoire's `kind`-based class hierarchy with a single `Item` core and optional behavior components. Chapters, pages, planning items, subfolders, export files, boards, etc. stop being distinct classes and become combinations of components (TextContent, NotesContent, Container, Numbering, FilesystemBacked, Immutable, etc.). Data in manuscript.json describes behaviors directly instead of routing through `kind`.
 
-**Before starting:** write a formal design doc. Proposed contents:
-- Audit of current item classes and the behaviors each bundles
-- Proposed component set and their responsibilities
-- Migration path class-by-class (stage at least 5 phases; don't go halfway)
-- Data migration plan for existing manuscript.json files (kind → explicit behavior flags)
-- Test strategy (per-component + composition tests)
-- Rollback plan if a phase goes sideways
+**Working notes + design-doc checklist:** `docs/COMPOSITION.md`. Add observations there as they surface during unrelated work.
 
 **Risk posture:** real but bounded — dev/stable split insulates active writing, recent test coverage guards structural output of `state:rebuild`. Biggest failure mode is stopping halfway (mixed hierarchy + composition); staging must commit to completion.
 

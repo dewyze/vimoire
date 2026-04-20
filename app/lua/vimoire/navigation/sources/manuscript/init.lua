@@ -30,7 +30,7 @@ local function node_from_item(item)
     name = item:display_name(),
     type = item.kind,
     path = item:text_path(),
-    extra = item.action and { action = function() item:action() end } or nil,
+    extra = item.action and { action = function() return item:action() end } or nil,
   }
 end
 

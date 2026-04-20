@@ -44,8 +44,7 @@ function Book.new(data, root_path)
 end
 
 function Book:action()
-  vim.cmd.edit(self:text_path())
-  return true
+  return false
 end
 
 function Book:path()

@@ -8,12 +8,13 @@ function ExportFile.new(id, name, path)
   self.name = name
   self.kind = "export_file"
   self.path = path
+  if open_util.is_external(path) then
+    self.action = function(s)
+      open_util.open_external(s.path)
+      return true
+    end
+  end
   return self
-end
-
-function ExportFile:action()
-  open_util.open_file(self.path)
-  return true
 end
 
 function ExportFile:display_name()
