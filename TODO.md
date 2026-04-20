@@ -53,8 +53,3 @@ Doesn't require waiting on composition — these are pure code-quality fixes in 
 
 - **Project directory picker drills in before confirming.** Selecting a dir enters it and asks "use this directory?". Expected: selecting a dir from its parent uses it directly. Likely in `ui/dashboard.lua` or the "Open project" picker wiring.
 
----
-
-## In-progress branches
-
-- **`simplify_state_rebuild`** — 3 commits: `state:register` method (`a36fbbb`), scanner extraction (`e015be3`), TODO.md (`b74fc12`). 2d deferred (superseded by composition refactor). Branch is in a clean mid-state; can be merged to main when ready.
