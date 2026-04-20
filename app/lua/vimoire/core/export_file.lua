@@ -1,6 +1,7 @@
 local ExportFile = {}
 
 local open_util = require("vimoire.util.open")
+local scandir = require("plenary.scandir")
 
 function ExportFile.new(id, name, path)
   local self = setmetatable({}, { __index = ExportFile })
@@ -59,22 +60,14 @@ end
 
 function ExportFile.scan_folder(state, folder_id, dir_path)
   local items = {}
-  local handle = vim.loop.fs_scandir(dir_path)
-  if handle then
-    while true do
-      local name, type = vim.loop.fs_scandir_next(handle)
-      if not name then
-        break
-      end
-      if type == "file" then
-        local file_id = folder_id .. ":" .. name
-        local file_path = dir_path .. "/" .. name
-        local file = ExportFile.new(file_id, name, file_path)
-        file.parent_items = items
-        state:register(file)
-        table.insert(items, { id = file_id })
-      end
-    end
+  local paths = scandir.scan_dir(dir_path, { depth = 1, add_dirs = false, hidden = true, silent = true })
+  for _, file_path in ipairs(paths) do
+    local name = vim.fs.basename(file_path)
+    local file_id = folder_id .. ":" .. name
+    local file = ExportFile.new(file_id, name, file_path)
+    file.parent_items = items
+    state:register(file)
+    table.insert(items, { id = file_id })
   end
   table.sort(items, function(a, b)
     return a.id < b.id
