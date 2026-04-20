@@ -21,10 +21,6 @@ Don't tackle separately. These are covered by or directly adjacent to the compos
 - **`DocumentBase:destroy` silently creates a planning item from notes.** The "preserve notes on delete" behavior is tied to the current class hierarchy. Rethink under composition — is "Preservable" a component? Does it live with NotesContent or independently?
 - **Type-dispatch portions of the nested-if audit.** Any nested-`if` that's actually type-dispatch in disguise is eliminated by composition. Structural nested-ifs (scandir loops, etc.) stay in the general audit below.
 
-### Validation task: measure `state:rebuild()` perf first
-
-Wrap rebuild with `vim.uv.hrtime()`, log delta during active writing, capture baseline on a real-size book. Useful before-and-after for the composition refactor, plus answers the open cartographer question about whether rebuild cost is felt in practice.
-
 ---
 
 ## Unrelated refactors — keep separate
