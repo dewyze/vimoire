@@ -27,24 +27,6 @@ Don't tackle separately. These are covered by or directly adjacent to the compos
 
 These don't intersect with composition. Do them whenever, independently.
 
-### Structural nested-if audit — catalog ready
-
-Six targets surfaced by cartographer sweep (2026-04-20). Suggested sequencing: #1 and #2 as tight XS commits, then #3 lands the shared helper and #4/#5 consume it in the same branch, #6 as its own branch.
-
-**XS — filesystem scandir pyramids, individually:**
-1. `core/export_file.lua:60-83` (`ExportFile.scan_folder`) — `fs_scandir` + `while true` pyramid → `plenary.scandir.scan_dir(dir_path, { depth = 1, add_dirs = false })` + flat for-loop.
-2. `plotting/board.lua:228-252` (`Board.scan_folder`) — same pyramid + json filter → `scan_dir` with `search_pattern = "%.json$"`, flat loop.
-
-**S — shared entry scanner, do #3 first:**
-3. `statusline/components.lua:105-130` (`refresh_book_word_count`) — third copy of the `entries/*/prose.md` scan pyramid. Extract shared helper in new `util/entries.lua` (e.g. `prose_paths(root)` or `each_prose(root, fn)`), based on `scan_dir(entries_dir, { depth = 1, only_dirs = true })`.
-4. `stats.lua:28-52` (`calculate_book_words`) — same pyramid; collapses to a one-liner using helper from #3.
-5. `core/orphan.lua:19-41` (`scan_entry_folders`) — same pyramid, guarded by `Path:new(prose_path):exists()`; collapses via helper from #3.
-
-**S — separate branch:**
-6. `ui/dashboard.lua:246-297` (`browse_folders.show_picker`) — three-way classification ladder inside recursive closure. Extract `classify_entry(dir, opts)` returning `{ type, display }` or nil; inner loop becomes one-line insertion.
-
-Doesn't require waiting on composition — these are pure code-quality fixes in orthogonal spots.
-
 ### Collapse `process_items` / `process_planning` walker duplication
 
 `state.lua:108-151` has two nearly-identical recursive tree walks differing only in which class they build and whether they set `parent_section` / `chapter_index`. Extract `walk(items, visit_fn)` helper; each call site passes its own visit lambda encapsulating the class choice.

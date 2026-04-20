@@ -239,6 +239,23 @@ local function default_browse_path()
   return vim.fn.expand("~")
 end
 
+-- Classify a subdirectory for the browse picker.
+-- Returns the item to insert, or nil to skip.
+local function classify_entry(dir, opts)
+  local name = vim.fn.fnamemodify(dir, ":t")
+  local is_project = is_vimoire_project(dir)
+  local is_bundle = name:match("%.tome$")
+
+  if is_project and opts.bundle_behavior == "open" then
+    return { type = "action", path = dir, display = name .. " ★" }
+  end
+  if is_bundle then
+    return nil  -- Hide .tome bundles outside open context
+  end
+  local marker = is_project and " ★" or ""
+  return { type = "nav", path = dir, display = name .. "/" .. marker }
+end
+
 -- Generic folder browser with contextual action
 -- opts.action_label: function(path) -> string or nil (nil = no action available)
 -- opts.on_action: function(path) -> called when action is selected
@@ -262,17 +279,9 @@ local function browse_folders(start_path, opts)
 
     -- Subdirectories
     for _, dir in ipairs(get_subdirs(path)) do
-      local name = vim.fn.fnamemodify(dir, ":t")
-      local is_project = is_vimoire_project(dir)
-      local is_bundle = name:match("%.tome$")
-
-      if is_project and opts.bundle_behavior == "open" then
-        table.insert(items, { type = "action", path = dir, display = name .. " ★" })
-      elseif is_bundle then
-        -- Hide .tome bundles in non-open contexts (don't create inside one)
-      else
-        local marker = is_project and " ★" or ""
-        table.insert(items, { type = "nav", path = dir, display = name .. "/" .. marker })
+      local item = classify_entry(dir, opts)
+      if item then
+        table.insert(items, item)
       end
     end
 
