@@ -27,16 +27,6 @@ Don't tackle separately. These are covered by or directly adjacent to the compos
 
 These don't intersect with composition. Do them whenever, independently.
 
-### Move UX into feature modules — `marks`, `images`, finder/navigation
-
-High leverage. `app/lua/config/commands/init.lua` is 372 lines because it owns UX that should live in feature modules. Specifically:
-
-- `vimoire.marks` only exposes `parse(content)`. The picker UI (`commands/init.lua:62-106`) should move to `marks.browse(bufnr)` and `marks.insert()`.
-- `vimoire.images` has full file ops; the 110-line `InsertImage` UX in `commands/init.lua` should move to `images.insert()`.
-- `vimoire.finder` builds picker data; `config/commands/navigation.lua` (~200 lines of near-duplicate picker bodies) runs them. Collapse both into `vimoire.navigation.picker` with `picker.manuscript()`, `picker.planning()`, etc.
-
-After this, `commands/init.lua` is ~200 lines of thin dispatchers.
-
 ### Structural nested-if audit
 
 Remaining nested-if cases that are NOT type-dispatch in disguise. Examples: `ExportFile.scan_folder` and `Board.scan_folder` (use `plenary.scandir.scan_dir(path, { depth = 1 })` to flatten), any others a codebase sweep surfaces. Dispatch a cartographer-style agent to catalog and propose flattened shapes; tackle as one focused branch.
