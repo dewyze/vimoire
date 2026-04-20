@@ -5,6 +5,17 @@ local state = {
   paths = {},
 }
 
+-- Walk a tree of item data tables.
+-- visit(data, items, ctx) -> (children_to_recurse_into_or_nil, ctx_for_children)
+local function walk(items, ctx, visit)
+  for _, data in ipairs(items or {}) do
+    local children, child_ctx = visit(data, items, ctx)
+    if children then
+      walk(children, child_ctx, visit)
+    end
+  end
+end
+
 local Manuscript = require("vimoire.core.manuscript")
 local Book = require("vimoire.core.book")
 local orphan = require("vimoire.core.orphan")
@@ -106,47 +117,42 @@ function state:rebuild()
   })
 
   -- Process manuscript entries
-  local function process_items(items, parent_section)
-    for _, item_data in ipairs(items) do
-      local item = Entry.build(item_data, root)
-      item.parent_items = items
-      item.parent_section = parent_section
-      self:register(item)
-
-      if item.items then
-        process_items(item.items, item)
-      elseif item:numbered() then
-        chapter_count = chapter_count + 1
-        item.chapter_index = chapter_count
-      end
+  local function visit_manuscript(data, items, parent_section)
+    local item = Entry.build(data, root)
+    item.parent_items = items
+    item.parent_section = parent_section
+    self:register(item)
+    if item.items then
+      return item.items, item
+    end
+    if item:numbered() then
+      chapter_count = chapter_count + 1
+      item.chapter_index = chapter_count
     end
   end
 
-  process_items(self.manuscript.items or {}, nil)
+  walk(self.manuscript.items, nil, visit_manuscript)
 
   -- Process planning items
-  local function process_planning(items, parent_items)
-    for _, data in ipairs(items or {}) do
-      local item
-      if data.items then
-        item = PlanningSection.new(data, root)
-      else
-        item = PlanningItem.new(data, root)
-      end
-      item.parent_items = parent_items
-      self:register(item)
-
-      if data.items then
-        process_planning(data.items, data.items)
-      end
+  local function visit_planning(data, items)
+    local item
+    if data.items then
+      item = PlanningSection.new(data, root)
+    else
+      item = PlanningItem.new(data, root)
     end
+    item.parent_items = items
+    self:register(item)
+    return data.items
   end
 
-  process_planning(self.manuscript.characters, self.manuscript.characters)
-  process_planning(self.manuscript.settings, self.manuscript.settings)
-  process_planning(self.manuscript.reference, self.manuscript.reference)
-  if self.manuscript.orphaned_notes then
-    process_planning(self.manuscript.orphaned_notes, self.manuscript.orphaned_notes)
+  for _, list in ipairs({
+    self.manuscript.characters,
+    self.manuscript.settings,
+    self.manuscript.reference,
+    self.manuscript.orphaned_notes,
+  }) do
+    walk(list, nil, visit_planning)
   end
 end
 
