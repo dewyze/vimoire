@@ -41,14 +41,6 @@ High leverage. `app/lua/config/commands/init.lua` is 372 lines because it owns U
 
 After this, `commands/init.lua` is ~200 lines of thin dispatchers.
 
-### Fix two-paths-to-colorscheme in `vimoire.config`
-
-`vimoire.config.load()` memoizes via `dofile`, but `effective_colorscheme()` does `dofile` again outside the memoized path. Future-you will add a third precedence source and get bit. Fix: memoize once, read cache in both places. ~5 min.
-
-### Extract `THEMES` array out of `config/commands/init.lua`
-
-Hardcoded theme list with descriptions and order lives in commands/init.lua around line 133. It's content, not command logic. Move to `app/lua/vimoire/themes.lua` as a data module.
-
 ### Structural nested-if audit
 
 Remaining nested-if cases that are NOT type-dispatch in disguise. Examples: `ExportFile.scan_folder` and `Board.scan_folder` (use `plenary.scandir.scan_dir(path, { depth = 1 })` to flatten), any others a codebase sweep surfaces. Dispatch a cartographer-style agent to catalog and propose flattened shapes; tackle as one focused branch.
@@ -60,7 +52,6 @@ Doesn't require waiting on composition — these are pure code-quality fixes in 
 ## UX bugs — unrelated
 
 - **Project directory picker drills in before confirming.** Selecting a dir enters it and asks "use this directory?". Expected: selecting a dir from its parent uses it directly. Likely in `ui/dashboard.lua` or the "Open project" picker wiring.
-- **`ExportFile:action()` opens binaries in vim.** Enter on `.epub`/`.docx`/`.pdf` in the navigator opens raw binary instead of system opener. Fix: dispatch on extension — use `vim.ui.open` (or `:!open` on macOS) for binary formats. Templates/configs (markdown, Lua, CSS) stay in vim. See `app/lua/vimoire/core/export_file.lua:action()` and `app/lua/vimoire/util/open.lua`.
 
 ---
 

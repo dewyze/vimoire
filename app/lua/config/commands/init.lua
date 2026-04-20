@@ -130,25 +130,9 @@ vim.api.nvim_create_user_command("InsertComment", function()
 end, { desc = "Insert a comment that won't appear in output" })
 
 -- Theme
-local THEMES = {
-  -- Dark
-  { name = "inkwell", desc = "Dark — Warm Candlelight" },
-  { name = "umbra", desc = "Dark — High Contrast" },
-  { name = "abyss", desc = "Dark — Ocean Blues" },
-  { name = "hollow", desc = "Dark — Forest Greens" },
-  { name = "dusk", desc = "Dark — Twilight Purples" },
-  { name = "tempest", desc = "Dark — Storm Grays" },
-  { name = "hearth", desc = "Dark — Firelight Reds" },
-  { name = "nebula", desc = "Dark — Cosmic Purples" },
-  { name = "frost", desc = "Dark — Arctic Blues" },
-  -- Light
-  { name = "parchment", desc = "Light — Warm Cream" },
-  { name = "vellum", desc = "Light — Aged Sepia" },
-  { name = "lumen", desc = "Light — High Contrast" },
-}
-
 vim.api.nvim_create_user_command("Theme", function()
   local Snacks = require("snacks")
+  local themes = require("vimoire.themes")
   local original = vim.g.colors_name
 
   local current_file = vim.api.nvim_buf_get_name(0)
@@ -159,7 +143,7 @@ vim.api.nvim_create_user_command("Theme", function()
       display = t.name:gsub("^%l", string.upper),
       desc = t.desc,
     }
-  end, THEMES)
+  end, themes.list)
 
   Snacks.picker({
     title = "Theme",
