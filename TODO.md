@@ -47,9 +47,3 @@ Remaining nested-if cases that are NOT type-dispatch in disguise. Examples: `Exp
 
 Doesn't require waiting on composition — these are pure code-quality fixes in orthogonal spots.
 
----
-
-## UX bugs — unrelated
-
-- **Project directory picker drills in before confirming.** Selecting a dir enters it and asks "use this directory?". Expected: selecting a dir from its parent uses it directly. Likely in `ui/dashboard.lua` or the "Open project" picker wiring.
-

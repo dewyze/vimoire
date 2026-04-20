@@ -263,17 +263,15 @@ local function browse_folders(start_path, opts)
     -- Subdirectories
     for _, dir in ipairs(get_subdirs(path)) do
       local name = vim.fn.fnamemodify(dir, ":t")
+      local is_project = is_vimoire_project(dir)
       local is_bundle = name:match("%.tome$")
 
-      if is_bundle then
-        if opts.bundle_behavior == "open" and is_vimoire_project(dir) then
-          table.insert(items, { type = "action", path = dir, display = name .. " ★" })
-        end
+      if is_project and opts.bundle_behavior == "open" then
+        table.insert(items, { type = "action", path = dir, display = name .. " ★" })
+      elseif is_bundle then
+        -- Hide .tome bundles in non-open contexts (don't create inside one)
       else
-        local marker = ""
-        if is_vimoire_project(dir) then
-          marker = " ★"
-        end
+        local marker = is_project and " ★" or ""
         table.insert(items, { type = "nav", path = dir, display = name .. "/" .. marker })
       end
     end
