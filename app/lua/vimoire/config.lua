@@ -92,6 +92,26 @@ M.defaults = {
 }
 
 M._loaded_config = nil
+M._user_config = nil
+
+-- Loads user config from ~/.vimoire/config.lua (separate from ~/.config/vimoire/,
+-- which is app code via NVIM_APPNAME). Returns {} if the file is missing or invalid.
+local function load_user_config()
+  if M._user_config then
+    return M._user_config
+  end
+
+  M._user_config = {}
+  local path = vim.fn.expand("~/.vimoire/config.lua")
+  if vim.fn.filereadable(path) == 1 then
+    local ok, user_config = pcall(dofile, path)
+    if ok and type(user_config) == "table" then
+      M._user_config = user_config
+    end
+  end
+
+  return M._user_config
+end
 
 function M.load()
   if M._loaded_config then
@@ -99,16 +119,7 @@ function M.load()
   end
 
   local config = vim.deepcopy(M.defaults)
-
-  -- Load user config from ~/.vimoire/config.lua
-  -- This is separate from ~/.config/vimoire/ (app code via NVIM_APPNAME)
-  local user_config_path = vim.fn.expand("~/.vimoire/config.lua")
-  if vim.fn.filereadable(user_config_path) == 1 then
-    local ok, user_config = pcall(dofile, user_config_path)
-    if ok and type(user_config) == "table" then
-      config = vim.tbl_deep_extend("force", config, user_config)
-    end
-  end
+  config = vim.tbl_deep_extend("force", config, load_user_config())
 
   M._loaded_config = config
   return config
@@ -131,13 +142,9 @@ end
 
 -- Returns colorscheme with precedence: user config > preferences > default
 function M.effective_colorscheme()
-  -- Check if user config explicitly sets colorscheme
-  local user_config_path = vim.fn.expand("~/.vimoire/config.lua")
-  if vim.fn.filereadable(user_config_path) == 1 then
-    local ok, user_config = pcall(dofile, user_config_path)
-    if ok and type(user_config) == "table" and user_config.colorscheme then
-      return user_config.colorscheme
-    end
+  local user_config = load_user_config()
+  if user_config.colorscheme then
+    return user_config.colorscheme
   end
 
   -- Check preferences (set via :Theme)
