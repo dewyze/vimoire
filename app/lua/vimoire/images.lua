@@ -221,4 +221,114 @@ function M.insert_at_cursor(text)
   vim.api.nvim_put(lines, "c", true, true)
 end
 
+function M.insert()
+  local state = require("vimoire.state")
+  local Snacks = require("snacks")
+
+  if not state.manuscript then
+    vim.notify("No manuscript loaded", vim.log.levels.WARN)
+    return
+  end
+
+  local root = state.manuscript.root
+
+  local function insert_from_file()
+    M.browse(function(src_path)
+      M.copy_with_collision_handling(root, src_path, function(dest_path)
+        if not dest_path then
+          return
+        end
+
+        local filename = vim.fn.fnamemodify(dest_path, ":t")
+
+        vim.ui.input({ prompt = "Alt text: " }, function(alt_text)
+          local md = M.markdown(filename, alt_text or "")
+          M.insert_at_cursor(md)
+        end)
+      end)
+    end)
+  end
+
+  local function insert_from_assets()
+    local image_list = M.list(root)
+
+    if #image_list == 0 then
+      vim.notify("No images in assets/images/", vim.log.levels.INFO)
+      return
+    end
+
+    local picker_items = {}
+    for _, filename in ipairs(image_list) do
+      table.insert(picker_items, {
+        text = filename,
+        filename = filename,
+        path = M.full_path(root, filename),
+      })
+    end
+
+    Snacks.picker({
+      title = "Images",
+      items = picker_items,
+      preview = false,
+      format = function(item)
+        return { { item.text, "Normal" } }
+      end,
+      actions = {
+        delete_image = function(picker)
+          local sel = picker:current()
+          if sel and sel.filename then
+            M.delete(root, sel.filename)
+            vim.notify("Deleted " .. sel.filename, vim.log.levels.INFO)
+            picker:close()
+          end
+        end,
+        rename_image = function(picker)
+          local sel = picker:current()
+          if sel and sel.filename then
+            vim.ui.input({ prompt = "New filename: ", default = sel.filename }, function(new_name)
+              if new_name and new_name ~= "" and new_name ~= sel.filename then
+                local ok, err = M.rename(root, sel.filename, new_name)
+                if ok then
+                  vim.notify("Renamed to " .. new_name, vim.log.levels.INFO)
+                else
+                  vim.notify(err or "Rename failed", vim.log.levels.ERROR)
+                end
+              end
+              picker:close()
+            end)
+          end
+        end,
+      },
+      win = {
+        input = {
+          keys = {
+            ["<C-d>"] = { "delete_image", mode = { "n", "i" }, desc = "Delete" },
+            ["<C-r>"] = { "rename_image", mode = { "n", "i" }, desc = "Rename" },
+          },
+          footer_keys = { "<C-d>", "<C-r>" },
+        },
+      },
+      confirm = function(picker, selected)
+        if selected and selected.filename then
+          picker:close()
+          vim.ui.input({ prompt = "Alt text: " }, function(alt_text)
+            local md = M.markdown(selected.filename, alt_text or "")
+            M.insert_at_cursor(md)
+          end)
+        end
+      end,
+    })
+  end
+
+  vim.ui.select({ "From file", "From assets" }, {
+    prompt = "Insert image:",
+  }, function(choice)
+    if choice == "From file" then
+      insert_from_file()
+    elseif choice == "From assets" then
+      insert_from_assets()
+    end
+  end)
+end
+
 return M
