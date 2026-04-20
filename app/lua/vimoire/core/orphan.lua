@@ -1,5 +1,6 @@
 local Path = require("plenary.path")
 local frontmatter = require("vimoire.export.frontmatter")
+local entries = require("vimoire.util.entries")
 
 local M = {}
 
@@ -15,27 +16,11 @@ local function collect_manifest_ids(items, ids)
   return ids
 end
 
--- Scan entries/ directory for folder names (each is an entry ID)
-local function scan_entry_folders(root)
+-- Collect entry IDs present on disk (folders under entries/ that have a prose.md).
+local function collect_disk_ids(root)
   local ids = {}
-  local entries_dir = root .. "/entries"
-  local handle = vim.loop.fs_scandir(entries_dir)
-  if not handle then
-    return ids
-  end
-
-  while true do
-    local name, type = vim.loop.fs_scandir_next(handle)
-    if not name then
-      break
-    end
-    if type == "directory" then
-      -- Verify prose.md exists
-      local prose_path = entries_dir .. "/" .. name .. "/prose.md"
-      if Path:new(prose_path):exists() then
-        ids[name] = true
-      end
-    end
+  for id in entries.each_prose(root) do
+    ids[id] = true
   end
   return ids
 end
@@ -56,7 +41,7 @@ end
 function M.recover(manuscript)
   local root = manuscript.root
   local manifest_ids = collect_manifest_ids(manuscript.items)
-  local disk_ids = scan_entry_folders(root)
+  local disk_ids = collect_disk_ids(root)
 
   local recovered = {}
 

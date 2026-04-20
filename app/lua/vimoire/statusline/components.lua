@@ -3,6 +3,7 @@ local M = {}
 
 local state = require("vimoire.state")
 local colors = require("vimoire.statusline.colors")
+local entries = require("vimoire.util.entries")
 
 local SEPARATOR = " › "
 
@@ -109,23 +110,10 @@ function M.refresh_book_word_count()
     return
   end
 
-  local entries_dir = root .. "/entries"
   local total = 0
-
-  local handle = vim.loop.fs_scandir(entries_dir)
-  if handle then
-    while true do
-      local name, type = vim.loop.fs_scandir_next(handle)
-      if not name then
-        break
-      end
-      if type == "directory" then
-        local prose_path = entries_dir .. "/" .. name .. "/prose.md"
-        total = total + count_file_words(prose_path)
-      end
-    end
+  for _, prose_path in entries.each_prose(root) do
+    total = total + count_file_words(prose_path)
   end
-
   cached_book_word_count = total
 end
 
