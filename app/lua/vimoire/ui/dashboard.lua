@@ -1,5 +1,6 @@
 local recent = require("vimoire.recent")
 local scaffold = require("vimoire.scaffold")
+local browser = require("vimoire.util.browser")
 
 local M = {}
 
@@ -205,10 +206,6 @@ local function create_project_at(parent_path)
   end)
 end
 
-local function shorten_home(path)
-  return path:gsub("^" .. vim.pesc(vim.fn.expand("~")), "~")
-end
-
 local function is_vimoire_project(path)
   return vim.fn.filereadable(path .. "/manuscript.json") == 1
 end
@@ -261,48 +258,26 @@ end
 -- opts.on_action: function(path) -> called when action is selected
 -- opts.bundle_behavior: "open" to show .tome bundles as openable, nil to hide them
 local function browse_folders(start_path, opts)
-  local function show_picker(path)
-    path = vim.fn.fnamemodify(path, ":p"):gsub("/$", "")
-    local items = {}
-
-    -- Contextual action (if available for this path)
-    local action_label = opts.action_label(path)
-    if action_label then
-      table.insert(items, { type = "action", path = path, display = action_label })
-    end
-
-    -- Parent directory
-    local parent = vim.fn.fnamemodify(path, ":h")
-    if parent ~= path then
-      table.insert(items, { type = "nav", path = parent, display = ".." })
-    end
-
-    -- Subdirectories
-    for _, dir in ipairs(get_subdirs(path)) do
-      local item = classify_entry(dir, opts)
-      if item then
-        table.insert(items, item)
+  browser.open({
+    start = start_path,
+    entries = function(path)
+      local items = {}
+      local action_label = opts.action_label(path)
+      if action_label then
+        table.insert(items, { type = "action", path = path, display = action_label })
       end
-    end
-
-    vim.ui.select(items, {
-      prompt = shorten_home(path),
-      format_item = function(item)
-        return item.display
-      end,
-    }, function(choice)
-      if not choice then
-        return
+      local parent = vim.fn.fnamemodify(path, ":h")
+      if parent ~= path then
+        table.insert(items, { type = "nav", path = parent, display = ".." })
       end
-      if choice.type == "action" then
-        opts.on_action(choice.path)
-      else
-        show_picker(choice.path)
+      for _, dir in ipairs(get_subdirs(path)) do
+        local item = classify_entry(dir, opts)
+        if item then table.insert(items, item) end
       end
-    end)
-  end
-
-  show_picker(start_path)
+      return items
+    end,
+    on_select = function(item) opts.on_action(item.path) end,
+  })
 end
 
 local function new_project()

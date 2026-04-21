@@ -1,4 +1,5 @@
 local Path = require("plenary.path")
+local browser = require("vimoire.util.browser")
 
 local M = {}
 
@@ -90,10 +91,6 @@ end
 
 -- File browser helpers
 
-local function shorten_home(path)
-  return path:gsub("^" .. vim.pesc(vim.fn.expand("~")), "~")
-end
-
 local function get_entries(path)
   local dirs = {}
   local files = {}
@@ -130,47 +127,25 @@ end
 -- Browse filesystem for an image file
 -- on_select(image_path) called when user picks an image
 function M.browse(on_select)
-  local function show_picker(path)
-    path = vim.fn.fnamemodify(path, ":p"):gsub("/$", "")
-    local items = {}
-
-    -- Parent directory
-    local parent = vim.fn.fnamemodify(path, ":h")
-    if parent ~= path then
-      table.insert(items, { type = "dir", path = parent, display = ".." })
-    end
-
-    -- Subdirectories and image files
-    local dirs, files = get_entries(path)
-
-    for _, dir in ipairs(dirs) do
-      local name = vim.fn.fnamemodify(dir, ":t")
-      table.insert(items, { type = "dir", path = dir, display = name .. "/" })
-    end
-
-    for _, file in ipairs(files) do
-      local name = vim.fn.fnamemodify(file, ":t")
-      table.insert(items, { type = "file", path = file, display = name })
-    end
-
-    vim.ui.select(items, {
-      prompt = shorten_home(path),
-      format_item = function(item)
-        return item.display
-      end,
-    }, function(choice)
-      if not choice then
-        return
+  browser.open({
+    start = default_browse_path(),
+    entries = function(path)
+      local items = {}
+      local parent = vim.fn.fnamemodify(path, ":h")
+      if parent ~= path then
+        table.insert(items, { type = "nav", path = parent, display = ".." })
       end
-      if choice.type == "dir" then
-        show_picker(choice.path)
-      else
-        on_select(choice.path)
+      local dirs, files = get_entries(path)
+      for _, dir in ipairs(dirs) do
+        table.insert(items, { type = "nav", path = dir, display = vim.fn.fnamemodify(dir, ":t") .. "/" })
       end
-    end)
-  end
-
-  show_picker(default_browse_path())
+      for _, file in ipairs(files) do
+        table.insert(items, { type = "file", path = file, display = vim.fn.fnamemodify(file, ":t") })
+      end
+      return items
+    end,
+    on_select = function(item) on_select(item.path) end,
+  })
 end
 
 -- Copy image to assets with collision handling
