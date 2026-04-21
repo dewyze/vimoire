@@ -352,6 +352,14 @@ local function setup_keymaps()
 end
 
 function M.show()
+  -- If already showing, re-attach to current window and refresh in place
+  if M.buf and vim.api.nvim_buf_is_valid(M.buf) then
+    M.win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(M.win, M.buf)
+    render()
+    return
+  end
+
   -- Create buffer
   M.buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_option(M.buf, "bufhidden", "wipe")
