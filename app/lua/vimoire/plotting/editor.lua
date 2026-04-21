@@ -71,6 +71,7 @@ function M.open(opts)
   vim.keymap.set("n", "<Esc>", cancel, key_opts)
   vim.keymap.set("n", "q", cancel, key_opts)
   vim.keymap.set({ "n", "i" }, "<C-s>", save, key_opts)
+  vim.keymap.set({ "n", "i" }, "<C-CR>", save, key_opts)
 
   -- Handle BufWriteCmd for :w
   vim.api.nvim_create_autocmd("BufWriteCmd", {

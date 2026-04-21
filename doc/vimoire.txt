@@ -854,8 +854,8 @@ See |vimoire-keymaps-plotting| for all keymaps.
 Cell Editing                                         *vimoire-plotting-edit*
 
 Press `<CR>`, `e`, `a`, or `i` to open a cell in a popup editor. The popup
-supports full markdown editing with word wrap. Save with `<C-s>` or `:w`,
-cancel with `<Esc>`.
+supports full markdown editing with word wrap. Save with `<C-s>`,
+`<C-CR>`, or `:w`, cancel with `<Esc>`.
 
 Press `K` to view a cell's full content without editing—useful for longer
 notes that are truncated in the grid view.
