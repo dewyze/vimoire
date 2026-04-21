@@ -15,11 +15,11 @@ vim.keymap.set({ "n", "i", "v" }, "<D-S-p>", "<Cmd>Palette<CR>", { desc = "Comma
 set({ "n", "v" }, keymaps.palette, "<Cmd>Palette<CR>", { desc = "Command palette" })
 
 -- Finder keymaps
-set("n", keymaps.finder.smart, ":Navigate<CR>", { desc = "Vimoire: smart finder" })
-set("n", keymaps.finder.manuscript, ":Manuscript<CR>", { desc = "Vimoire: manuscript" })
-set("n", keymaps.finder.planning, ":Planning<CR>", { desc = "Vimoire: planning" })
-set("n", keymaps.finder.snippets, ":Snippets<CR>", { desc = "Vimoire: snippets" })
-set("n", keymaps.finder.exports, ":Exports<CR>", { desc = "Vimoire: exports" })
+set("n", keymaps.finder.smart, ":Find<CR>", { desc = "Vimoire: smart finder" })
+set("n", keymaps.finder.manuscript, ":FindManuscript<CR>", { desc = "Vimoire: manuscript" })
+set("n", keymaps.finder.planning, ":FindPlanning<CR>", { desc = "Vimoire: planning" })
+set("n", keymaps.finder.snippets, ":FindSnippets<CR>", { desc = "Vimoire: snippets" })
+set("n", keymaps.finder.exports, ":FindExports<CR>", { desc = "Vimoire: exports" })
 
 -- Navigator keymaps
 set("n", keymaps.navigator.toggle, ":Neotree toggle source=manuscript<CR>", { desc = "Vimoire: toggle navigator" })
@@ -28,23 +28,23 @@ set("n", keymaps.navigator.reveal, function()
   local source = path_util.navigator_source(vim.fn.expand("%:p"))
   vim.cmd("Neotree reveal source=" .. source)
 end, { desc = "Vimoire: reveal in navigator" })
-set("n", keymaps.navigator.manuscript, ":Neotree source=manuscript<CR>", { desc = "Vimoire: manuscript view" })
-set("n", keymaps.navigator.export, ":Neotree source=export<CR>", { desc = "Vimoire: export view" })
+set("n", keymaps.navigator.manuscript, ":NavigateManuscript<CR>", { desc = "Vimoire: manuscript view" })
+set("n", keymaps.navigator.export, ":NavigateExport<CR>", { desc = "Vimoire: export view" })
 
 -- Views keymaps
 if keymaps.views then
-  set("n", keymaps.views.home, ":Home<CR>", { desc = "Vimoire: home" })
-  set("n", keymaps.views.focus, ":Focus<CR>", { desc = "Vimoire: toggle focus mode" })
+  set("n", keymaps.views.home, ":ViewHome<CR>", { desc = "Vimoire: home" })
+  set("n", keymaps.views.focus, ":ViewFocus<CR>", { desc = "Vimoire: toggle focus mode" })
 end
-vim.keymap.set("n", "<C-\\>", "<Cmd>Focus<CR>", { desc = "Vimoire: toggle focus mode" })
-vim.keymap.set("n", "<D-d>", "<Cmd>Focus<CR>", { desc = "Vimoire: toggle focus mode" })
+vim.keymap.set("n", "<C-\\>", "<Cmd>ViewFocus<CR>", { desc = "Vimoire: toggle focus mode" })
+vim.keymap.set("n", "<D-d>", "<Cmd>ViewFocus<CR>", { desc = "Vimoire: toggle focus mode" })
 
 -- Writing context keymaps
 if keymaps.writing then
-  set("n", keymaps.writing.notes, ":Notes<CR>", { desc = "Vimoire: open notes" })
-  set("n", keymaps.writing.marks, ":Marks<CR>", { desc = "Vimoire: browse marks" })
+  set("n", keymaps.writing.notes, ":OpenNotes<CR>", { desc = "Vimoire: open notes" })
+  set("n", keymaps.writing.marks, ":FindMarks<CR>", { desc = "Vimoire: browse marks" })
   set("n", keymaps.writing.toggle_kind, ":ToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
-  set("n", keymaps.writing.prose, ":Prose<CR>", { desc = "Vimoire: jump to prose" })
+  set("n", keymaps.writing.prose, ":OpenProse<CR>", { desc = "Vimoire: jump to prose" })
 end
 
 -- Insert keymaps
@@ -55,7 +55,7 @@ end
 
 -- Snippets keymaps
 if keymaps.snippets then
-  set("n", keymaps.snippets.insert, ":Snippets<CR>", { desc = "Vimoire: insert snippet" })
+  set("n", keymaps.snippets.insert, ":FindSnippets<CR>", { desc = "Vimoire: insert snippet" })
   set("v", keymaps.snippets.extract, ":SnippetExtract<CR>", { desc = "Vimoire: extract snippet" })
 end
 

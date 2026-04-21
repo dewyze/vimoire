@@ -1,32 +1,32 @@
-vim.api.nvim_create_user_command("Manuscript", function()
+vim.api.nvim_create_user_command("FindManuscript", function()
   require("vimoire.navigation.picker").manuscript()
 end, { desc = "Browse manuscript" })
 
-vim.api.nvim_create_user_command("Characters", function()
+vim.api.nvim_create_user_command("FindCharacters", function()
   require("vimoire.navigation.picker").characters()
 end, { desc = "Browse characters" })
 
-vim.api.nvim_create_user_command("Settings", function()
+vim.api.nvim_create_user_command("FindSettings", function()
   require("vimoire.navigation.picker").settings()
 end, { desc = "Browse settings" })
 
-vim.api.nvim_create_user_command("Reference", function()
+vim.api.nvim_create_user_command("FindReference", function()
   require("vimoire.navigation.picker").reference()
 end, { desc = "Browse reference" })
 
-vim.api.nvim_create_user_command("Navigate", function()
+vim.api.nvim_create_user_command("Find", function()
   require("vimoire.navigation.picker").navigate()
-end, { desc = "Browse all entries" })
+end, { desc = "Browse all entries (smart finder)" })
 
-vim.api.nvim_create_user_command("Planning", function()
+vim.api.nvim_create_user_command("FindPlanning", function()
   require("vimoire.navigation.picker").planning()
 end, { desc = "Browse planning (characters, settings, reference)" })
 
-vim.api.nvim_create_user_command("Exports", function()
+vim.api.nvim_create_user_command("FindExports", function()
   require("vimoire.navigation.picker").exports()
 end, { desc = "Browse exports" })
 
-vim.api.nvim_create_user_command("Prose", function()
+vim.api.nvim_create_user_command("OpenProse", function()
   local state = require("vimoire.state")
   local item_id = vim.b.vimoire_item_id
   if not item_id then return end

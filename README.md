@@ -78,7 +78,7 @@ Pandoc-powered export to **EPUB**, **DOCX**, and **PDF**. Chapter numbering, sce
 
 ### Themes
 
-Twelve moods for writing. Switch with `:Theme` or set in config.
+Twelve moods for writing. Switch with `:ViewTheme` or set in config.
 
 |   |   |   |
 |:---:|:---:|:---:|
@@ -95,7 +95,7 @@ Twelve moods for writing. Switch with `:Theme` or set in config.
 
 ### The Little Things
 
-**Typewriter mode** — keeps the cursor vertically centered while you write. Toggle with `:Typewriter`, persists across sessions.
+**Typewriter mode** — keeps the cursor vertically centered while you write. Toggle with `:ViewTypewriter`, persists across sessions.
 
 **Plotting boards** — grid-based planning for plot threads, character arcs, or any tabular structure. Navigate with `hjkl`, edit cells in popups.
 

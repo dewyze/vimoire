@@ -156,7 +156,7 @@ Available themes:
 - `vellum` — aged sepia
 - `lumen` — high contrast monochrome
 
-You can also change themes at runtime with `:Theme`.
+You can also change themes at runtime with `:ViewTheme`.
 
 ---
 
@@ -280,7 +280,7 @@ Settings applied to prose and notes buffers.
 | `focus_mode` | `true` | Enable focus mode by default |
 | `termguicolors` | `true` | Enable 24-bit RGB colors (required for accurate theme colors in terminal) |
 
-Typewriter scrolling can also be toggled at runtime with `:Typewriter`. The setting persists across sessions.
+Typewriter scrolling can also be toggled at runtime with `:ViewTypewriter`. The setting persists across sessions.
 
 ---
 
@@ -388,7 +388,7 @@ goals:
 ```
 
 When goals are set:
-- `:Stats` shows progress toward target
-- `:Home` (project dashboard) shows session and total progress
+- `:ViewStats` shows progress toward target
+- `:ViewHome` (project dashboard) shows session and total progress
 
 Session tracking resets when you reopen the project.

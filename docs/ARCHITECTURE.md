@@ -125,7 +125,7 @@ All entities use **6-character alphanumeric IDs** (a-z, 0-9) generated randomly 
 
 ## Buffer Metadata
 
-When files are opened via navigator or pickers, the buffer is tagged with `vim.b.vimoire_item_id`. This enables buffer-context commands like `:Notes` to know which chapter/page the user is editing.
+When files are opened via navigator or pickers, the buffer is tagged with `vim.b.vimoire_item_id`. This enables buffer-context commands like `:OpenNotes` to know which chapter/page the user is editing.
 
 **Shared open logic:** `vimoire.navigation.open` provides `open_item(item)` which:
 1. Opens the file with `:edit`

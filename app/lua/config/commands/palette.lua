@@ -1,23 +1,31 @@
 -- Commands to show in palette (controls order too)
--- Note: Characters/Settings/Reference excluded (use Planning or Navigate)
+-- Note: FindCharacters/FindSettings/FindReference excluded (use FindPlanning or Find)
 local COMMANDS = {
   -- Find
-  { cmd = "Navigate", display = "Find > All Files" },
-  { cmd = "Manuscript", display = "Find > Manuscript" },
-  { cmd = "Planning", display = "Find > Planning" },
-  { cmd = "Exports", display = "Find > Exports" },
+  { cmd = "Find", display = "Find > All Files" },
+  { cmd = "FindManuscript", display = "Find > Manuscript" },
+  { cmd = "FindPlanning", display = "Find > Planning" },
+  { cmd = "FindExports", display = "Find > Exports" },
+  { cmd = "FindSnippets", display = "Find > Snippets" },
+  { cmd = "FindMarks", display = "Find > Marks" },
+
+  -- Navigate (side-panel trees)
+  { cmd = "NavigateManuscript", display = "Navigate > Manuscript" },
+  { cmd = "NavigateExport", display = "Navigate > Export" },
 
   -- View
-  { cmd = "Home", display = "View > Home" },
-  { cmd = "Stats", display = "View > Stats" },
-  { cmd = "Focus", display = "View > Focus Mode" },
-  { cmd = "Typewriter", display = "View > Toggle Typewriter Mode" },
-  { cmd = "Theme", display = "View > Theme" },
+  { cmd = "ViewHome", display = "View > Home" },
+  { cmd = "ViewProjects", display = "View > Projects" },
+  { cmd = "ViewStats", display = "View > Stats" },
+  { cmd = "ViewFocus", display = "View > Focus Mode" },
+  { cmd = "ViewTypewriter", display = "View > Toggle Typewriter Mode" },
+  { cmd = "ViewTheme", display = "View > Theme" },
+
+  -- Open
+  { cmd = "OpenNotes", display = "Open > Notes" },
+  { cmd = "OpenProse", display = "Open > Prose" },
 
   -- Writing
-  { cmd = "Notes", display = "Writing > Notes" },
-  { cmd = "Prose", display = "Writing > Jump to Prose" },
-  { cmd = "Marks", display = "Writing > Browse Marks" },
   { cmd = "ToggleKind", display = "Writing > Toggle Chapter/Page" },
 
   -- Insert
@@ -29,7 +37,6 @@ local COMMANDS = {
   { cmd = "InsertComment", display = "Insert > Pandoc > Comment" },
 
   -- Snippets
-  { cmd = "Snippets", display = "Snippets > Browse" },
   { cmd = "SnippetExtract", display = "Snippets > Extract Selection" },
 
   -- Comments

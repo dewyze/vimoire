@@ -147,7 +147,7 @@ function M.effective_colorscheme()
     return user_config.colorscheme
   end
 
-  -- Check preferences (set via :Theme)
+  -- Check preferences (set via :ViewTheme)
   local preferences = require("vimoire.preferences")
   local pref_colorscheme = preferences.get("colorscheme")
   if pref_colorscheme then

@@ -5,28 +5,42 @@ require("config.commands.navigation")
 require("config.commands.palette")
 
 -- Focus commands
-vim.api.nvim_create_user_command("Focus", function()
+vim.api.nvim_create_user_command("ViewFocus", function()
   require("vimoire.focus").toggle()
 end, { desc = "Toggle focus mode (margins)" })
 
 -- Typewriter mode
-vim.api.nvim_create_user_command("Typewriter", function()
+vim.api.nvim_create_user_command("ViewTypewriter", function()
   require("vimoire.typewriter").toggle()
 end, { desc = "Toggle typewriter mode" })
 
 -- Dashboard
-vim.api.nvim_create_user_command("Home", function()
+vim.api.nvim_create_user_command("ViewHome", function()
   require("neo-tree.command").execute({ action = "close" })
   require("vimoire.setup").show_dashboard()
 end, { desc = "Show Vimoire dashboard" })
 
+vim.api.nvim_create_user_command("ViewProjects", function()
+  require("neo-tree.command").execute({ action = "close" })
+  require("vimoire.ui.dashboard").show()
+end, { desc = "Show project picker (start screen)" })
+
+-- Navigator (side-panel tree views)
+vim.api.nvim_create_user_command("NavigateManuscript", function()
+  vim.cmd("Neotree source=manuscript")
+end, { desc = "Open manuscript tree in side panel" })
+
+vim.api.nvim_create_user_command("NavigateExport", function()
+  vim.cmd("Neotree source=export")
+end, { desc = "Open export tree in side panel" })
+
 -- Stats
-vim.api.nvim_create_user_command("Stats", function()
+vim.api.nvim_create_user_command("ViewStats", function()
   require("vimoire.ui.stats_window").show()
 end, { desc = "Show book statistics" })
 
 -- Item commands
-vim.api.nvim_create_user_command("Notes", function()
+vim.api.nvim_create_user_command("OpenNotes", function()
   local state = require("vimoire.state")
   local item_id = vim.b.vimoire_item_id
   if not item_id then return end
@@ -59,7 +73,7 @@ vim.api.nvim_create_user_command("ToggleKind", function()
 end, { desc = "Toggle chapter/page for current buffer" })
 
 -- Marks
-vim.api.nvim_create_user_command("Marks", function()
+vim.api.nvim_create_user_command("FindMarks", function()
   require("vimoire.marks").browse(vim.api.nvim_get_current_buf())
 end, { desc = "Browse marks in current buffer" })
 
@@ -84,7 +98,7 @@ vim.api.nvim_create_user_command("InsertComment", function()
 end, { desc = "Insert a comment that won't appear in output" })
 
 -- Theme
-vim.api.nvim_create_user_command("Theme", function()
+vim.api.nvim_create_user_command("ViewTheme", function()
   local Snacks = require("snacks")
   local themes = require("vimoire.themes")
   local original = vim.g.colors_name

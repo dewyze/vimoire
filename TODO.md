@@ -27,9 +27,9 @@ Don't tackle separately. These are covered by or directly adjacent to the compos
 
 These don't intersect with composition. Do them whenever, independently.
 
-### Dashboard `:Home` is not idempotent
+### Dashboard `:ViewHome` is not idempotent
 
-Running `:Home` while the dashboard is already showing breaks (defined at `config/commands/init.lua:18` → `vimoire.setup.show_dashboard()`). Either no-op when dashboard is current buffer, or recreate cleanly. Surfaced 2026-04-20 during browser-primitive QA.
+Running `:ViewHome` while the dashboard is already showing breaks (defined in `config/commands/init.lua` → `vimoire.setup.show_dashboard()`). Either no-op when dashboard is current buffer, or recreate cleanly. Surfaced 2026-04-20 during browser-primitive QA.
 
 ### No way back to dashboard from inside `browse_folders` picker
 

@@ -179,7 +179,7 @@ Focus mode centers your prose by creating empty margin windows on left and
 right. This removes visual clutter and keeps text at a comfortable reading
 width (80 columns by default, matching `textwidth`).
 
-Toggle with |:Focus| or `<leader>vf`.
+Toggle with |:ViewFocus| or `<leader>vf`.
 
 Focus mode:
 - Closes split windows (except neo-tree)
@@ -360,41 +360,57 @@ FINDING COMMANDS ~
                                                      *vimoire-commands-find*
 These commands open Snacks pickers to browse and open content.
 
-:Navigate                                            *:Navigate*
+:Find                                                *:Find*
     Browse all manuscript and planning entries in one list. Smart finder
     that searches everything.
 
-:Manuscript                                          *:Manuscript*
+:FindManuscript                                      *:FindManuscript*
     Browse manuscript entries only (chapters and pages). Shows chapter
     numbers inline.
 
-:Planning                                            *:Planning*
+:FindPlanning                                        *:FindPlanning*
     Browse all planning entries (characters, settings, reference).
 
-:Characters                                          *:Characters*
+:FindCharacters                                      *:FindCharacters*
     Browse character entries only.
 
-:Settings                                            *:Settings*
+:FindSettings                                        *:FindSettings*
     Browse settings/locations entries only.
 
-:Reference                                           *:Reference*
+:FindReference                                       *:FindReference*
     Browse reference entries only (includes subfolders).
 
-:Exports                                             *:Exports*
+:FindExports                                         *:FindExports*
     Browse export files (configs, templates, output).
 
-:Snippets                                            *:Snippets*
+:FindSnippets                                        *:FindSnippets*
     Browse saved snippets. Press `<CR>` to insert (consumes snippet),
     `<C-e>` to edit, `<C-d>` to delete.
 
+:FindMarks                                           *:FindMarks*
+    Browse marks in the current buffer. Marks are inline annotations
+    using `{{mark:text}}` syntax. Jump to selected mark.
+
 VIEW COMMANDS ~
                                                      *vimoire-commands-view*
-:Home                                                *:Home*
+:ViewHome                                            *:ViewHome*
     Return to the Vimoire dashboard. If a project is loaded, shows the
     project dashboard with session stats and quick actions. Otherwise
     shows the welcome screen with recent projects.
 
-:Stats                                               *:Stats*
+:ViewProjects                                        *:ViewProjects*
+    Always show the welcome / project-picker screen, regardless of
+    whether a project is loaded. Use this to switch between projects
+    without quitting.
+
+:NavigateManuscript                                  *:NavigateManuscript*
+    Open the manuscript tree in the side panel (same as
+    `<leader>nm`).
+
+:NavigateExport                                      *:NavigateExport*
+    Open the exports tree in the side panel (same as `<leader>ne`).
+
+:ViewStats                                           *:ViewStats*
     Show book statistics in a floating window. Displays:
     - Session words (delta since project opened)
     - Book total (words and estimated pages)
@@ -402,16 +418,16 @@ VIEW COMMANDS ~
     - Progress toward goal (if set in book.yml)
     - Chapter breakdown by section
 
-:Focus                                               *:Focus*
+:ViewFocus                                           *:ViewFocus*
     Toggle focus mode—adds empty margin windows to center prose.
     See |vimoire-focus|.
 
-:Typewriter                                          *:Typewriter*
+:ViewTypewriter                                      *:ViewTypewriter*
     Toggle typewriter mode—keeps the cursor vertically centered while
     writing. When enabled, the screen scrolls to keep your writing line
     in the middle of the window. The setting persists across sessions.
 
-:Theme                                               *:Theme*
+:ViewTheme                                           *:ViewTheme*
     Open theme picker with live preview. Selection is saved to preferences.
     Available themes:
 
@@ -426,21 +442,17 @@ WRITING COMMANDS ~
                                                      *vimoire-commands-writing*
 These commands operate on the current buffer.
 
-:Notes                                               *:Notes*
+:OpenNotes                                           *:OpenNotes*
     Open the notes file for the current entry. Each chapter/page has
     a paired notes.md for scratch content that doesn't export.
 
-:Prose                                               *:Prose*
+:OpenProse                                           *:OpenProse*
     Jump to the prose file for the current entry. Useful when viewing
     notes to return to the main text.
 
 :ToggleKind                                          *:ToggleKind*
     Toggle the current entry between chapter and page. Chapters export
     with numbers ("Chapter 1: Title"), pages export with just the title.
-
-:Marks                                               *:Marks*
-    Browse marks in the current buffer. Marks are inline annotations
-    using `{{mark:text}}` syntax. Jump to selected mark.
 
 INSERT COMMANDS ~
                                                      *vimoire-commands-insert*
@@ -477,8 +489,7 @@ These commands insert content at the cursor position.
 
 SNIPPET COMMANDS ~
                                                      *vimoire-commands-snippets*
-:Snippets                                            *:Snippets*
-    Browse and insert snippets. See |vimoire-commands-find|.
+See |:FindSnippets| for browsing and inserting snippets.
 
 :SnippetExtract                                      *:SnippetExtract*
     Extract visual selection as a snippet. The selected text is removed
@@ -609,28 +620,28 @@ PICKERS ~
 Pickers are fuzzy finders for quick navigation. They show a searchable list
 with file preview (toggle preview in config, see |vimoire-configuration|).
 
-:Navigate (`<leader>ff` or `<C-p>`)                  *vimoire-picker-navigate*
+:Find (`<leader>ff` or `<C-p>`)                      *vimoire-picker-find*
     The "smart finder"—shows all manuscript entries AND all planning items
     in one searchable list. This is your go-to for jumping anywhere.
 
     Entries display with chapter numbers (e.g., "Chapter 3: The Escape").
     Planning items show their folder path (e.g., "Characters > Alice").
 
-:Manuscript (`<leader>fm`)                           *vimoire-picker-manuscript*
+:FindManuscript (`<leader>fm`)                       *vimoire-picker-manuscript*
     Manuscript entries only—chapters and pages. Useful when you know you're
     looking for narrative content.
 
-:Planning (`<leader>fp`)                             *vimoire-picker-planning*
+:FindPlanning (`<leader>fp`)                         *vimoire-picker-planning*
     All planning items across all categories. Shows folder breadcrumbs.
 
-:Characters, :Settings, :Reference                   *vimoire-picker-planning-cat*
+:FindCharacters, :FindSettings, :FindReference       *vimoire-picker-planning-cat*
     Browse a single planning category. Reference includes subfolders.
 
-:Exports (`<leader>fe`)                              *vimoire-picker-exports*
+:FindExports (`<leader>fe`)                          *vimoire-picker-exports*
     Browse export files—configs, templates, and generated output. External
     files (epub, docx, pdf) open in your system's default application.
 
-:Snippets (`<leader>fs`)                             *vimoire-picker-snippets*
+:FindSnippets (`<leader>fs`)                         *vimoire-picker-snippets*
     Browse saved snippets. In this picker:
     - `<CR>` inserts the snippet at cursor (and deletes the snippet file)
     - `<C-e>` opens the snippet for editing
@@ -654,8 +665,8 @@ MOVING BETWEEN RELATED FILES ~
                                                      *vimoire-move-between*
 Every entry has paired files (prose.md and notes.md). Jump between them:
 
-- |:Notes| (`<leader>wn`) — open notes for current entry
-- |:Prose| (`<leader>ww`) — jump back to prose from notes
+- |:OpenNotes| (`<leader>wn`) — open notes for current entry
+- |:OpenProse| (`<leader>ww`) — jump back to prose from notes
 
 These commands work from any buffer that belongs to an entry.
 
@@ -709,7 +720,7 @@ The text after the colon is optional—`{{mark}}` creates an empty marker.
 
 Commands:
     |:InsertMark| (`<leader>im`)    Insert mark and enter insert mode
-    |:Marks| (`<leader>wm`)         Browse marks in current buffer
+    |:FindMarks| (`<leader>wm`)     Browse marks in current buffer
 
 The marks picker shows all marks with their line numbers. Press `<CR>` to
 jump to a mark's location.
@@ -742,7 +753,7 @@ add a description below it, then save and close (`:wq`).
 
 Using Snippets                                       *vimoire-snippets-use*
 
-Run |:Snippets| or press `<leader>si` to browse snippets.
+Run |:FindSnippets| or press `<leader>si` to browse snippets.
 
 Picker actions:
     `<CR>`            Insert at cursor AND delete the snippet
@@ -1109,11 +1120,11 @@ WRITING GOALS ~
 Optional goals can be set in book.yml:
 
 goals.target_words                                   *vimoire-goal-target*
-    Total word count goal for the book. When set, |:Stats| and the project
-    dashboard (|:Home|) show progress as a percentage.
+    Total word count goal for the book. When set, |:ViewStats| and the project
+    dashboard (|:ViewHome|) show progress as a percentage.
 
 goals.daily_words                                    *vimoire-goal-daily*
-    Daily writing goal. When set, |:Stats| shows session progress toward
+    Daily writing goal. When set, |:ViewStats| shows session progress toward
     the daily target. Resets when you reopen the project.
 
 PROSE FRONTMATTER ~
@@ -1282,7 +1293,7 @@ COLORSCHEME                                          *vimoire-config-colorscheme
     Default: `"inkwell"`
 
     Set the startup colorscheme. See |vimoire-colorschemes| for available
-    themes. Can also be changed at runtime via |:Theme|.
+    themes. Can also be changed at runtime via |:ViewTheme|.
 >lua
         colorscheme = "inkwell"
 <
@@ -1319,7 +1330,7 @@ editor.visual_line_navigation                        *vimoire-config-visual-nav*
 editor.typewriter_scrolling                          *vimoire-config-typewriter*
     Default: `false`
     Keep cursor vertically centered while writing. Can also be toggled at
-    runtime with |:Typewriter|. The runtime setting persists via preferences.
+    runtime with |:ViewTypewriter|. The runtime setting persists via preferences.
 
 editor.autosave                                      *vimoire-config-autosave*
     Default: `false`
@@ -1357,7 +1368,7 @@ STATS OPTIONS                                        *vimoire-config-stats*
 
 stats.reading_wpm                                    *vimoire-config-reading-wpm*
     Default: `250`
-    Words per minute used for reading time estimates in |:Stats|.
+    Words per minute used for reading time estimates in |:ViewStats|.
 
 NEOVIDE OPTIONS                                      *vimoire-config-neovide*
 
@@ -1381,7 +1392,7 @@ neovide.scroll_animation_length                      *vimoire-config-scroll*
 
 COLORSCHEMES ~
                                                      *vimoire-colorschemes*
-Available themes. Set via `colorscheme` config or |:Theme| command.
+Available themes. Set via `colorscheme` config or |:ViewTheme| command.
 
 Dark themes:                                         *vimoire-themes-dark*
     `inkwell`     Warm candlelight (default)
@@ -1402,10 +1413,10 @@ Light themes:                                        *vimoire-themes-light*
 Theme Precedence                                     *vimoire-theme-precedence*
 
     1. User config (`~/.vimoire/config.lua` colorscheme setting)
-    2. Preferences (`~/.vimoire/preferences.json`, set by |:Theme|)
+    2. Preferences (`~/.vimoire/preferences.json`, set by |:ViewTheme|)
     3. Default (inkwell)
 
-User config always wins. If you want the |:Theme| picker selection to persist,
+User config always wins. If you want the |:ViewTheme| picker selection to persist,
 don't set `colorscheme` in your config.
 
 KEYMAP CUSTOMIZATION ~

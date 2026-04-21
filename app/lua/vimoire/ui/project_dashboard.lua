@@ -1,4 +1,4 @@
--- Project dashboard (shown when :Home called with project loaded)
+-- Project dashboard (shown when :ViewHome called with project loaded)
 local M = {}
 
 local state = require("vimoire.state")
