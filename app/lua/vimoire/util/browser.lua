@@ -14,7 +14,7 @@ function M.open(opts)
   local function show(path)
     path = vim.fn.fnamemodify(path, ":p"):gsub("/$", "")
     vim.ui.select(opts.entries(path), {
-      prompt = shorten_home(path),
+      prompt = shorten_home(path) .. "  (Esc to cancel)",
       format_item = function(item) return item.display end,
     }, function(choice)
       if not choice then return end

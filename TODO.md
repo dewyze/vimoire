@@ -27,7 +27,3 @@ Don't tackle separately. These are covered by or directly adjacent to the compos
 
 These don't intersect with composition. Do them whenever, independently.
 
-### No way back to dashboard from inside `browse_folders` picker
-
-Once inside the recursive folder picker (via Open project / New project), the only exit is `<Esc>` to cancel. Add an explicit "← Back to dashboard" entry, or document that Esc returns there. Pre-existing UX gap, surfaced 2026-04-20 during browser-primitive QA.
-
