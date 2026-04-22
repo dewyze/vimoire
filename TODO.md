@@ -2,28 +2,18 @@
 
 Parked work. Written so each item can be picked up cold without conversation context.
 
-## Composition refactor — biggest, needs its own plan
+## Kinds-table refactor — active, branch `kinds_refactor`
 
-Large refactor applying "composition over classification" (see `.claude/CLAUDE.md`, OO Design Principles section, and `~/dev/dewzy/docs/engineering/data_architecture_rationale.md` for the canonical rationale).
+Replace the 5 per-kind classes (`Chapter`, `Page`, `PlanningItem`, `ManuscriptSection`, `PlanningSection`) with a data-driven `core/kinds.lua` config table + a single `core/item.lua` class that reads from it. Drops `DocumentBase`/`SectionBase`/per-kind-class shims along the way.
 
-**The idea:** replace vimoire's `kind`-based class hierarchy with a single `Item` core and optional behavior components. Chapters, pages, planning items, subfolders, export files, boards, etc. stop being distinct classes and become combinations of components (TextContent, NotesContent, Container, Numbering, FilesystemBacked, Immutable, etc.). Data in manuscript.json describes behaviors directly instead of routing through `kind`.
+**Full plan + rationale:** `docs/COMPOSITION.md`. Includes the kinds.lua shape, the 6-step migration sequence, per-step risk gates, and why we picked this shape over the originally-pitched component hybrid.
 
-**Working notes + design-doc checklist:** `docs/COMPOSITION.md`. Add observations there as they surface during unrelated work.
-
-**Risk posture:** real but bounded — dev/stable split insulates active writing, recent test coverage guards structural output of `state:rebuild`. Biggest failure mode is stopping halfway (mixed hierarchy + composition); staging must commit to completion.
+**Risk posture:** real but bounded. Step 3 (`Entry.build` switchover) is the integration moment — full state_spec pass + manual smoke test required. Halt-mid-refactor is the worst state, so each commit on the branch must be green and ship-able. Steps 1-2 are zero-risk (pure additions), step 3 is high-risk (semantic switch), steps 4-5 are low-risk (cleanup with tests as safety net).
 
 ### Items folded into this refactor
 
-Don't tackle separately. These are covered by or directly adjacent to the composition work:
+Don't tackle separately. These are covered by or directly adjacent to the kinds-table work:
 
-- **Refactor 2d — unify `state:rebuild` walker.** Composition eliminates the kind dispatch in `Entry.build` entirely; there's no unified walker to build because there's no walker split. The `simplify_state_rebuild` branch's partial progress (2a `state:register`, 2b+2c scanner extraction) is keepable mid-state; 2d is superseded.
-- **Declarative synthetic-folder table in `state.lua`.** Synthetic folders may stop being a special case — they'd just be Items with a Container component and no TextContent. Revisit shape during the refactor.
-- **`DocumentBase:destroy` silently creates a planning item from notes.** The "preserve notes on delete" behavior is tied to the current class hierarchy. Rethink under composition — is "Preservable" a component? Does it live with NotesContent or independently?
-- **Type-dispatch portions of the nested-if audit.** Any nested-`if` that's actually type-dispatch in disguise is eliminated by composition. Structural nested-ifs (scandir loops, etc.) stay in the general audit below.
-
----
-
-## Unrelated refactors — keep separate
-
-These don't intersect with composition. Do them whenever, independently.
+- **`DocumentBase:destroy` silently creates a planning item from notes.** The "preserve notes on delete" behavior is tied to the current class hierarchy. Rethink during the migration — likely a `preserve_on_delete = true` flag in the kinds entry, or stays as logic on Item with no kind-flag (acts on presence of notes file).
+- **Declarative synthetic-folder table in `state.lua`.** Synthetic folders (manuscript, planning, characters, etc.) constructed at rebuild time. Open question in COMPOSITION.md whether they fold into Item or stay as Folder. Decide during the migration.
 

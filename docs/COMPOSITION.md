@@ -1,41 +1,103 @@
 # Composition Refactor — Working Notes
 
-Staging ground for the "composition over classification" refactor. See `docs/DESIGN_PRINCIPLES.md` for the rule and `~/dev/dewzy/docs/engineering/data_architecture_rationale.md` for the canonical pattern.
+Staging ground for the data-model refactor of `core/`. See `docs/DESIGN_PRINCIPLES.md` for the duck-typing/composition rule and `~/dev/dewzy/docs/engineering/data_architecture_rationale.md` for the canonical pattern.
 
-## Status (as of 2026-04-20)
+## Status (as of 2026-04-21)
 
-**Parked, pending audit and walker dedup.** Nested-if audit catalog and `state.lua` walker dedup are both in `TODO.md` and should land first — they either remove composition's arguments or cleanly compose with them. Reassess composition after those land.
+**Active — switched approach to kinds-table, not hybrid components.** Audit + walker dedup landed in the 2026-04-20/21 session, removing most of full-composition's original support. Re-read in 2026-04-21 with Opus 4.7 yielded a simpler shape than the hybrid: data-driven `kinds.lua` config + one `Item` class. See "Chosen approach: kinds table" section below. The hybrid (component-list-per-kind) is documented in "Alternative considered" for posterity.
 
-Preferred shape **if** composition proceeds: **hybrid** (below), not full composition. The distinction matters because the original full-composition pitch assumed scattered `kind ==` checks that we confirmed don't exist.
+## Chosen approach: kinds table
 
-## The shape (hybrid, preferred)
+The 5 per-kind classes (`Chapter`, `Page`, `PlanningItem`, `ManuscriptSection`, `PlanningSection`) are configuration entries pretending to be classes. ~50 lines each, mostly setting class constants (`KIND`, `BASE`, `TEXT_FILENAME`, `ADD_OPTIONS`) and tiny methods that return them. The per-class files exist only because Lua's class machinery wraps the data in OO clothing.
 
-`kind` stays in the JSON as a stable label. A central `kind_components` table at construction maps kind → components. Inside the code, behavior is component-driven:
+**Replace with a data table + one Item class:**
+
+```lua
+-- core/kinds.lua
+return {
+  chapter = {
+    base = "entries", text_filename = "prose.md", extras = true,
+    numbered = true, toggle_to = "page",
+    add_options = { CHAPTER, PAGE, SECTION },
+    export_context = function(item)
+      return { title = item.name, num = item.chapter_index }
+    end,
+  },
+  page = {
+    base = "entries", text_filename = "prose.md", extras = true,
+    toggle_to = "chapter",
+    add_options = { CHAPTER, PAGE, SECTION },
+    export_context = function(item)
+      return { title = item.name, actions = {} }
+    end,
+  },
+  planning_item = {
+    base = "planning", text_filename = "text.md", extras = false,
+    add_options = { PLANNING_ITEM },
+    category = "planning",
+  },
+  section = {
+    container = true,
+    add_options = { CHAPTER, PAGE, SECTION },
+  },
+  subfolder = {
+    container = true,
+    add_options = { PLANNING_ITEM },
+    category = "planning",
+  },
+}
+```
+
+`Item` reads from the table for every behavior method:
+
+```lua
+function Item:base() return kinds[self.kind].base end
+function Item:numbered() return kinds[self.kind].numbered == true end
+function Item:text_path()
+  local k = kinds[self.kind]
+  if not k.text_filename then return nil end
+  return self:dir_path() .. "/" .. k.text_filename
+end
+```
+
+**Net file change:** `core/` collapses from ~9 files (5 kind classes + `document_base` + `section_base` + `entry` + `folder`) to ~3 (`item.lua`, `kinds.lua`, `folder.lua`).
+
+### Why not the hybrid (component-list-per-kind)?
+
+The hybrid frames the units of variation as **behaviors** (`chapter = { Prose, Notes, Numbered, Container }`). That's right when behaviors combine combinatorially in unpredictable ways. Vimoire's actual variation is **configuration-shaped** — each kind picks values for the same handful of slots (text filename, base dir, add-options list, etc.). Components are one indirection past where the data already wants to live.
+
+The kinds table is a stepping stone *to* components if/when the variation grows past what a config table comfortably expresses. Going straight to components is over-engineering for current shape.
+
+### What stays out
+
+`ExportFile`, `Board`, `Book` are genuinely their own things with unique behavior. They don't fit `kinds.lua`. They stay separate. The kinds table is for the document-shaped family only.
+
+## Migration plan
+
+Branch: `kinds_refactor`. Each commit green and ship-able; can stop midway.
+
+1. **Write `core/kinds.lua`.** Distill all 5 per-kind classes into the table. Pure data file, no code changes. Zero risk.
+2. **Introduce `core/item.lua`.** One class merging `DocumentBase` + `SectionBase` behavior, reading from `kinds.lua`. Unused. Zero risk.
+3. **Switch `Entry.build`.** `Chapter.new(data, root)` returns `Item.new("chapter", data, root)`. Per-class files become 3-line shims. **High risk:** state_spec must pass, manual smoke test required (open project, browse tree, edit chapter, toggle kind, save).
+4. **Delete per-kind class files.** Update direct callers (likely few — `Entry.build` is the boundary).
+5. **Inline `DocumentBase`/`SectionBase` into `item.lua`.** One file.
+6. **Update this doc** with "complete" status.
+
+## Alternative considered: hybrid (component-list-per-kind)
+
+Original 2026-04-20 framing. Kept here as historical context. Sketch:
 
 ```lua
 local kind_components = {
   chapter = { Prose, Notes, Numbered, Container },
   page    = { Prose, Notes, Container },
-  section = { Container },
-  planning_item = { ... },
   -- etc.
 }
 ```
 
-Adding a new kind = one table row + any new components that don't already exist. Class hierarchy collapses to a single `Item` class plus the component set.
+Adding a kind = one table row + any new components. Class hierarchy collapses to `Item` + component set.
 
-### What this buys
-
-- Class hierarchy collapses (5 core classes → 1 `Item` + components).
-- Adding a new kind is a data-level change — one table row.
-- Cross-cutting behavior changes live in one component, not scattered across class methods.
-- Config-driven registration (the `kind_components` table) reads like neo-tree / snacks config, which is where the "disciplined feel" of those libraries comes from.
-
-### What it does NOT buy (calibration for future sessions)
-
-- **Scattered kind-check cleanup** — doesn't apply. 2026-04-20 sweep confirmed zero `if item.kind == "X"` conditionals in behavior code.
-- **"Disciplined feel"** — helps, but isn't the whole answer. Module-boundary discipline (commands/init.lua cleanup landed during 2026-04-19/20 session) and the nested-if audit move that needle more per unit effort.
-- **Kind-specific change ergonomics** — slightly worse, not better. Today editing Chapter.lua is one file; under hybrid you navigate "Chapter = [Prose, Notes, Numbered, Container] — which component owns this?" Offset by wins on cross-cutting changes, which are rarer.
+**Why we didn't pick this:** the unit of variation in vimoire's documents isn't behavioral combination — it's configuration values. The kinds-table approach captures the same wins (one Item class, data-level kind addition, one source of truth) with one fewer abstraction layer.
 
 ## Diagnosis from the 2026-04-20 sweep
 
@@ -47,15 +109,13 @@ Adding a new kind = one table row + any new components that don't already exist.
 - Walker duplication (`state.lua:108-151`) is independent of composition — standalone `walk(items, visit_fn)` extraction. Parked in `TODO.md`.
 - **Real duplication:** the class hierarchy. `Chapter`, `Page`, `PlanningItem` inherit `DocumentBase` and mostly differ by a `KIND` constant + a few method overrides. `ManuscriptSection` and `PlanningSection` both inherit `SectionBase` with near-identical shape. Five shallow classes where two or three component combinations would suffice.
 
-## Design doc checklist (fill in during prep)
+## Open questions for kinds-table approach
 
-- [ ] Audit matrix: rows = current classes, columns = behaviors (Prose, Notes, Container, Numbered, Immutable, FilesystemBacked, ExternalOpener, VirtualPath, Preservable). Populate cells honestly.
-- [ ] Derive component set from the matrix. Names, responsibilities, interactions.
-- [ ] Runtime representation: how does `Item` construct from data + the kind→components lookup? Factory + per-component init? Metatable composition? Stick with Lua idiom; don't invent framework machinery.
-- [ ] `toggle_kind` handling: current impl mutates `self.kind` in place; under hybrid, kind change = swap component set. Decide the mechanism.
-- [ ] Class-by-class migration path (phases). Each phase must land on dev, self-contained, with a rollback gate. Halfway state is worst state.
-- [ ] Test strategy (per-component + per-kind integration).
-- [ ] Migration of existing `manuscript.json` files: trivial under hybrid (kind already on disk), but confirm no renames are needed.
+- **`toggle_kind` mechanism.** Current impl: `self:update(state, { kind = "page" })` then `state:load(...)` rebuilds. Under kinds-table: same shape — mutate `kind`, rebuild. Item identity stays; behavior changes via the table lookup. Probably trivial.
+- **`extras = true`** on Chapter/Page vs `extras = false` on PlanningItem. Need to read where `extras()` is called to confirm semantics. (Likely the "has notes.md" flag.)
+- **`section` vs `subfolder` kind names.** Current code uses both. Confirm both stay distinct or unify. (Probably stay distinct — they have different `add_options`.)
+- **`Folder` class.** Synthetic UI containers ("manuscript", "planning", "characters", etc.) constructed in `state.lua:67-100` via `Folder.new`. Stays separate, or absorbed into Item with `container = true, synthetic = true`? Lean toward staying separate for v1 — synthetic folders have a different lifecycle (constructed at rebuild, never persisted to manuscript.json).
+- **Where do per-kind methods that aren't pure data go?** `Chapter:export_context` returns a table built from instance state. Lives in `kinds.lua` as a function field — already shown in the example. `Item:export_context()` becomes `kinds[self.kind].export_context(self)`.
 
 ## Notes accumulated along the way
 
