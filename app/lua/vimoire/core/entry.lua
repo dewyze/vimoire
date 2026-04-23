@@ -1,11 +1,10 @@
 local Entry = {}
 
-local Chapter = require("vimoire.core.chapter")
 local Item = require("vimoire.core.item")
 
 local KINDS = {
   section = function(data, root) return Item.new("section", data, root) end,
-  chapter = function(data, root) return Chapter.new(data, root) end,
+  chapter = function(data, root) return Item.new("chapter", data, root) end,
   page = function(data, root) return Item.new("page", data, root) end,
 }
 

@@ -29,8 +29,8 @@ M.SECTION = {
 M.CHAPTER = {
   label = "Chapter",
   execute = function(state, name, parent_items, at_index)
-    local Chapter = require("vimoire.core.chapter")
-    return Chapter.create(state, name, parent_items, at_index)
+    local Item = require("vimoire.core.item")
+    return Item.create("chapter", state, name, parent_items, at_index)
   end,
 }
 
