@@ -4,6 +4,7 @@ local movement = require("vimoire.core.movement")
 local delete_options = require("vimoire.core.delete_options")
 local add_options = require("vimoire.core.add_options")
 local rename = require("vimoire.core.rename")
+local select = require("vimoire.util.select")
 
 local M = {}
 
@@ -66,7 +67,7 @@ function M.add(state)
 
   local labels = add_options.labels(options)
 
-  vim.ui.select(labels, {
+  select.select(labels, {
     prompt = "Add:",
     snacks = { layout = { hidden = { "input" }, preview = false } },
   }, function(choice)
@@ -130,7 +131,7 @@ function M.delete(state)
     end
   elseif result.choose then
     local labels = delete_options.labels(result.choose, item)
-    vim.ui.select(labels, {
+    select.select(labels, {
       prompt = "Delete " .. item:display_name() .. "?",
       snacks = { layout = { hidden = { "input" }, preview = false } },
     }, function(choice)

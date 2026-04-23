@@ -1,6 +1,7 @@
 local state = require("vimoire.state")
 local ActionItem = require("vimoire.core.action_item")
 local Path = require("plenary.path")
+local select = require("vimoire.util.select")
 
 local M = {
   name = "export",
@@ -36,7 +37,7 @@ local function run_export_picker()
     return
   end
 
-  vim.ui.select(configs, { prompt = "Select config:" }, function(choice)
+  select.select(configs, { prompt = "Select config:" }, function(choice)
     if choice then
       vim.cmd("Export " .. choice)
       state:rebuild()
