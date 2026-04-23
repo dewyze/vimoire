@@ -40,10 +40,9 @@ When variants multiply, prefer a thin core item with optional behavior component
 
 **Why:** every time we've added a new variant by adding a new class with "some subset of behaviors," we've duplicated work and created a dispatch smell. Composition makes new variants data-level (a new combination of existing components), not code-level (a new class).
 
-**In practice:**
-- Data shape: `{ id, name, prose: true, notes: true, numbered: true, items: [...] }`, NOT `{ id, name, kind: "chapter" }` that then routes to a Chapter class which bundles those behaviors.
-- Code: `if item.text_content then item.text_content:open() end`, NOT `if item:is_a?(Chapter) or item:is_a?(Page) then ...`.
-- Iteration: walk items filtered by the component they carry (`items.with(TextContent)`), not by class.
+**Current implementation — kinds table:** `core/kinds.lua` is a data table keyed by kind string; `core/item.lua` is one class that reads from it. Adding a new document variant = one table row, no new class. This is composition over classification: the table entry IS the type, not a routing lookup to a class hierarchy.
+
+**Further evolution — behavioral components:** if variation grows combinatorial (items that mix-and-match arbitrary behavior subsets), the next step is replacing the config table with attached behavior components: `{ id, name, prose: true, notes: true, numbered: true }` where presence drives behavior rather than a kind key. See `docs/COMPOSITION.md` for the rationale and the stepping-stone relationship between the two approaches.
 
 **When overkill:** tiny hierarchies (2-3 shallow classes), behaviors everyone has (make them first-class), or no variant-explosion pressure. Composition earns its keep when combinations proliferate.
 

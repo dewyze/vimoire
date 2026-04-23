@@ -2,9 +2,11 @@
 
 Staging ground for the data-model refactor of `core/`. See `docs/DESIGN_PRINCIPLES.md` for the duck-typing/composition rule and `~/dev/dewzy/docs/engineering/data_architecture_rationale.md` for the canonical pattern.
 
-## Status (as of 2026-04-21)
+## Status (as of 2026-04-23)
 
-**Active — switched approach to kinds-table, not hybrid components.** Audit + walker dedup landed in the 2026-04-20/21 session, removing most of full-composition's original support. Re-read in 2026-04-21 with Opus 4.7 yielded a simpler shape than the hybrid: data-driven `kinds.lua` config + one `Item` class. See "Chosen approach: kinds table" section below. The hybrid (component-list-per-kind) is documented in "Alternative considered" for posterity.
+**Complete.** All 5 per-kind classes deleted. `core/` now has `kinds.lua` + `item.lua` as the only document-model files. `DocumentBase`, `SectionBase`, and all shim classes are gone. Migration landed on branch `kinds_refactor`, merged to `main`.
+
+**What was planned vs. what happened:** Steps 5 (delete per-kind files) and 6 (inline DocumentBase/SectionBase) merged into one — by the time per-kind files were deleted, `item.lua` already contained everything from both base classes, so there was nothing to inline. The `preserve_notes` construction path (planning_item from chapter delete) was routed through `Item.create` in Step 4a.
 
 ## Chosen approach: kinds table
 
