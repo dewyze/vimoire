@@ -8,6 +8,8 @@ local FILE_DISPLAY_SUFFIXES = {
   ["notes.md"] = " - Notes",
 }
 
+local Item -- forward declaration; DocumentItem:preserve_notes references Item.create
+
 -- DocumentItem -----------------------------------------------------------------
 
 local DocumentItem = {}
@@ -105,6 +107,8 @@ function DocumentItem:preserve_notes(state)
   local item = Item.create("planning_item", state, self:display_name(), state.manuscript.orphaned_notes, 1)
   Path:new(item:text_path()):write(content, "w")
 end
+
+function DocumentItem:destroy_children(_state) end
 
 function DocumentItem:destroy(state)
   self:preserve_notes(state)
@@ -218,7 +222,7 @@ end
 
 -- Item (dispatch) --------------------------------------------------------------
 
-local Item = {}
+Item = {}
 
 function Item.new(kind, data, root)
   local mt = kinds[kind].container and ContainerItem or DocumentItem

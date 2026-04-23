@@ -124,8 +124,8 @@ function M.delete(state)
   if not result then return end
 
   if result.confirm then
-    local choice = vim.fn.confirm("Delete " .. item:display_name() .. "?", "&Yes\n&No", 2)
-    if choice == 1 and result.confirm.execute(item, vimoire_state) then
+    local ok, choice = pcall(vim.fn.confirm, "Delete " .. item:display_name() .. "?", "&Yes\n&No", 2)
+    if ok and choice == 1 and result.confirm.execute(item, vimoire_state) then
       M.refresh(state)
     end
   elseif result.choose then
