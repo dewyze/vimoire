@@ -51,3 +51,17 @@ Users who write notes on a chapter can't later delete them from within vimoire �
 
 Expandable-child approach is more discoverable; context-menu keeps the tree cleaner. Pick one.
 
+## Fix subfolder movement escape (parent_subfolder tracking)
+
+Planning subfolders can get stuck nested inside another subfolder with no way out. Root cause: `movement.lua:29` escapes via `item.parent_section`, which is a manuscript-only concept. `visit_planning` in `state.lua` doesn't track the containing subfolder, so nested subfolders have no escape path.
+
+**Fix:** mirror what `visit_manuscript` does — pass the containing subfolder through `visit_planning` recursion, set `item.parent_subfolder` on each item. In `movement.lua`, add `elseif item.parent_subfolder then` parallel to the `parent_section` branch.
+
+**Note:** this is pre-existing behavior, not introduced by the kinds-table refactor.
+
+## Consolidate section and subfolder into one kind
+
+After the kinds-table refactor, `section` and `subfolder` have identical structure — both `container = true`, same movement behavior, same tree mechanics. The only differences are `category` (prose vs. planning) and `add_options` (what children they accept). The naming is legacy from separate class hierarchies.
+
+**Decision:** determine whether to merge into a single `container` kind parameterized by category/add_options, or keep them as named aliases for clarity. Either way, the movement fix above applies to both identically.
+

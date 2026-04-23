@@ -20,7 +20,6 @@ local Manuscript = require("vimoire.core.manuscript")
 local Book = require("vimoire.core.book")
 local orphan = require("vimoire.core.orphan")
 local Entry = require("vimoire.core.entry")
-local PlanningSection = require("vimoire.core.planning_section")
 local Item = require("vimoire.core.item")
 local Folder = require("vimoire.core.folder")
 local ExportFile = require("vimoire.core.export_file")
@@ -137,7 +136,7 @@ function state:rebuild()
   local function visit_planning(data, items)
     local item
     if data.items then
-      item = PlanningSection.new(data, root)
+      item = Item.new("subfolder", data, root)
     else
       item = Item.new("planning_item", data, root)
     end

@@ -53,8 +53,8 @@ M.PLANNING_ITEM = {
 M.SUBFOLDER = {
   label = "Subfolder",
   execute = function(state, name, parent_items, at_index)
-    local PlanningSection = require("vimoire.core.planning_section")
-    return PlanningSection.create(state, name, parent_items, at_index)
+    local Item = require("vimoire.core.item")
+    return Item.create("subfolder", state, name, parent_items, at_index)
   end,
 }
 
