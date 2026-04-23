@@ -30,12 +30,16 @@ function Store:load()
 end
 
 function Store:save(comments)
+  local file = Path:new(self.path)
+  if #comments == 0 then
+    if file:exists() then file:rm() end
+    return
+  end
+
   local data = {
     version = VERSION,
     comments = comments,
   }
-
-  local file = Path:new(self.path)
   file:write(vim.json.encode(data), "w")
 end
 
