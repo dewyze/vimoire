@@ -5,8 +5,8 @@ local items_util = require("vimoire.util.items")
 M.SECTION = {
   label = "Section",
   execute = function(state, name, parent_items, at_index)
-    local ManuscriptSection = require("vimoire.core.manuscript_section")
-    return ManuscriptSection.create(state, name, parent_items, at_index)
+    local Item = require("vimoire.core.item")
+    return Item.create("section", state, name, parent_items, at_index)
   end,
   -- Sections always insert at manuscript root level
   target = function(state, item)
