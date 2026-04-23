@@ -37,8 +37,8 @@ M.CHAPTER = {
 M.PAGE = {
   label = "Page",
   execute = function(state, name, parent_items, at_index)
-    local Page = require("vimoire.core.page")
-    return Page.create(state, name, parent_items, at_index)
+    local Item = require("vimoire.core.item")
+    return Item.create("page", state, name, parent_items, at_index)
   end,
 }
 
