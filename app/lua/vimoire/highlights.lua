@@ -10,6 +10,7 @@ local function apply_defaults()
   end
 
   -- Navigator groups
+  default_link("VimoireMarker", "Comment")
   default_link("VimoireBook", "Identifier")
   default_link("VimoireManuscript", "Title")
   default_link("VimoireSection", "Statement")

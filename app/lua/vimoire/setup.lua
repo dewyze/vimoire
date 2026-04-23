@@ -46,6 +46,20 @@ function setup.on_manuscript_loaded()
     end,
   })
 
+  -- Update notes marker: delete file if empty, then refresh tree
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    group = augroup,
+    pattern = "*/notes.md",
+    callback = function(args)
+      local lines = vim.api.nvim_buf_get_lines(args.buf, 0, -1, false)
+      local content = table.concat(lines, "")
+      if content:match("^%s*$") then
+        vim.fn.delete(args.file)
+      end
+      refresh_neotree()
+    end,
+  })
+
   vim.api.nvim_create_autocmd("BufEnter", {
     group = augroup,
     callback = function(args)

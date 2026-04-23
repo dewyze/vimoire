@@ -5,6 +5,8 @@ local function icon(hex)
 end
 
 M.ICONS = {
+  NOTES_MARKER    = icon("0xf040"),   -- pencil
+  COMMENTS_MARKER = icon("0xf075"),   -- speech bubble
   BOOK = icon("0xf02d"),
   MANUSCRIPT = icon("0xf15d6"),
   SECTION = icon("0xe6ad"),
@@ -25,6 +27,7 @@ M.ICONS = {
 }
 
 M.HIGHLIGHTS = {
+  MARKER = "VimoireMarker",
   BOOK = "VimoireBook",
   MANUSCRIPT = "VimoireManuscript",
   SECTION = "VimoireSection",

@@ -10,6 +10,10 @@ local FILE_DISPLAY_SUFFIXES = {
 
 local Item -- forward declaration; DocumentItem:preserve_notes references Item.create
 
+local function file_exists(path)
+  return path ~= nil and Path:new(path):exists()
+end
+
 -- DocumentItem -----------------------------------------------------------------
 
 local DocumentItem = {}
@@ -36,6 +40,11 @@ end
 function DocumentItem:notes_path()
   if not self:extras() then return nil end
   return self:dir_path() .. "/notes.md"
+end
+
+function DocumentItem:comments_path()
+  if not self:extras() then return nil end
+  return self:dir_path() .. "/comments.json"
 end
 
 function DocumentItem:display_number()
@@ -108,6 +117,9 @@ function DocumentItem:preserve_notes(state)
   Path:new(item:text_path()):write(content, "w")
 end
 
+function DocumentItem:has_notes()    return file_exists(self:notes_path()) end
+function DocumentItem:has_comments() return file_exists(self:comments_path()) end
+
 function DocumentItem:destroy_children(_state) end
 
 function DocumentItem:destroy(state)
@@ -145,6 +157,9 @@ function ContainerItem:add_options() return kinds[self.kind].add_options end
 function ContainerItem:dir_path()       return nil end
 function ContainerItem:text_path()      return nil end
 function ContainerItem:notes_path()     return nil end
+function ContainerItem:comments_path()  return nil end
+function ContainerItem:has_notes()      return false end
+function ContainerItem:has_comments()   return false end
 function ContainerItem:display_number() return nil end
 
 function ContainerItem:display_name() return self.name end

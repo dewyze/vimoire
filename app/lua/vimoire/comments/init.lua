@@ -93,12 +93,14 @@ function M.setup()
     end,
   })
 
-  -- Save on write
+  -- Save on write and refresh tree to update comments marker
   vim.api.nvim_create_autocmd("BufWritePost", {
     group = augroup,
     pattern = "*/entries/*/prose.md",
     callback = function(args)
       save_buffer(args.buf)
+      local manager = require("neo-tree.sources.manager")
+      manager.refresh("manuscript")
     end,
   })
 
