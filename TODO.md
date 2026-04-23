@@ -59,6 +59,14 @@ Planning subfolders can get stuck nested inside another subfolder with no way ou
 
 **Note:** this is pre-existing behavior, not introduced by the kinds-table refactor.
 
+## Plotting board keyboard shortcut discoverability
+
+Plotting board keybindings aren't surfaced anywhere accessible. Users have to dig through source to find them.
+
+**Options:** add a `?` help overlay in the board buffer (similar to neo-tree's `?`), or show available keys in a statusline/virtual text hint when the board is focused.
+
+**Where to look:** plotting keymaps likely live under `app/lua/vimoire/plotting/`.
+
 ## Consolidate section and subfolder into one kind
 
 After the kinds-table refactor, `section` and `subfolder` have identical structure — both `container = true`, same movement behavior, same tree mechanics. The only differences are `category` (prose vs. planning) and `add_options` (what children they accept). The naming is legacy from separate class hierarchies.

@@ -48,8 +48,8 @@ describe("delete_options", function()
     end)
 
     it("returns confirm for empty sections", function()
-      local ManuscriptSection = require("vimoire.core.manuscript_section")
-      local section = ManuscriptSection.create(state, "Empty Section", state.manuscript.items, #state.manuscript.items + 1)
+      local Item = require("vimoire.core.item")
+      local section = Item.create("section", state, "Empty Section", state.manuscript.items, #state.manuscript.items + 1)
 
       local result = delete_options.for_item(section)
 
