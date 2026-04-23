@@ -117,8 +117,8 @@ function DocumentBase:preserve_notes(state)
   end
 
   -- Create planning item for the orphaned note
-  local PlanningItem = require("vimoire.core.planning_item")
-  local item = PlanningItem.create(state, self:display_name(), state.manuscript.orphaned_notes, 1)
+  local Item = require("vimoire.core.item")
+  local item = Item.create("planning_item", state, self:display_name(), state.manuscript.orphaned_notes, 1)
 
   -- Write notes content to the new item
   Path:new(item:text_path()):write(content, "w")

@@ -45,8 +45,8 @@ M.PAGE = {
 M.PLANNING_ITEM = {
   label = "Item",
   execute = function(state, name, parent_items, at_index)
-    local PlanningItem = require("vimoire.core.planning_item")
-    return PlanningItem.create(state, name, parent_items, at_index)
+    local Item = require("vimoire.core.item")
+    return Item.create("planning_item", state, name, parent_items, at_index)
   end,
 }
 
