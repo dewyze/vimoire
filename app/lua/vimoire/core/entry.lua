@@ -1,16 +1,11 @@
 local Entry = {}
 
 local Item = require("vimoire.core.item")
-
-local KINDS = {
-  section = function(data, root) return Item.new("section", data, root) end,
-  chapter = function(data, root) return Item.new("chapter", data, root) end,
-  page = function(data, root) return Item.new("page", data, root) end,
-}
+local kinds = require("vimoire.core.kinds")
 
 function Entry.build(data, root)
-  local handler = KINDS[data.kind] or KINDS.page
-  return handler(data, root)
+  local kind = kinds[data.kind] and data.kind or "page"
+  return Item.new(kind, data, root)
 end
 
 return Entry
