@@ -30,9 +30,10 @@ function ExportFile:text_path()
   return self.path
 end
 
-function ExportFile:notes_path()
-  return nil
-end
+function ExportFile:notes_path()      return nil end
+function ExportFile:comments_path()   return nil end
+function ExportFile:has_notes()       return false end
+function ExportFile:has_comments()    return false end
 
 function ExportFile:destroy(state)
   -- Remove from parent folder's items
