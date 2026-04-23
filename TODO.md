@@ -2,6 +2,14 @@
 
 Parked work. Written so each item can be picked up cold without conversation context.
 
+## ItemInterface mixin for state.items duck-typing
+
+`state.items` is a heterogeneous bag: DocumentItem, ContainerItem, Folder, Board, Book, ExportFile. Every new interface method (e.g. `has_notes`, `has_comments`) requires a stub on all six classes. The fix is a shared `ItemInterface` base table that all classes fall back to via metatable chaining — default false/nil implementations live there, classes override only what applies. Adding a new method then touches one place, not six.
+
+**Where:** introduce `app/lua/vimoire/core/item_interface.lua`, have all six classes `setmetatable(Foo, { __index = ItemInterface })` (or chain their existing metatables). Remove the scattered stubs.
+
+**Note:** `has_notes`/`has_comments` on TODO-stub classes (Board, ExportFile, Folder, Book) can move there once this lands.
+
 ## Declarative synthetic-folder table in state.lua
 
 Synthetic folders (manuscript, planning, characters, etc.) are constructed imperatively in `state.lua` at rebuild time. Carry-over from the kinds-table refactor — the open question was whether they fold into `Item` or stay as `Folder`. Decision deferred: they stayed as `Folder` for v1 since they have a different lifecycle (constructed at rebuild, never persisted to manuscript.json).
