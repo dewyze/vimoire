@@ -78,9 +78,13 @@ function Board:text_path()
   return "vimoire://plotting/" .. self.id
 end
 
-function Board:notes_path()
-  return nil
-end
+function Board:notes_path()      return nil end
+function Board:comments_path()   return nil end
+function Board:has_notes()       return false end
+function Board:has_comments()    return false end
+-- TODO: Board should fully conform to the state.items duck-typing interface.
+-- Its internal model (columns/rows JSON) is too different to merge into Item,
+-- but missing stubs should be added here as the interface grows.
 
 function Board:add_options()
   return nil
