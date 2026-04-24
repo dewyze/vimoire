@@ -135,7 +135,7 @@ function state:rebuild()
   walk(self.manuscript.items, nil, visit_manuscript)
 
   -- Process planning items
-  local function visit_planning(data, items)
+  local function visit_planning(data, items, parent_subfolder)
     local item
     if data.items then
       item = Item.new("subfolder", data, root)
@@ -143,8 +143,11 @@ function state:rebuild()
       item = Item.new("planning_item", data, root)
     end
     item.parent_items = items
+    item.parent_subfolder = parent_subfolder
     self:register(item)
-    return data.items
+    if item.items then
+      return item.items, item
+    end
   end
 
   for _, list in ipairs({

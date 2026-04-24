@@ -31,6 +31,11 @@ local function move(state, id, direction)
     local section_index = items_util.find_index(section.parent_items, section.id)
     local insert_pos = direction == -1 and section_index or section_index + 1
     table.insert(section.parent_items, insert_pos, table.remove(items, index))
+  elseif item.parent_subfolder then
+    local subfolder = item.parent_subfolder
+    local subfolder_index = items_util.find_index(subfolder.parent_items, subfolder.id)
+    local insert_pos = direction == -1 and subfolder_index or subfolder_index + 1
+    table.insert(subfolder.parent_items, insert_pos, table.remove(items, index))
   else
     return false
   end

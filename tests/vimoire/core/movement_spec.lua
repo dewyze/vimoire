@@ -17,6 +17,29 @@ describe("Movement", function()
     helpers.reset_state()
   end)
 
+  describe("subfolder escape", function()
+    it("pops out before subfolder when at top of subfolder", function()
+      -- ref3 is first item in brdref subfolder
+      local result = movement.move_up(state, "ref3")
+
+      assert.is_true(result)
+      local ref = state.manuscript.reference
+      local brdref_index = 3 -- brdref is 3rd in reference
+      assert.equals("ref3", ref[brdref_index].id)
+      assert.equals("brdref", ref[brdref_index + 1].id)
+    end)
+
+    it("pops out after subfolder when at bottom of subfolder", function()
+      -- ref4 is last item in brdref subfolder
+      local result = movement.move_down(state, "ref4")
+
+      assert.is_true(result)
+      local ref = state.manuscript.reference
+      assert.equals("brdref", ref[3].id)
+      assert.equals("ref4", ref[4].id)
+    end)
+  end)
+
   describe("move_up", function()
     it("swaps with previous item within array", function()
       -- chap1b is at index 2 in Part 1, chap1a at index 1
