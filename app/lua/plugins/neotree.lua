@@ -62,6 +62,7 @@ return {
             ["r"] = "rename",
             ["d"] = "delete",
             ["n"] = "notes",
+            ["N"] = "delete_notes",
             ["m"] = "move",
             ["J"] = "move_down",
             ["K"] = "move_up",

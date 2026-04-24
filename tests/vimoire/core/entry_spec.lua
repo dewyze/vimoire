@@ -122,6 +122,36 @@ describe("Entry", function()
       end)
     end)
 
+    describe("delete_notes", function()
+      it("deletes notes file and returns true when it exists", function()
+        local entry = state.items["chap1a"]
+        local notes_path = Path:new(entry:notes_path())
+        notes_path:write("some notes", "w")
+
+        local result = entry:delete_notes()
+
+        assert.is_true(result)
+        assert.is_false(notes_path:exists())
+      end)
+
+      it("returns false when notes file does not exist", function()
+        local entry = state.items["chap1a"]
+        assert.is_false(Path:new(entry:notes_path()):exists())
+
+        local result = entry:delete_notes()
+
+        assert.is_false(result)
+      end)
+
+      it("returns false for item without extras", function()
+        local entry = Item.new("planning_item", { id = "px1", name = "Test" }, temp_dir)
+
+        local result = entry:delete_notes()
+
+        assert.is_false(result)
+      end)
+    end)
+
     describe("destroy", function()
       it("removes the document and its files", function()
         local entry = state.items["chap1a"]

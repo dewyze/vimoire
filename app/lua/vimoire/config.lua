@@ -22,6 +22,7 @@ M.defaults = {
     },
     writing = {
       notes = "<leader>wn",
+      delete_notes = "<leader>wN",
       marks = "<leader>wm",
       toggle_kind = "<leader>wk",
       prose = "<leader>ww",

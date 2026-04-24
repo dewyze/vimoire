@@ -52,6 +52,21 @@ function M.notes(state)
   if item.open_notes then item:open_notes() end
 end
 
+function M.delete_notes(state)
+  local node = state.tree:get_node()
+  local item = vimoire_state.items[node.id]
+  if not item then return end
+  if not item.delete_notes then return end
+
+  local notes = item:notes_path()
+  if not notes or not require("plenary.path"):new(notes):exists() then return end
+
+  local choice = vim.fn.confirm("Delete notes for " .. item:display_name() .. "?", "&Yes\n&No", 2)
+  if choice == 1 and item:delete_notes() then
+    M.refresh(state, item.id)
+  end
+end
+
 function M.add(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]

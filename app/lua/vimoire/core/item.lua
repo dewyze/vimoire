@@ -70,6 +70,20 @@ function DocumentItem:open_notes()
   vim.b.vimoire_item_id = self.id
 end
 
+function DocumentItem:delete_notes()
+  local notes = self:notes_path()
+  if not notes then return false end
+  if not file_exists(notes) then return false end
+
+  local bufnr = vim.fn.bufnr(vim.fn.fnamemodify(notes, ":p"))
+  if bufnr ~= -1 then
+    vim.api.nvim_buf_delete(bufnr, { force = true })
+  end
+
+  vim.fn.delete(notes)
+  return true
+end
+
 function DocumentItem:action() return false end
 
 function DocumentItem:add_parent_items() return self.parent_items end

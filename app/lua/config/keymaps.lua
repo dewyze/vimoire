@@ -42,6 +42,7 @@ vim.keymap.set("n", "<D-d>", "<Cmd>ViewFocus<CR>", { desc = "Vimoire: toggle foc
 -- Writing context keymaps
 if keymaps.writing then
   set("n", keymaps.writing.notes, ":OpenNotes<CR>", { desc = "Vimoire: open notes" })
+  set("n", keymaps.writing.delete_notes, ":DeleteNotes<CR>", { desc = "Vimoire: delete notes" })
   set("n", keymaps.writing.marks, ":FindMarks<CR>", { desc = "Vimoire: browse marks" })
   set("n", keymaps.writing.toggle_kind, ":ToggleKind<CR>", { desc = "Vimoire: toggle chapter/page" })
   set("n", keymaps.writing.prose, ":OpenProse<CR>", { desc = "Vimoire: jump to prose" })

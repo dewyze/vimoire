@@ -51,6 +51,26 @@ vim.api.nvim_create_user_command("OpenNotes", function()
   if item.open_notes then item:open_notes() end
 end, { desc = "Open notes for current chapter/page" })
 
+vim.api.nvim_create_user_command("DeleteNotes", function()
+  local state = require("vimoire.state")
+  local item_id = vim.b.vimoire_item_id
+  if not item_id then return end
+  local item = state.items[item_id]
+  if not item then return end
+  if not item.delete_notes then return end
+
+  local notes = item:notes_path()
+  if not notes or not require("plenary.path"):new(notes):exists() then return end
+
+  local choice = vim.fn.confirm("Delete notes for " .. item:display_name() .. "?", "&Yes\n&No", 2)
+  if choice == 1 then
+    local prose = item:text_path()
+    if prose then vim.cmd("edit " .. prose) end
+    item:delete_notes()
+    require("neo-tree.sources.manager").refresh("manuscript")
+  end
+end, { desc = "Delete notes for current chapter/page" })
+
 vim.api.nvim_create_user_command("ToggleKind", function()
   local state = require("vimoire.state")
   local item_id = vim.b.vimoire_item_id

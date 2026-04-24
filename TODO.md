@@ -35,6 +35,10 @@ Planning subfolders can get stuck nested inside another subfolder with no way ou
 
 **Note:** this is pre-existing behavior, not introduced by the kinds-table refactor.
 
+## Remove pcall from vim.fn.confirm in commands.lua
+
+`M.delete` in `navigation/sources/manuscript/commands.lua:123` wraps `vim.fn.confirm` in `pcall`. `vim.fn.confirm` doesn't throw in a real session — the pcall is defensive without cause and silently swallows any genuine errors. Remove it and call directly.
+
 ## Plotting board keyboard shortcut discoverability
 
 Plotting board keybindings aren't surfaced anywhere accessible. Users have to dig through source to find them.
