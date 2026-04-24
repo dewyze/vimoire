@@ -64,6 +64,7 @@ describe("Entry", function()
     end)
   end)
 
+
   describe("mutations", function()
     local temp_dir
     local fixture_path = "tests/fixtures/standard"

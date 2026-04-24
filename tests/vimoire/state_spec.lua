@@ -47,6 +47,13 @@ describe("State", function()
     }, by_kind)
   end)
 
+  it("registers notes paths for document entries", function()
+    state:load(fixture_path)
+    local chapter = state.items["chap1a"]
+    local notes = vim.fn.fnamemodify(chapter:notes_path(), ":p")
+    assert.equals(chapter, state.paths[notes])
+  end)
+
   it("can rebuild indexes", function()
     state:load(fixture_path)
     local original_count = vim.tbl_count(state.items)

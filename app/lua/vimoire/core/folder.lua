@@ -25,8 +25,6 @@ function Folder:text_path()
   return nil
 end
 
-function Folder:notes_path()     return nil end
-function Folder:comments_path()  return nil end
 function Folder:render_extras()  return {} end
 -- TODO: Folder is structurally close to ContainerItem (synthetic container, no files).
 -- Consider unifying as a synthetic ContainerItem — see TODO.md: declarative synthetic-folder table.

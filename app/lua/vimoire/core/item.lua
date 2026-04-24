@@ -63,6 +63,13 @@ function DocumentItem:display_name_for_path(filepath)
   return self:display_name() .. suffix
 end
 
+function DocumentItem:open_notes()
+  local notes = self:notes_path()
+  if not notes then return end
+  vim.cmd("edit " .. notes)
+  vim.b.vimoire_item_id = self.id
+end
+
 function DocumentItem:action() return false end
 
 function DocumentItem:add_parent_items() return self.parent_items end
@@ -165,8 +172,6 @@ function ContainerItem:add_options() return kinds[self.kind].add_options end
 
 function ContainerItem:dir_path()       return nil end
 function ContainerItem:text_path()      return nil end
-function ContainerItem:notes_path()     return nil end
-function ContainerItem:comments_path()  return nil end
 function ContainerItem:render_extras()  return {} end
 function ContainerItem:display_number() return nil end
 

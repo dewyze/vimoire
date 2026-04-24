@@ -23,10 +23,6 @@ function ActionItem:text_path()
   return nil
 end
 
-function ActionItem:notes_path()
-  return nil
-end
-
 function ActionItem:category()
   return "default"
 end

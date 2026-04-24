@@ -38,10 +38,6 @@ describe("Folder", function()
       assert.is_nil(folder:text_path())
     end)
 
-    it("notes_path returns nil", function()
-      assert.is_nil(folder:notes_path())
-    end)
-
     it("add_parent_items returns items", function()
       assert.same({{ id = "child" }}, folder:add_parent_items())
     end)

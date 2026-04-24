@@ -48,11 +48,7 @@ vim.api.nvim_create_user_command("OpenNotes", function()
   local item = state.items[item_id]
   if not item then return end
 
-  local notes_path = item:notes_path()
-  if not notes_path then return end
-
-  vim.cmd("edit " .. notes_path)
-  vim.b.vimoire_item_id = item.id
+  if item.open_notes then item:open_notes() end
 end, { desc = "Open notes for current chapter/page" })
 
 vim.api.nvim_create_user_command("ToggleKind", function()

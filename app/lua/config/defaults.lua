@@ -13,6 +13,7 @@ vim.o.shiftwidth = editor.shiftwidth
 vim.o.smartcase = true
 vim.o.tabstop = editor.tabstop
 vim.o.textwidth = editor.textwidth
+vim.o.swapfile = false
 vim.o.undofile = true
 vim.o.wildignore = ".git,*.swp,*.tmp"
 vim.o.wrap = editor.wrap

@@ -30,8 +30,6 @@ function ExportFile:text_path()
   return self.path
 end
 
-function ExportFile:notes_path()      return nil end
-function ExportFile:comments_path()   return nil end
 function ExportFile:render_extras()   return {} end
 
 function ExportFile:destroy(state)

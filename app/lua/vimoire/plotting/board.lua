@@ -78,8 +78,6 @@ function Board:text_path()
   return "vimoire://plotting/" .. self.id
 end
 
-function Board:notes_path()      return nil end
-function Board:comments_path()   return nil end
 function Board:render_extras()   return {} end
 
 function Board:add_options()

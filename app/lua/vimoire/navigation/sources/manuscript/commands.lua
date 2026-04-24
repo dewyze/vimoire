@@ -49,12 +49,7 @@ function M.notes(state)
   local node = state.tree:get_node()
   local item = vimoire_state.items[node.id]
   if not item then return end
-
-  local notes_path = item:notes_path()
-  if not notes_path then return end
-
-  vim.cmd("edit " .. notes_path)
-  vim.b.vimoire_item_id = item.id
+  if item.open_notes then item:open_notes() end
 end
 
 function M.add(state)

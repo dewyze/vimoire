@@ -52,9 +52,11 @@ function state:register(item)
   if text_path then
     self.paths[vim.fn.fnamemodify(text_path, ":p")] = item
   end
-  local notes_path = item:notes_path()
-  if notes_path then
-    self.paths[vim.fn.fnamemodify(notes_path, ":p")] = item
+  if item.notes_path then
+    local notes_path = item:notes_path()
+    if notes_path then
+      self.paths[vim.fn.fnamemodify(notes_path, ":p")] = item
+    end
   end
 end
 
