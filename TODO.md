@@ -16,30 +16,6 @@ Synthetic folders (manuscript, planning, characters, etc.) are constructed imper
 
 **If revisited:** synthetic folders could become `Item` instances with `container = true, synthetic = true` in kinds.lua, or the `Folder` class could be absorbed. The main motivation would be unifying the `state.items` interface further.
 
-## Skip picker when add_options has only one entry
-
-When a folder exposes exactly one `add_options` entry (planning subfolders only offer "Item"), the add-item flow still prompts a `vim.ui.select` picker with a single choice. Should bypass the picker and execute directly.
-
-**Where:** prompt lives in the neo-tree add-item handler (likely under `app/lua/vimoire/navigation/sources/manuscript/`). Check `#options == 1` before invoking `vim.ui.select`; call `options[1].execute(...)` directly if so.
-
-## Neo-tree marker for notes and comments
-
-Visual signal in the tree when a chapter or page has authored `notes.md` or non-empty `comments.json`. Currently both are invisible in neo-tree.
-
-**Data side:**
-- `Item:has_notes()` → `Path:new(self:notes_path()):exists()`. File is lazy, so existence is a valid signal.
-- `Item:has_comments()` → requires reading `comments.json` and checking `#data.comments > 0`. File existence is NOT valid while empty comments.json keeps getting written (see next TODO — landing that first makes this a simple existence check).
-
-**Render side:** neo-tree manuscript source adds a suffix or icon to affected nodes.
-
-## Stop persisting empty comments.json
-
-`comments/init.lua:76` calls `store:save(comments)` on every prose `BufWritePost`, and `comments/store.lua:32-40` writes unconditionally. Result: `{"version":1,"comments":[]}` lands next to every prose file the user ever saves, regardless of comment usage. Shows up as a lot of empty-looking tracked files in the user's project.
-
-**Fix:** in `save_buffer` (comments/init.lua:58), when `#comments == 0`: delete `comments.json` if it exists, otherwise no-op. Only write when there's something to persist.
-
-**Bonus:** makes `has_comments()` (see previous TODO) a valid existence check instead of needing a JSON read.
-
 ## Expose notes.md (and comments) for management
 
 Users who write notes on a chapter can't later delete them from within vimoire — `notes.md` is a real file but never appears as a navigable node. Same for `comments.json`. Need an in-app way to remove them.
