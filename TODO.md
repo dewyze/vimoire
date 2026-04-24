@@ -2,13 +2,14 @@
 
 Parked work. Written so each item can be picked up cold without conversation context.
 
-## ItemInterface mixin for state.items duck-typing
 
-`state.items` is a heterogeneous bag: DocumentItem, ContainerItem, Folder, Board, Book, ExportFile. Every new interface method (e.g. `has_notes`, `has_comments`) requires a stub on all six classes. The fix is a shared `ItemInterface` base table that all classes fall back to via metatable chaining — default false/nil implementations live there, classes override only what applies. Adding a new method then touches one place, not six.
+## Items register their own paths (remove nil stubs from non-document classes)
 
-**Where:** introduce `app/lua/vimoire/core/item_interface.lua`, have all six classes `setmetatable(Foo, { __index = ItemInterface })` (or chain their existing metatables). Remove the scattered stubs.
+`state:register` currently probes `notes_path()` and `comments_path()` on every item, requiring nil-returning stubs on ContainerItem, Folder, Board, Book, and ExportFile. The fix: items declare what they contribute via `registered_paths()`. DocumentItem returns its prose and notes paths; everything else returns `{}` or just the text path. `state:register` loops over whatever the item provides — no probing, no stubs.
 
-**Note:** `has_notes`/`has_comments` on TODO-stub classes (Board, ExportFile, Folder, Book) can move there once this lands.
+Same pattern applies to `commands.lua:M.notes`: becomes `item:open_notes()` where DocumentItem opens the file and everything else is a no-op. Callers stop interrogating; items declare and respond.
+
+**Where:** `state:register` in `state.lua`, `M.notes` in `navigation/sources/manuscript/commands.lua`, `notes_path`/`comments_path` stubs on ContainerItem (`item.lua`), Folder, Board, Book, ExportFile.
 
 ## Declarative synthetic-folder table in state.lua
 

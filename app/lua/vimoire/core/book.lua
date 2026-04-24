@@ -59,9 +59,9 @@ function Book:display_name()
   return "Book Info"
 end
 
-function Book:category()      return "default" end
-function Book:comments_path() return nil end
-function Book:has_notes()     return false end
-function Book:has_comments()  return false end
+function Book:category()       return "default" end
+function Book:comments_path()  return nil end
+function Book:notes_path()     return nil end
+function Book:render_extras()  return {} end
 
 return Book

@@ -2,7 +2,6 @@ local M = {}
 local cc = require("neo-tree.sources.common.components")
 local vimoire_state = require("vimoire.state")
 local view = require("vimoire.view")
-local constants = require("vimoire.core.constants")
 
 M.icon = function(config, node, state)
   local padding = config.padding or " "
@@ -28,11 +27,8 @@ M.name = function(config, node, state)
 
   local result = { { text = node.name, highlight = highlight } }
 
-  if item and item:has_notes() then
-    table.insert(result, { text = " " .. constants.ICONS.NOTES_MARKER, highlight = constants.HIGHLIGHTS.MARKER })
-  end
-  if item and item:has_comments() then
-    table.insert(result, { text = " " .. constants.ICONS.COMMENTS_MARKER, highlight = constants.HIGHLIGHTS.MARKER })
+  if item then
+    vim.list_extend(result, item:render_extras())
   end
 
   return result

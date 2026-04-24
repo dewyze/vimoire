@@ -117,8 +117,17 @@ function DocumentItem:preserve_notes(state)
   Path:new(item:text_path()):write(content, "w")
 end
 
-function DocumentItem:has_notes()    return file_exists(self:notes_path()) end
-function DocumentItem:has_comments() return file_exists(self:comments_path()) end
+function DocumentItem:render_extras()
+  local constants = require("vimoire.core.constants")
+  local result = {}
+  if file_exists(self:notes_path()) then
+    table.insert(result, { text = " " .. constants.ICONS.NOTES_MARKER, highlight = constants.HIGHLIGHTS.MARKER })
+  end
+  if file_exists(self:comments_path()) then
+    table.insert(result, { text = " " .. constants.ICONS.COMMENTS_MARKER, highlight = constants.HIGHLIGHTS.MARKER })
+  end
+  return result
+end
 
 function DocumentItem:destroy_children(_state) end
 
@@ -158,8 +167,7 @@ function ContainerItem:dir_path()       return nil end
 function ContainerItem:text_path()      return nil end
 function ContainerItem:notes_path()     return nil end
 function ContainerItem:comments_path()  return nil end
-function ContainerItem:has_notes()      return false end
-function ContainerItem:has_comments()   return false end
+function ContainerItem:render_extras()  return {} end
 function ContainerItem:display_number() return nil end
 
 function ContainerItem:display_name() return self.name end
