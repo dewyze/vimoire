@@ -9,6 +9,7 @@ M.defaults = {
       planning = "<leader>fp",
       snippets = "<leader>fs",
       exports = "<leader>fe",
+      search = "<leader>fg",
     },
     navigator = {
       toggle = "<leader>nt",

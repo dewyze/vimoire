@@ -8,6 +8,7 @@ local COMMANDS = {
   { cmd = "FindExports", display = "Find > Exports" },
   { cmd = "FindSnippets", display = "Find > Snippets" },
   { cmd = "FindMarks", display = "Find > Marks" },
+  { cmd = "FileGrep", display = "Find > Search Manuscript" },
 
   -- Navigate (side-panel trees)
   { cmd = "NavigateManuscript", display = "Navigate > Manuscript" },

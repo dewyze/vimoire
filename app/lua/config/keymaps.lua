@@ -20,6 +20,7 @@ set("n", keymaps.finder.manuscript, ":FindManuscript<CR>", { desc = "Vimoire: ma
 set("n", keymaps.finder.planning, ":FindPlanning<CR>", { desc = "Vimoire: planning" })
 set("n", keymaps.finder.snippets, ":FindSnippets<CR>", { desc = "Vimoire: snippets" })
 set("n", keymaps.finder.exports, ":FindExports<CR>", { desc = "Vimoire: exports" })
+set("n", keymaps.finder.search, ":FileGrep<CR>", { desc = "Vimoire: search manuscript" })
 
 -- Navigator keymaps
 set("n", keymaps.navigator.toggle, ":Neotree toggle source=manuscript<CR>", { desc = "Vimoire: toggle navigator" })

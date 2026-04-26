@@ -88,6 +88,11 @@ vim.api.nvim_create_user_command("ToggleKind", function()
   end
 end, { desc = "Toggle chapter/page for current buffer" })
 
+-- Search
+vim.api.nvim_create_user_command("FileGrep", function()
+  require("vimoire.search").grep()
+end, { desc = "Search manuscript prose files" })
+
 -- Marks
 vim.api.nvim_create_user_command("FindMarks", function()
   require("vimoire.marks").browse(vim.api.nvim_get_current_buf())
