@@ -155,6 +155,10 @@ Available themes:
 - `parchment` — warm cream
 - `vellum` — aged sepia
 - `lumen` — high contrast monochrome
+- `mist` — morning fog blues
+- `dune` — desert gold
+- `bloom` — garden rose
+- `canopy` — forest sage
 
 You can also change themes at runtime with `:ViewTheme`.
 

@@ -15,6 +15,10 @@ M.list = {
   { name = "parchment", desc = "Light — Warm Cream" },
   { name = "vellum", desc = "Light — Aged Sepia" },
   { name = "lumen", desc = "Light — High Contrast" },
+  { name = "mist", desc = "Light — Morning Fog" },
+  { name = "dune", desc = "Light — Desert Gold" },
+  { name = "bloom", desc = "Light — Garden Rose" },
+  { name = "canopy", desc = "Light — Forest Sage" },
 }
 
 return M

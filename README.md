@@ -92,6 +92,10 @@ Twelve moods for writing. Switch with `:ViewTheme` or set in config.
 | **Light** | | |
 | ![Parchment](assets/themes/parchment.png) | ![Vellum](assets/themes/vellum.png) | ![Lumen](assets/themes/lumen.png) |
 | Parchment · *Warm cream* | Vellum · *Aged sepia* | Lumen · *High contrast* |
+| ![Mist](assets/themes/mist.png) | ![Dune](assets/themes/dune.png) | ![Bloom](assets/themes/bloom.png) |
+| Mist · *Morning fog* | Dune · *Desert gold* | Bloom · *Garden rose* |
+| ![Canopy](assets/themes/canopy.png) | | |
+| Canopy · *Forest sage* | | |
 
 ### The Little Things
 
