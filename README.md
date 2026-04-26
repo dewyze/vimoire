@@ -16,6 +16,8 @@ Vimoire is a standalone Neovim app for writing long-form fiction. Modal editing,
 
 Vimoire is almost entirely vibe-coded—built with heavy LLM assistance to scratch a personal itch. This means there are likely bugs, antipatterns, or rough edges I haven't caught. If you spot something off, please open an issue. Feedback genuinely welcome.
 
+Vimoire takes advantage of the neovim feature that if you start neovim (or neovide) with `NVIM_APPNAME=<appname> neovim` then instead of looking in `~/.config/nvim` it will look in `~/.config/<appname>` and you can create a whole different editor experience.
+
 ## Why?
 
 Because writing a novel in VS Code feels wrong. Because Google Docs makes you reach for the mouse. Because Word is where prose goes to die in a sea of ribbon menus.
