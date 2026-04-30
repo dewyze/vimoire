@@ -36,21 +36,20 @@ local function build_statusline()
   return string.format("%%#%s# %s%%=  %s ", hl, left, right)
 end
 
--- Check if current buffer is neo-tree
-local function is_neotree_buffer()
-  local bufname = vim.api.nvim_buf_get_name(0)
-  return bufname:match("neo%-tree [%w]+ %[%d+%]$")
-end
-
 -- Update statusline for current window
 local function update_statusline()
-  if is_neotree_buffer() then
+  local ft = vim.bo.filetype
+  if ft == "neo-tree" then
     local title = state.book and state.book.title or "Vimoire"
     vim.wo.statusline = "%#StatusLine# " .. title
     vim.wo.winbar = nil
     return
   end
-  vim.wo.statusline = build_statusline()
+  if ft == "vimoire_prose" or ft == "vimoire_markdown" then
+    vim.wo.statusline = build_statusline()
+    return
+  end
+  vim.wo.statusline = ""
 end
 
 -- Refresh components that need updating
