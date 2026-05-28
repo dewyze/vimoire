@@ -6,8 +6,12 @@ local M = {}
 function M.process_entry(content, context, opts)
   opts = opts or {}
   local result = content
-  result = preprocess.strip_tags(result)
+  -- Strip indentation before tags: a mark on its own indented line
+  -- (\t{{mark}}\n) must lose its tab while still a distinct line. If tags
+  -- went first, removing the mark would orphan its leading tab onto the next
+  -- paragraph, leaving a stray indent that renders as a code block.
   result = preprocess.strip_indent(result)
+  result = preprocess.strip_tags(result)
   result = preprocess.chapter(result, context)
 
   -- Render chapter opening from template if this is a chapter (has num)

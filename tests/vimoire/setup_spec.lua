@@ -16,10 +16,12 @@ describe("Setup", function()
   end)
 
   describe("on_manuscript_loaded", function()
-    it("sets up statusline", function()
+    it("sets up statusline on vimoire buffers", function()
+      -- Statusline is whitelisted to vimoire buffers, so it only applies the
+      -- highlighted statusline when the current buffer is vimoire prose/markdown.
+      vim.bo.filetype = "vimoire_prose"
       state:load(fixture_path)
       setup.on_manuscript_loaded()
-      -- Statusline is now window-local and uses highlight groups
       assert.is_not_nil(vim.wo.statusline)
       assert.matches("%%#", vim.wo.statusline)
     end)

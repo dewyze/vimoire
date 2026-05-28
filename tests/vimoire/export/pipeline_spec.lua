@@ -59,6 +59,14 @@ describe("pipeline", function()
 
       assert.equals("He walked slowly.", result)
     end)
+
+    it("does not leave an indented mark line orphaning a tab on the next paragraph", function()
+      local content = "\tDylan jumped in.\n\t{{mark:fix the meal}}\n\tThe night continued."
+
+      local result = pipeline.process_entry(content, {})
+
+      assert.equals("Dylan jumped in.\n\nThe night continued.", result)
+    end)
   end)
 
   describe("process_front_matter", function()
