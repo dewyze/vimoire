@@ -1,2 +1,38 @@
-#!/bin/bash
-NVIM_APPNAME=vimoire ${VIMOIRE_EDITOR:-neovide} "$@"
+#!/usr/bin/env bash
+# vimoire launcher: focus the running instance, or cold-launch one.
+# Single-instance — one vimoire window ever; re-launching raises it.
+#
+# A stale socket (left by a crash) HANGS on connect rather than failing,
+# so probe with --remote-expr under a manual timeout; macOS has no timeout(1).
+set -euo pipefail
+
+SOCK=/tmp/vimoire.sock
+EDITOR_BIN="${VIMOIRE_EDITOR:-neovide}"
+
+probe() {
+  [ -S "$SOCK" ] || return 1
+  nvim --server "$SOCK" --remote-expr 1 >/dev/null 2>&1 &
+  local pid=$!
+  for _ in $(seq 20); do
+    if ! kill -0 "$pid" 2>/dev/null; then
+      wait "$pid"
+      return $?
+    fi
+    sleep 0.1
+  done
+  kill "$pid" 2>/dev/null || true
+  wait "$pid" 2>/dev/null || true
+  return 1
+}
+
+if probe; then
+  # Only neovide knows this command; ignore failure under terminal nvim.
+  nvim --server "$SOCK" --remote-send '<Cmd>NeovideFocus<CR>' 2>/dev/null || true
+else
+  rm -f "$SOCK"
+  if [ "$(basename "$EDITOR_BIN")" = "neovide" ]; then
+    exec env NVIM_APPNAME=vimoire "$EDITOR_BIN" --fork -- --listen "$SOCK" "$@"
+  else
+    exec env NVIM_APPNAME=vimoire "$EDITOR_BIN" --listen "$SOCK" "$@"
+  fi
+fi
