@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.."
 
 SOURCE="assets/icon.png"
-DEST="platform/macos/Vimoire.app/Contents/Resources/vimoire.icns"
+DEST="assets/vimoire.icns"
 ICONSET="vimoire.iconset"
 
 if [ ! -f "$SOURCE" ]; then

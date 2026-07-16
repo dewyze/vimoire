@@ -34,8 +34,8 @@ luac.out
 # Executables
 *.exe
 *.out
+# Generated app bundles (built from Neovide by bin/build-bundle, not committed)
 *.app
-!platform/**/*.app
 *.i*86
 *.x86_64
 *.hex
