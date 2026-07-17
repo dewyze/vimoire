@@ -18,3 +18,4 @@ vim.g.neovide_padding_right = neovide.padding.right
 vim.g.neovide_padding_bottom = neovide.padding.bottom
 vim.g.neovide_scroll_animation_length = neovide.scroll_animation_length
 vim.g.neovide_position_animation_length = 0
+vim.g.neovide_progress_bar_enabled = false
