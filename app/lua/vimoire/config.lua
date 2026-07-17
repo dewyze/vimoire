@@ -80,6 +80,10 @@ M.defaults = {
     visible = true,
     sign = nil, -- nil uses theme sign, set to override (e.g., "●")
   },
+  git = {
+    enabled = true, -- auto-commit checkpoints (only when the book root is a git repo)
+    autocommit_minutes = 30, -- minimum time between auto-commits
+  },
   neovide = {
     font = "Iosevka Term Slab:h16",
     linespace = 8,

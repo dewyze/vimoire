@@ -68,6 +68,10 @@ Vimoire remaps navigation for paragraphs, not code:
 
 The `g` prefix escapes to buffer lines when you need them.
 
+### Version History
+
+If your book lives in a git repository, Vimoire commits your work automatically as you write — quietly, a few times per session at most. Mark milestones ("finished ch. 8 rough draft") with `:GitCommit`, which opens a commit editor showing files changed and the word delta. No terminal required, nothing to remember.
+
 ### Export
 
 When it's time to share your work:

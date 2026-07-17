@@ -94,6 +94,11 @@ return {
     sign = "●",
   },
 
+  git = {
+    enabled = true,
+    autocommit_minutes = 30,
+  },
+
   neovide = {
     font = "Iosevka Term Slab:h16",
     linespace = 8,
@@ -320,6 +325,17 @@ Use `--no-open` flag to skip auto-open for a single export: `:Export --no-open`
 |-----|---------|-------------|
 | `visible` | `true` | Show comments by default when opening prose files |
 | `sign` | `nil` | Sign column symbol for commented lines (`nil` uses theme-specific sign) |
+
+---
+
+## git
+
+Only active when the book root is a git repository. Vimoire commits pending changes automatically as you write — commits ride idle pauses, at most one per debounce window, with a final commit on quit. Messages are `auto:` timestamps; use `:GitCommit` for intentional milestone commits that stand out in the log.
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `enabled` | `true` | Auto-commit the book as you write |
+| `autocommit_minutes` | `30` | Minimum time between auto-commits |
 
 ---
 

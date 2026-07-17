@@ -54,6 +54,9 @@ local COMMANDS = {
   -- Export
   { cmd = "Export", display = "Export > Run Export" },
   { cmd = "ExportConfig", display = "Export > Generate Config" },
+
+  -- Git
+  { cmd = "GitCommit", display = "Git > Commit" },
 }
 
 local function get_keymap_for_command(cmd_name)

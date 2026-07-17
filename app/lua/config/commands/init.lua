@@ -236,3 +236,8 @@ end, { desc = "Clear all comments in buffer" })
 vim.api.nvim_create_user_command("InsertImage", function()
   require("vimoire.images").insert()
 end, { desc = "Insert image" })
+
+-- Git
+vim.api.nvim_create_user_command("GitCommit", function()
+  require("vimoire.git").commit()
+end, { desc = "Open commit editor for an intentional milestone commit" })

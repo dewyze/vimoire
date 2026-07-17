@@ -529,6 +529,28 @@ EXPORT COMMANDS ~
 <
     Output goes to `exports/output/`. See |vimoire-export| for config format.
 
+GIT COMMANDS ~
+                                                     *vimoire-commands-git*
+:GitCommit                                           *:GitCommit*
+    Open a float editor for an intentional milestone commit ("finished
+    chapter 8 rough draft"). The header shows files changed and the word
+    delta since the last commit. `<C-s>` commits, `<Esc>` cancels.
+
+    Requires the book root to be a git repository.
+
+                                                     *vimoire-git-autocommit*
+When the book root is a git repository, Vimoire also commits pending
+changes automatically as you write. Commits ride idle pauses (the same
+boundaries autosave uses), at most one per |vimoire-config-autocommit|
+window (default 30 minutes), with a final commit on quit. Messages are
+`auto:` timestamps, so milestone commits from |:GitCommit| stand out in
+the log — and per-day writing history falls out of grouping commits by
+date.
+
+Auto-commits capture what is on disk; unsaved buffer edits ride a later
+commit. Enable |vimoire-config-autosave| to write buffers on the same
+pauses. Disable auto-commit entirely with `git.enabled = false`.
+
 ==============================================================================
 5. NAVIGATION                                        *vimoire-navigation*
 
@@ -1369,6 +1391,17 @@ STATS OPTIONS                                        *vimoire-config-stats*
 stats.reading_wpm                                    *vimoire-config-reading-wpm*
     Default: `250`
     Words per minute used for reading time estimates in |:ViewStats|.
+
+GIT OPTIONS                                          *vimoire-config-git*
+
+git.enabled                                          *vimoire-config-git-enabled*
+    Default: `true`
+    Auto-commit the book as you write. Only activates when the book root
+    is a git repository. See |vimoire-git-autocommit|.
+
+git.autocommit_minutes                               *vimoire-config-autocommit*
+    Default: `30`
+    Minimum time between auto-commits.
 
 NEOVIDE OPTIONS                                      *vimoire-config-neovide*
 
