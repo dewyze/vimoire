@@ -47,6 +47,33 @@ Plotting board keybindings aren't surfaced anywhere accessible. Users have to di
 
 **Where to look:** plotting keymaps likely live under `app/lua/vimoire/plotting/`.
 
+## Adopt the shared keybinding grammar (approved worklist)
+
+The semantic keybinding grammar lives in `~/dev/dotfiles/KEYBINDINGS.md`
+(read it first — five layers, spine, conventions). John approved this
+worklist on 2026-07-15; hard cutover, no compatibility stubs.
+
+1. Set `mapleader`/`maplocalleader` explicitly in `app/lua/config/lazy.lua`
+   — leader is `\` today only because the assignment is commented out.
+2. Fix `doc/vimoire.txt` (~line 193): claims "the leader key is space" —
+   it never was. Sync `docs/CONFIGURATION.md` keymap tables with all
+   changes below.
+3. Drawers move to the spine's show namespace: `C-s C-s` manuscript
+   navigator toggle (was `\nt`), `C-s C-f` reveal current file (was
+   `\nf`), `C-s C-e` export panel (was `\ne`). The navigator domain
+   dissolves — `\nm`/`\ne`/`\nt`/`\nf` all die.
+4. Drop `\nh` clear-highlight — `Esc Esc` already covers it.
+
+Smaller, pending John's final word:
+- Palette hint bug: `palette.lua` reverse-looks-up keys by matching
+  `:Cmd<CR>`-form rhs only; bindings in `<Cmd>Cmd<CR>` form (`<D-S-p>`,
+  `<C-\>`, `<D-d>`) show no hint. Normalize to `:Cmd<CR>` form.
+- which-key: probably skip — the palette already covers discoverability.
+
+**Accepted deviations — ruled by John, do not "fix":** `\fg` grep stays
+under find (search matters less here); snippets keep `\s`; the
+comments-under-revise question stays parked until a real revision pass.
+
 ## Consolidate section and subfolder into one kind
 
 After the kinds-table refactor, `section` and `subfolder` have identical structure — both `container = true`, same movement behavior, same tree mechanics. The only differences are `category` (prose vs. planning) and `add_options` (what children they accept). The naming is legacy from separate class hierarchies.
