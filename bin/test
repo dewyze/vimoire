@@ -3,4 +3,6 @@
 
 cd "$(dirname "$0")/.."
 
-nvim --headless -u tests/minimal_init.lua -c "lua require('tests.init')"
+# Match the app's runtime: stdpath must point at vimoire's data dir
+# (~/.local/share/vimoire) so plugins like snacks resolve in headless tests.
+NVIM_APPNAME=vimoire nvim --headless -u tests/minimal_init.lua -c "lua require('tests.init')"
