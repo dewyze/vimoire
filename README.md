@@ -153,17 +153,32 @@ git clone https://github.com/dewyze/vimoire ~/dev/vimoire
 # Symlink the app directory
 ln -s ~/dev/vimoire/app ~/.config/vimoire
 
-# Add bin to your PATH, or symlink the launcher
+# Add bin to your PATH, or symlink the launchers
 ln -s ~/dev/vimoire/bin/vimoire /usr/local/bin/vimoire
+ln -s ~/dev/vimoire/bin/term-vimoire /usr/local/bin/term-vimoire
 ```
 
-Then run `vimoire` to launch.
+Two ways to launch:
 
-By default, Vimoire uses [Neovide](https://neovide.dev) (recommended for the best experience). To use terminal Neovim instead:
+- **`vimoire`** — GUI via [Neovide](https://neovide.dev) (recommended). Single-instance: re-launching focuses the running window instead of opening another, and it carries a Vimoire Dock icon.
+- **`term-vimoire`** — terminal Neovim in the current shell; a fresh instance per tmux pane.
+
+To make the GUI launcher use terminal Neovim instead of Neovide:
 
 ```bash
 export VIMOIRE_EDITOR=nvim
 ```
+
+### macOS app
+
+For a real double-click / Spotlight app with the Vimoire name and icon:
+
+```bash
+bin/build-bundle                # clones your installed Neovide into platform/macos/Vimoire.app, rebranded
+open platform/macos/Vimoire.app # or move it into /Applications
+```
+
+The bundle is a copy of a specific Neovide version—re-run `bin/build-bundle` after upgrading Neovide. To use your own icon, drop a 1024×1024 `assets/icon.png` and run `bin/build-icon` first.
 
 User configuration lives in `~/.vimoire/` (created automatically on first launch).
 
