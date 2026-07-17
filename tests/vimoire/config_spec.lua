@@ -14,9 +14,12 @@ describe("config", function()
     prefs_dir = helpers.temp_dir()
     user_config_dir = helpers.temp_dir()
 
+    -- Preferences live in ~/.$NVIM_APPNAME (per-build); user config is
+    -- always ~/.vimoire/config.lua (shared across builds).
+    local prefs_home = "~/." .. (vim.env.NVIM_APPNAME or "vimoire")
     original_expand = vim.fn.expand
     vim.fn.expand = function(path)
-      if path == "~/.vimoire" then
+      if path == prefs_home then
         return prefs_dir
       end
       if path == "~/.vimoire/config.lua" then
