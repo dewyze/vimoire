@@ -21,10 +21,9 @@ return {
       exports = "<leader>fe",
     },
     navigator = {
-      toggle = "<leader>nt",
-      reveal = "<leader>nf",
-      manuscript = "<leader>nm",
-      export = "<leader>ne",
+      toggle = "<C-s><C-s>",
+      reveal = "<C-s><C-f>",
+      export = "<C-s><C-e>",
     },
     views = {
       home = "<leader>vh",
@@ -55,7 +54,7 @@ return {
       prev = "[c",
     },
     misc = {
-      clear_highlight = { "<Esc><Esc>", "<leader>nh" },
+      clear_highlight = "<Esc><Esc>",
     },
   },
 
@@ -171,12 +170,12 @@ You can also change themes at runtime with `:ViewTheme`.
 
 ## keymaps
 
-All keymaps use `<leader>` with mnemonic prefixes. Set any key to `false` to disable it, or use an array to bind multiple keys to the same action:
+Most keymaps use `<leader>` with mnemonic prefixes; drawer (side panel) keys live under the `<C-s>` show prefix. Set any key to `false` to disable it, or use an array to bind multiple keys to the same action:
 
 ```lua
 keymaps = {
-  misc = {
-    clear_highlight = { "<Esc><Esc>", "<leader>nh" },  -- both work
+  finder = {
+    smart = { "<leader>ff", "<C-p>" },  -- both work
   },
 }
 ```
@@ -205,10 +204,9 @@ Neo-tree sidebar controls.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `toggle` | `<leader>nt` | Toggle tree visibility |
-| `reveal` | `<leader>nf` | Reveal current file in tree |
-| `manuscript` | `<leader>nm` | Switch to manuscript view |
-| `export` | `<leader>ne` | Switch to export view |
+| `toggle` | `<C-s><C-s>` | Toggle navigator (manuscript drawer) |
+| `reveal` | `<C-s><C-f>` | Reveal current file in tree |
+| `export` | `<C-s><C-e>` | Toggle export drawer |
 
 ### keymaps.views
 
@@ -259,7 +257,7 @@ Buffer-level actions for prose files.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `clear_highlight` | `{ "<Esc><Esc>", "<leader>nh" }` | Clear search highlight |
+| `clear_highlight` | `<Esc><Esc>` | Clear search highlight |
 
 ---
 

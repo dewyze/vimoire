@@ -141,7 +141,7 @@ Twelve moods for writing. Switch with `:ViewTheme` or set in config.
 
 1. Launch Vimoire (see [Installation](#installation))
 2. From the dashboard, create a new project or open an existing one
-3. Use the navigator (`<leader>nt`) to browse your manuscript
+3. Use the navigator (`<C-s><C-s>`) to browse your manuscript
 4. `a` to add chapters, `K`/`J` to reorder, `<CR>` to open
 5. Write. `<leader>fm` to jump between chapters.
 6. `:Export` when you're ready to share

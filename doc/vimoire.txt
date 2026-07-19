@@ -85,7 +85,7 @@ BASIC WORKFLOW ~
 Write → Organize → Export
 
 1. WRITE
-   Open chapters from the navigator (`<leader>nt`) or finder (`<leader>ff`).
+   Open chapters from the navigator (`<C-s><C-s>`) or finder (`<leader>ff`).
    Edit prose.md files. Notes.md is scratch space per entry.
 
 2. ORGANIZE
@@ -154,7 +154,8 @@ ORPHANED NOTES                                       *vimoire-orphaned*
     When you delete a chapter or page, its notes.md content is preserved
     here automatically. Review and clean up periodically.
 
-Access planning via the navigator (`<leader>nm`) or finder (`<leader>fp`).
+Access planning via the navigator (|:NavigateManuscript|) or finder
+(`<leader>fp`).
 
 EXPORT SYSTEM ~
                                                      *vimoire-export-concepts*
@@ -190,8 +191,9 @@ Focus mode:
 ==============================================================================
 3. KEYMAPS                                           *vimoire-keymaps*
 
-Vimoire's keymaps are organized by domain. The leader key is space (default).
-All keymaps can be customized via |vimoire-configuration|.
+Vimoire's keymaps are organized by domain. The leader key is backslash.
+Drawer (side panel) keys live under the `<C-s>` show prefix instead of
+leader. All keymaps can be customized via |vimoire-configuration|.
 
 FINDER                                               *vimoire-keymaps-finder*
 
@@ -208,10 +210,9 @@ NAVIGATOR                                            *vimoire-keymaps-navigator*
 
 Control the Neo-tree sidebar. See |vimoire-navigation| for tree keymaps.
 
-    <leader>nt        Toggle navigator
-    <leader>nf        Reveal current file in navigator
-    <leader>nm        Switch to manuscript view
-    <leader>ne        Switch to export view
+    <C-s><C-s>        Toggle navigator (manuscript drawer)
+    <C-s><C-f>        Reveal current file in navigator
+    <C-s><C-e>        Toggle export drawer
 
 VIEWS                                                *vimoire-keymaps-views*
 
@@ -404,11 +405,10 @@ VIEW COMMANDS ~
     without quitting.
 
 :NavigateManuscript                                  *:NavigateManuscript*
-    Open the manuscript tree in the side panel (same as
-    `<leader>nm`).
+    Open the manuscript tree in the side panel.
 
 :NavigateExport                                      *:NavigateExport*
-    Open the exports tree in the side panel (same as `<leader>ne`).
+    Open the exports tree in the side panel (same as `<C-s><C-e>`).
 
 :ViewStats                                           *:ViewStats*
     Show book statistics in a floating window. Displays:
@@ -560,13 +560,13 @@ tree view) and Pickers (fuzzy finders via Snacks).
 THE NAVIGATOR ~
                                                      *vimoire-navigator*
 The navigator is a sidebar that displays your manuscript as a tree. Toggle
-it with `<leader>nt` or reveal the current file with `<leader>nf`.
+it with `<C-s><C-s>` or reveal the current file with `<C-s><C-f>`.
 
 Two views are available:
 
 MANUSCRIPT VIEW                                      *vimoire-navigator-ms*
 
-Switch with `<leader>nm`. Displays:
+Switch with |:NavigateManuscript|. Displays:
 
     Book (root)
     ├── Manuscript
@@ -615,7 +615,7 @@ NOTES (`n`)                                          *vimoire-navigator-notes*
 
 EXPORT VIEW                                          *vimoire-navigator-ex*
 
-Switch with `<leader>ne`. Displays:
+Switch with `<C-s><C-e>`. Displays:
 
     Export
     ├── [ Generate Config ]     (action)
@@ -674,7 +674,7 @@ select, `<Esc>` to close, `<C-/>` for help.
 
 REVEAL AND FOCUS ~
                                                      *vimoire-reveal*
-The reveal command (`<leader>nf`) finds your current buffer in the navigator
+The reveal command (`<C-s><C-f>`) finds your current buffer in the navigator
 and expands the tree to show it. Vimoire automatically detects the correct
 view:
 
@@ -1486,10 +1486,9 @@ All keymap options and their defaults:
         exports = "<leader>fe",
       },
       navigator = {
-        toggle = "<leader>nt",
-        reveal = "<leader>nf",
-        manuscript = "<leader>nm",
-        export = "<leader>ne",
+        toggle = "<C-s><C-s>",
+        reveal = "<C-s><C-f>",
+        export = "<C-s><C-e>",
       },
       views = {
         home = "<leader>vh",

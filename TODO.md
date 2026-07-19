@@ -47,28 +47,26 @@ Plotting board keybindings aren't surfaced anywhere accessible. Users have to di
 
 **Where to look:** plotting keymaps likely live under `app/lua/vimoire/plotting/`.
 
-## Adopt the shared keybinding grammar (approved worklist)
+## Keybinding grammar — remaining items
 
 The semantic keybinding grammar lives in `~/dev/dotfiles/KEYBINDINGS.md`
-(read it first — five layers, spine, conventions). John approved this
-worklist on 2026-07-15; hard cutover, no compatibility stubs.
+(read it first — five layers, spine, conventions). The core cutover
+shipped 2026-07-18: leader set explicitly to `\`, drawers moved to the
+show namespace, the `\n` navigator domain deleted.
 
-1. Set `mapleader`/`maplocalleader` explicitly in `app/lua/config/lazy.lua`
-   — leader is `\` today only because the assignment is commented out.
-2. Fix `doc/vimoire.txt` (~line 193): claims "the leader key is space" —
-   it never was. Sync `docs/CONFIGURATION.md` keymap tables with all
-   changes below.
-3. Drawers move to the spine's show namespace: `C-s C-s` manuscript
-   navigator toggle (was `\nt`), `C-s C-f` reveal current file (was
-   `\nf`), `C-s C-e` export panel (was `\ne`). The navigator domain
-   dissolves — `\nm`/`\ne`/`\nt`/`\nf` all die.
-4. Drop `\nh` clear-highlight — `Esc Esc` already covers it.
+Transition ledger (delete after retraining):
+`\nt → C-s C-s` · `\nf → C-s C-f` · `\ne → C-s C-e` ·
+`\nm` dead (`C-s C-s` covers it) · `\nh` dead (`Esc Esc`)
 
-Smaller, pending John's final word:
+Pending John's final word:
 - Palette hint bug: `palette.lua` reverse-looks-up keys by matching
   `:Cmd<CR>`-form rhs only; bindings in `<Cmd>Cmd<CR>` form (`<D-S-p>`,
   `<C-\>`, `<D-d>`) show no hint. Normalize to `:Cmd<CR>` form.
 - which-key: probably skip — the palette already covers discoverability.
+- Neo-tree quick_jump: lore binds it on `C-j` (evicted from stock `C-s`);
+  vimoire binds no quick_jump at all (`use_default_mappings = false`), so
+  the `C-s` chords are safe here without eviction. Add `C-j` quick_jump
+  in the tree for parity with lore?
 
 **Accepted deviations — ruled by John, do not "fix":** `\fg` grep stays
 under find (search matters less here); snippets keep `\s`; the

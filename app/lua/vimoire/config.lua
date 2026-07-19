@@ -12,10 +12,9 @@ M.defaults = {
       search = "<leader>fg",
     },
     navigator = {
-      toggle = "<leader>nt",
-      reveal = "<leader>nf",
-      manuscript = "<leader>nm",
-      export = "<leader>ne",
+      toggle = "<C-s><C-s>",
+      reveal = "<C-s><C-f>",
+      export = "<C-s><C-e>",
     },
     views = {
       home = "<leader>vh",
@@ -48,7 +47,7 @@ M.defaults = {
     },
     palette = "<leader>p",
     misc = {
-      clear_highlight = { "<Esc><Esc>", "<leader>nh" },
+      clear_highlight = "<Esc><Esc>",
     },
   },
   ui = {

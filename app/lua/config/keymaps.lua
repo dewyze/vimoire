@@ -29,7 +29,6 @@ set("n", keymaps.navigator.reveal, function()
   local source = path_util.navigator_source(vim.fn.expand("%:p"))
   vim.cmd("Neotree reveal source=" .. source)
 end, { desc = "Vimoire: reveal in navigator" })
-set("n", keymaps.navigator.manuscript, ":NavigateManuscript<CR>", { desc = "Vimoire: manuscript view" })
 set("n", keymaps.navigator.export, ":NavigateExport<CR>", { desc = "Vimoire: export view" })
 
 -- Views keymaps
