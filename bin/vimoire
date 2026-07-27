@@ -6,8 +6,26 @@
 # so probe with --remote-expr under a manual timeout; macOS has no timeout(1).
 set -euo pipefail
 
+# GUI callers (Raycast, Finder) run with a bare PATH that lacks homebrew —
+# make neovide/nvim resolve regardless of who launched us.
+case ":$PATH:" in
+  *:/opt/homebrew/bin:*) ;;
+  *) PATH="/opt/homebrew/bin:$PATH" ;;
+esac
+
 SOCK=/tmp/vimoire.sock
 EDITOR_BIN="${VIMOIRE_EDITOR:-neovide}"
+
+# Self-locate: this file is the source of truth at bin/vimoire in the
+# checkout (dev mode — raw neovide exec) and a copy shipped by build-bundle
+# at Vimoire.app/Contents/Resources/vimoire (app mode — cold-launch the
+# bundle it lives in). Where it wakes up is the mode switch.
+SELF_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+BUNDLE="${SELF_DIR%/Contents/Resources}"
+case "$BUNDLE" in
+  *.app) [ "$BUNDLE" != "$SELF_DIR" ] || BUNDLE="" ;;
+  *) BUNDLE="" ;;
+esac
 
 # Resolve the repo root even when invoked through a PATH symlink, so the Dock
 # icon is found no matter where the launcher is called from.
@@ -41,7 +59,14 @@ if probe; then
   nvim --server "$SOCK" --remote-send '<Cmd>NeovideFocus<CR>' 2>/dev/null || true
 else
   rm -f "$SOCK"
-  if [ "$(basename "$EDITOR_BIN")" = "neovide" ]; then
+  if [ -n "$BUNDLE" ]; then
+    # App mode: launch through LaunchServices; init.lua serverstarts the
+    # socket, so wait for it, then raise the window.
+    open -a "$BUNDLE"
+    for _ in $(seq 100); do [ -S "$SOCK" ] && break; sleep 0.1; done
+    [ -S "$SOCK" ] || { echo "vimoire didn't start" >&2; exit 1; }
+    nvim --server "$SOCK" --remote-send '<Cmd>NeovideFocus<CR>' 2>/dev/null || true
+  elif [ "$(basename "$EDITOR_BIN")" = "neovide" ]; then
     exec env NVIM_APPNAME=vimoire "$EDITOR_BIN" --icon "$ICON" --fork -- --listen "$SOCK" "$@"
   else
     exec env NVIM_APPNAME=vimoire "$EDITOR_BIN" --listen "$SOCK" "$@"

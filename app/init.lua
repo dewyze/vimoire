@@ -4,6 +4,11 @@ math.randomseed(os.time() + os.clock() * 1000)
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- Bundle launches (open -a Vimoire) pass no --listen flag; claim the socket
+-- here so bin/vimoire's probe can find and focus this instance. No-op when
+-- the launcher already bound it.
+pcall(vim.fn.serverstart, "/tmp/vimoire.sock")
+
 require("config.lazy")
 require("config.defaults")
 require("vimoire.highlights").setup()
