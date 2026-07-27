@@ -175,14 +175,14 @@ export VIMOIRE_EDITOR=nvim
 
 ### macOS app
 
-For a real double-click / Spotlight app with the Vimoire name and icon:
-
 ```bash
-bin/build-bundle # clones your installed Neovide, rebrands it, and installs to ~/Applications
-open -a Vimoire  # (platform/macos/Vimoire.app remains as staging for releases)
+bin/release # promote app/ to ~/.config/vimoire + rebuild/install ~/Applications/Vimoire.app
+bin/vimoire # dev mode: run the live working tree (own config root; doesn't touch the release)
 ```
 
-The bundle is a copy of a specific Neovide version—re-run `bin/build-bundle` after upgrading Neovide. To use your own icon, drop a 1024×1024 `assets/icon.png` and run `bin/build-icon` first.
+The installed app always runs the last `bin/release`; the checkout launcher always runs
+the working tree. Re-run `bin/release` after upgrading Neovide (the bundle clones it).
+Custom icon: 1024×1024 `assets/icon.png`, then `bin/build-icon`.
 
 User configuration lives in `~/.vimoire/` (created automatically on first launch).
 

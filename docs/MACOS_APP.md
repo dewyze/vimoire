@@ -10,7 +10,7 @@ Vimoire has two launch paths, both driving the same `NVIM_APPNAME=vimoire` confi
 
 ## The bundle: clone-and-rebrand, not a wrapper
 
-`bin/build-bundle` produces `platform/macos/Vimoire.app` by **cloning the installed
+`bin/release` installs `~/Applications/Vimoire.app` by **cloning the installed
 Neovide.app** (shipped inside the Homebrew keg) and rebranding it:
 
 - `Info.plist`: `CFBundleName`/`CFBundleDisplayName` = Vimoire, `CFBundleIdentifier`
@@ -20,6 +20,7 @@ Neovide.app** (shipped inside the Homebrew keg) and rebranding it:
 - Neovide's `Neovide.icns` swapped for `vimoire.icns` (built by `bin/build-icon` from
   `assets/icon.png`).
 - Re-signed ad-hoc (editing broke Neovide's ad-hoc/linker signature).
+- The launcher CLI shipped at `Contents/Resources/vimoire` (self-detects app mode).
 
 **Why clone instead of a wrapper `.app` that exec's neovide?** A wrapper makes macOS
 attribute the app's identity — menu bar, Cmd-Tab, icon — to *Neovide.app* (the bundle
@@ -34,12 +35,10 @@ logo in the Dock/Cmd-Tab.
 
 ## Rebuilding
 
-The bundle is a **copy of a specific Neovide version** — re-run `bin/build-bundle` after
-every Neovide upgrade. The generated `.app` is gitignored (regenerable, ~28 MB).
+The bundle is a **copy of a specific Neovide version** — re-run `bin/release` after
+every Neovide upgrade.
 
 ## Known seam
 
-`NEOVIDE_ICON` is baked as an absolute path to the bundle's current location, so moving
-`Vimoire.app` (e.g. into `/Applications`) breaks the icon until you re-run `build-bundle`.
-A relocatable fix would be a small launcher script inside the bundle that resolves its own
-`Resources/` path; not needed yet.
+`NEOVIDE_ICON` is baked as an absolute path to `~/Applications/Vimoire.app`, so moving
+the bundle elsewhere breaks the icon until you re-run `bin/release`.

@@ -27,6 +27,14 @@ case "$BUNDLE" in
   *) BUNDLE="" ;;
 esac
 
+# Dev mode runs the live working tree via its own config root; the
+# installed app reads the bin/release copy at ~/.config/vimoire.
+if [ -z "$BUNDLE" ]; then
+  DEV_XDG="${TMPDIR:-/tmp}/vimoire-dev-xdg"
+  mkdir -p "$DEV_XDG"
+  ln -sfn "$ROOT/app" "$DEV_XDG/vimoire"
+fi
+
 # Resolve the repo root even when invoked through a PATH symlink, so the Dock
 # icon is found no matter where the launcher is called from.
 src="${BASH_SOURCE[0]}"
@@ -67,8 +75,8 @@ else
     [ -S "$SOCK" ] || { echo "vimoire didn't start" >&2; exit 1; }
     nvim --server "$SOCK" --remote-send '<Cmd>NeovideFocus<CR>' 2>/dev/null || true
   elif [ "$(basename "$EDITOR_BIN")" = "neovide" ]; then
-    exec env NVIM_APPNAME=vimoire "$EDITOR_BIN" --icon "$ICON" --fork -- --listen "$SOCK" "$@"
+    exec env NVIM_APPNAME=vimoire XDG_CONFIG_HOME="$DEV_XDG" "$EDITOR_BIN" --icon "$ICON" --fork -- --listen "$SOCK" "$@"
   else
-    exec env NVIM_APPNAME=vimoire "$EDITOR_BIN" --listen "$SOCK" "$@"
+    exec env NVIM_APPNAME=vimoire XDG_CONFIG_HOME="$DEV_XDG" "$EDITOR_BIN" --listen "$SOCK" "$@"
   fi
 fi

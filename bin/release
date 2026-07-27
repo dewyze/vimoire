@@ -1,7 +1,7 @@
-#!/bin/bash
-# Release the current app/ to ~/.config/vimoire/ (the stable build).
-# Refuses to run if the working tree is dirty or you're not on main.
-
+#!/usr/bin/env bash
+# release: promote app/ to ~/.config/vimoire and rebuild+install Vimoire.app.
+# The one verb — after this, the installed app runs this commit.
+# Refuses to run if app/ is dirty or you're not on main.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -10,17 +10,65 @@ if [[ -n "$(git status --porcelain app/)" ]]; then
   echo "error: app/ has uncommitted or untracked changes — commit or stash first" >&2
   exit 1
 fi
-
 branch="$(git rev-parse --abbrev-ref HEAD)"
 if [[ "$branch" != "main" ]]; then
   echo "error: not on main (currently on '$branch')" >&2
   exit 1
 fi
-
 sha="$(git rev-parse HEAD)"
-sha_short="$(git rev-parse --short HEAD)"
 
-rsync -a --delete app/ ~/.config/vimoire/
-echo "$sha" > ~/.config/vimoire/.release-sha
+# --- promote config ---------------------------------------------------
+CONF="$HOME/.config/vimoire"
+[ -L "$CONF" ] && rm "$CONF"
+mkdir -p "$CONF"
+rsync -a --delete app/ "$CONF/"
+echo "$sha" > "$CONF/.release-sha"
+echo "config released $(git rev-parse --short HEAD) -> $CONF"
 
-echo "Released $sha_short to ~/.config/vimoire/"
+# --- build + install Vimoire.app ----------------------------------------
+# Clone the installed Neovide.app and rebrand it: Vimoire name/icon/bundle-id,
+# NVIM_APPNAME baked in via LSEnvironment, CLI shipped inside, ad-hoc signed.
+ICON="$PWD/assets/vimoire.icns"
+formula_bin="$(command -v neovide)" || { echo "neovide not on PATH" >&2; exit 1; }
+real_bin="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$formula_bin")"
+keg="$(cd "$(dirname "$real_bin")/.." && pwd)"
+src_app="$keg/Neovide.app"
+[ -d "$src_app" ] || { echo "Neovide.app not found under keg: $src_app" >&2; exit 1; }
+[ -f "$ICON" ] || { echo "icon missing: $ICON" >&2; exit 1; }
+
+INSTALL="$HOME/Applications/Vimoire.app"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+OUT="$TMP/Vimoire.app"
+cp -R "$src_app" "$OUT"
+
+rm -f "$OUT/Contents/Resources/Neovide.icns"
+cp "$ICON" "$OUT/Contents/Resources/vimoire.icns"
+
+# Ship the CLI inside the bundle — external callers use this copy instead
+# of the dev checkout. It self-detects app mode.
+cp bin/vimoire "$OUT/Contents/Resources/vimoire"
+chmod +x "$OUT/Contents/Resources/vimoire"
+
+plist="$OUT/Contents/Info.plist"
+pb() { /usr/libexec/PlistBuddy -c "$1" "$plist"; }
+pb "Set :CFBundleName Vimoire"
+pb "Set :CFBundleDisplayName Vimoire"
+pb "Set :CFBundleIdentifier dev.vimoire.app"
+pb "Set :CFBundleIconFile vimoire"
+pb "Delete :LSEnvironment" 2>/dev/null || true
+pb "Add :LSEnvironment dict"
+pb "Add :LSEnvironment:NVIM_APPNAME string vimoire"
+# Neovide re-applies its own icon at runtime, overriding CFBundleIconFile —
+# hand it ours explicitly, at the path the bundle will live at.
+pb "Add :LSEnvironment:NEOVIDE_ICON string $INSTALL/Contents/Resources/vimoire.icns"
+
+codesign --force --deep --sign - "$OUT"
+
+mkdir -p "$HOME/Applications"
+rm -rf "$INSTALL"
+mv "$OUT" "$INSTALL"
+codesign --verify --deep --strict "$INSTALL" && echo "signature OK"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$INSTALL"
+
+echo "installed $INSTALL"
