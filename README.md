@@ -135,7 +135,7 @@ Twelve moods for writing. Switch with `:ViewTheme` or set in config.
 
 **Book-local dictionary** — teach it your character names once.
 
-**Writing stats** — session word count, book total, reading time, chapter breakdown. Set goals in `book.yml` to track progress toward your target.
+**Writing stats** — session word count, book total, reading time, chapter breakdown, and words written per day for the last two weeks. Set goals in `book.yml` to track progress toward your target.
 
 ## Quick Start
 

@@ -4,6 +4,8 @@ local M = {}
 local stats = require("vimoire.stats")
 local state = require("vimoire.state")
 
+local DAILY_DAYS = 14
+
 -- Format number with commas
 local function format_number(n)
   return tostring(n):reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", "")
@@ -92,6 +94,32 @@ local function build_content(width)
   end
 
   table.insert(lines, "")
+
+  -- Daily writing (books with git history)
+  local days = stats.recent_days(DAILY_DAYS)
+  if days then
+    local daily_header = "Daily"
+    table.insert(lines, center(daily_header, width))
+    table.insert(highlights, { #lines, math.floor((width - #daily_header) / 2), math.floor((width - #daily_header) / 2) + #daily_header, "Title" })
+    table.insert(lines, "")
+
+    local function columns(label, added, removed, net)
+      local values = right_align(added, 9) .. right_align(removed, 9) .. right_align(net, 9)
+      return "  " .. label .. string.rep(" ", inner_width - #label - #values) .. values
+    end
+
+    table.insert(lines, columns("", "added", "removed", "net"))
+    table.insert(highlights, { #lines, 0, #lines[#lines], "Comment" })
+    for _, day in ipairs(days) do
+      local year, month, date = day.day:match("(%d+)-(%d+)-(%d+)")
+      local label = os.date("%a %b %d", os.time({ year = year, month = month, day = date, hour = 12 }))
+      local added = day.added > 0 and "+" .. format_number(day.added) or "0"
+      local removed = day.removed > 0 and "-" .. format_number(day.removed) or "0"
+      table.insert(lines, columns(label, added, removed, format_delta(day:net())))
+    end
+
+    table.insert(lines, "")
+  end
 
   -- Breakdown header
   local breakdown_header = "Breakdown"

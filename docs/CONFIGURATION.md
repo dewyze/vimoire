@@ -330,6 +330,8 @@ Use `--no-open` flag to skip auto-open for a single export: `:Export --no-open`
 
 Only active when the book root is a git repository. Vimoire commits pending changes automatically as you write — commits ride idle pauses, at most one per debounce window, with a final commit on quit. Messages are `auto:` timestamps; use `:GitCommit` for intentional milestone commits that stand out in the log.
 
+At midnight, Vimoire saves open buffers and commits the day's work dated `23:59:59`, so each day's writing has an exact boundary in the history. If the machine was asleep at midnight, the commit lands on wake but is still dated to the day that ended. `:ViewStats` reads these commits to show the last 14 days of writing — words added, removed, and net.
+
 | Key | Default | Description |
 |-----|---------|-------------|
 | `enabled` | `true` | Auto-commit the book as you write |
@@ -402,11 +404,11 @@ title: "My Book"
 author: "Author Name"
 goals:
   target_words: 80000   # total book word count goal
-  daily_words: 1000     # daily writing session goal
+  daily_words: 1000     # net words per day goal
 ```
 
 When goals are set:
 - `:ViewStats` shows progress toward target
 - `:ViewHome` (project dashboard) shows session and total progress
 
-Session tracking resets when you reopen the project.
+The daily goal counts net words written today, read from the book's git history, so it survives restarts and resets at midnight. Books that aren't git repositories fall back to the session count, which resets when you reopen the project.

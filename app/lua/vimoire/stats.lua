@@ -3,6 +3,8 @@ local M = {}
 
 local state = require("vimoire.state")
 local entries = require("vimoire.util.entries")
+local repo = require("vimoire.git.repo")
+local History = require("vimoire.git.history")
 
 -- Session state
 M.session_start_words = nil
@@ -110,6 +112,27 @@ function M.progress()
   }
 end
 
+-- Net words written today, from the book's git history (so it survives
+-- restarts and resets at midnight). Books without git fall back to the
+-- session count.
+function M.today_words()
+  local root = state.manuscript and state.manuscript.root
+  if not root or not repo.is_git_repo(root) then
+    return M.session_words()
+  end
+  return History.new(root):today():net()
+end
+
+-- The last `count` days of writing, newest first, or nil when the book has
+-- no git history to read.
+function M.recent_days(count)
+  local root = state.manuscript and state.manuscript.root
+  if not root or not repo.is_git_repo(root) then
+    return nil
+  end
+  return History.new(root):days(count)
+end
+
 -- Get daily goal info
 -- Returns: {goal, written, percent} or nil if no daily goal
 function M.daily_progress()
@@ -118,13 +141,13 @@ function M.daily_progress()
     return nil
   end
 
-  local session = M.session_words()
+  local written = M.today_words()
   local goal = book.goals.daily_words
-  local percent = math.floor((session / goal) * 100)
+  local percent = math.floor((written / goal) * 100)
 
   return {
     goal = goal,
-    written = session,
+    written = written,
     percent = math.min(percent, 100),
   }
 end
