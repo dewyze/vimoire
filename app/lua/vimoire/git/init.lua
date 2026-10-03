@@ -7,6 +7,13 @@
 -- edits ride a later commit (autosave registers on the same events first).
 -- :GitCommit stays for intentional milestone commits, which stand out
 -- against the auto: timestamps.
+--
+-- Midnight closes the day: a minute timer watches the date, and when it
+-- rolls over, buffers are saved and the day's work is committed dated
+-- 23:59:59 of the day that ended. A poll rather than one long timer because
+-- libuv timers run on a clock that stops while the Mac sleeps; a check that
+-- runs late (laptop asleep at midnight) still dates to the ended day, since
+-- nothing was written while asleep.
 local M = {}
 
 local config = require("vimoire.config")
@@ -14,8 +21,11 @@ local repo = require("vimoire.git.repo")
 local state = require("vimoire.state")
 
 local DEFAULT_AUTOCOMMIT_MINUTES = 30
+local DAY_CHECK_MS = 60 * 1000
 
 local last_commit = {}
+local current_day = os.date("%Y-%m-%d")
+local day_timer = nil
 
 local function debounce_seconds()
   local minutes = tonumber(config.get("git.autocommit_minutes")) or DEFAULT_AUTOCOMMIT_MINUTES
@@ -40,6 +50,24 @@ function M.checkpoint(opts)
   end
 end
 
+-- Close the day once the date at `now` has moved past it.
+function M.check_day(now)
+  local day = os.date("%Y-%m-%d", now)
+  if day == current_day then
+    return
+  end
+  local ended = current_day
+  current_day = day
+
+  vim.cmd("silent! wall")
+  local root = state.manuscript.root
+  if not repo.has_changes(root) then
+    return
+  end
+  local closing = ended .. " 23:59:59"
+  repo.commit(root, { message = "auto: " .. closing, date = ended .. "T23:59:59" })
+end
+
 -- Manual milestone commit via the float editor.
 function M.commit()
   local root = state.manuscript.root
@@ -50,9 +78,22 @@ function M.commit()
   require("vimoire.git.commit_editor").open(root)
 end
 
--- Test hook: clear debounce state.
+-- Test hook: clear debounce state and start the day over.
 function M.reset()
   last_commit = {}
+  current_day = os.date("%Y-%m-%d")
+end
+
+local function watch_day()
+  if day_timer then
+    day_timer:stop()
+    day_timer:close()
+  end
+  current_day = os.date("%Y-%m-%d")
+  day_timer = vim.uv.new_timer()
+  day_timer:start(DAY_CHECK_MS, DAY_CHECK_MS, vim.schedule_wrap(function()
+    M.check_day(os.time())
+  end))
 end
 
 function M.setup()
@@ -76,6 +117,7 @@ function M.setup()
       M.checkpoint({ force = true })
     end,
   })
+  watch_day()
 end
 
 return M
