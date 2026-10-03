@@ -27,14 +27,6 @@ case "$BUNDLE" in
   *) BUNDLE="" ;;
 esac
 
-# Dev mode runs the live working tree via its own config root; the
-# installed app reads the bin/release copy at ~/.config/vimoire.
-if [ -z "$BUNDLE" ]; then
-  DEV_XDG="${TMPDIR:-/tmp}/vimoire-dev-xdg"
-  mkdir -p "$DEV_XDG"
-  ln -sfn "$ROOT/app" "$DEV_XDG/vimoire"
-fi
-
 # Resolve the repo root even when invoked through a PATH symlink, so the Dock
 # icon is found no matter where the launcher is called from.
 src="${BASH_SOURCE[0]}"
@@ -45,6 +37,14 @@ while [ -L "$src" ]; do
 done
 ROOT="$(cd -P "$(dirname "$src")/.." && pwd)"
 ICON="$ROOT/assets/vimoire.icns"
+
+# Dev mode runs the live working tree via its own config root; the
+# installed app reads the bin/release copy at ~/.config/vimoire.
+if [ -z "$BUNDLE" ]; then
+  DEV_XDG="${TMPDIR:-/tmp}/vimoire-dev-xdg"
+  mkdir -p "$DEV_XDG"
+  ln -sfn "$ROOT/app" "$DEV_XDG/vimoire"
+fi
 
 probe() {
   [ -S "$SOCK" ] || return 1
